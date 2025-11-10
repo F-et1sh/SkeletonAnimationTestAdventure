@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonAnimationTestAdventure", "SkeletonAnimationTestAdventure\SkeletonAnimationTestAdventure.vcxproj", "{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.clang-format = .clang-format
+		.clang-tidy = .clang-tidy
+		.gitignore = .gitignore
+		README.md = README.md
+		settings.json = settings.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Debug|x64.ActiveCfg = Debug|x64
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Debug|x64.Build.0 = Debug|x64
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Debug|x86.ActiveCfg = Debug|Win32
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Debug|x86.Build.0 = Debug|Win32
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Release|x64.ActiveCfg = Release|x64
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Release|x64.Build.0 = Release|x64
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Release|x86.ActiveCfg = Release|Win32
+		{CECEF74C-5704-44A3-A68B-CDD5D7EEB33C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E052833-C5BB-4A04-85B1-44382949C03A}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,20 @@
+Checks: >
+  readability-*,
+  cppcoreguidelines-*,
+  -readability-redundant-access-specifiers
+
+CheckOptions:
+  # Defines
+  - { key: readability-identifier-naming.MacroDefinitionCase,    value: UPPER_CASE }
+
+  # Local variables
+  - { key: readability-identifier-naming.LocalVariableCase,      value: lower_case }
+
+  # Functions arguments
+  - { key: readability-identifier-naming.ParameterCase,          value: lower_case }
+
+WarningsAsErrors: ''
+HeaderFileExtensions:         ['h','hpp']
+ImplementationFileExtensions: ['c','cpp']
+HeaderFilterRegex: '.*SkeletonAnimationTestAdventure/Code/.*'
+FormatStyle: none
