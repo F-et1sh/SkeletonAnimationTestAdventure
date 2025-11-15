@@ -1,21 +1,7 @@
-#include <iostream>
-#include <filesystem>
+#include "Model.hpp"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/vector_angle.hpp>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "tiny_gltf.h"
-
-#include "Shader.hpp"
+// I used this https://www.youtube.com/playlist?list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M as a code base for OpenGL rendering
+// So, honestly, I don't like this code, but it works, so I don't give a damn
 
 int main() {
     if (!glfwInit()) return -1;
@@ -24,7 +10,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", NULL, NULL);
     if (!window) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -36,10 +22,10 @@ int main() {
         return -1;
     }
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, 1920, 1080);
 
-    Shader shader("F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default.vert",
-                  "F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default.frag");
+    Shader shaderProgram("F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default.vert",
+                         "F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default.frag");
 
     // Take care of all the light related things
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -47,46 +33,43 @@ int main() {
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel           = glm::translate(lightModel, lightPos);
 
-    shader.Activate();
-    glUniform4f(glGetUniformLocation(shader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-    glUniform3f(glGetUniformLocation(shader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    shaderProgram.Activate();
+    glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+    glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
-    tinygltf::Model       model;
-    tinygltf::TinyGLTF    gltf_ctx;
-    std::string           err;
-    std::string           warn;
-    std::filesystem::path input_filename = L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\Cube\\Cube.gltf";
-    std::string           ext            = input_filename.extension().string();
+    // Enables the Depth Buffer
+    glEnable(GL_DEPTH_TEST);
 
-    gltf_ctx.SetStoreOriginalJSONForExtrasAndExtensions(false);
+    // Creates camera object
+    Camera camera(1920, 1080, glm::vec3(0.0f, 0.0f, 2.0f));
 
-    bool success = false;
-    if (ext.compare("glb") == 0) {
-        success = gltf_ctx.LoadBinaryFromFile(&model, &err, &warn, input_filename.string().c_str());
-    }
-    else {
-        success = gltf_ctx.LoadASCIIFromFile(&model, &err, &warn, input_filename.string().c_str());
-    }
-
-    if (!warn.empty()) {
-        printf("Warn: %s\n", warn.c_str());
-    }
-
-    if (!err.empty()) {
-        printf("Err: %s\n", err.c_str());
-    }
-
-    if (!success) {
-        printf("Failed to parse glTF\n");
-        return -1;
-    }
+    // Load in a model
+    Model model("F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\map\\scene.gltf");
 
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // Specify the color of the background
+        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+        // Clean the back buffer and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Handles camera inputs
+        camera.Inputs(window);
+        // Updates and exports the camera matrix to the Vertex Shader
+        camera.updateMatrix(45.0f, 0.01f, 1000.0f);
+
+        // Draw a model
+        model.Draw(shaderProgram, camera);
+
+        // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);
+        // Take care of all GLFW events
         glfwPollEvents();
     }
 
+    // Delete all the objects we've created
+    shaderProgram.Delete();
+    // Delete window before ending the program
+    glfwDestroyWindow(window);
+    // Terminate GLFW before ending the program
     glfwTerminate();
 }

@@ -143,8 +143,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Code\Camera.cpp" />
+    <ClCompile Include="Code\EBO.cpp" />
     <ClCompile Include="Code\main.cpp" />
+    <ClCompile Include="Code\Mesh.cpp" />
+    <ClCompile Include="Code\Model.cpp" />
     <ClCompile Include="Code\Shader.cpp" />
+    <ClCompile Include="Code\Texture.cpp" />
+    <ClCompile Include="Code\VAO.cpp" />
+    <ClCompile Include="Code\VBO.cpp" />
     <ClCompile Include="ThirdParty\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
@@ -171,7 +178,14 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\Camera.hpp" />
+    <ClInclude Include="Code\EBO.hpp" />
+    <ClInclude Include="Code\Mesh.hpp" />
+    <ClInclude Include="Code\Model.hpp" />
     <ClInclude Include="Code\Shader.hpp" />
+    <ClInclude Include="Code\Texture.hpp" />
+    <ClInclude Include="Code\VAO.hpp" />
+    <ClInclude Include="Code\VBO.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Files\Shaders\default.frag" />

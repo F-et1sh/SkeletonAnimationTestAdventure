@@ -22,6 +22,27 @@
     <Filter Include="Shaders\Default">
       <UniqueIdentifier>{4d774312-8ec4-4a8f-ab23-b0e4e37514c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Camera">
+      <UniqueIdentifier>{ee2c97a1-ed20-4cfe-91da-74df5625995b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Model">
+      <UniqueIdentifier>{5ed9f1c9-0727-4c75-ba02-c1ca6c59b115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Mesh">
+      <UniqueIdentifier>{be71c6dd-4333-4e81-be78-b3a7d5240a0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\VAO">
+      <UniqueIdentifier>{8b20051a-9f9b-4b16-bf08-aaede9d259be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\VBO">
+      <UniqueIdentifier>{0b0397cc-9ec2-4557-a3e4-8c5bb3014fbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\EBO">
+      <UniqueIdentifier>{3e861ffa-4476-47fd-86ba-59e13a8572d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Texture">
+      <UniqueIdentifier>{df534680-16c9-46d0-b0df-73fb067fc9a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\main.cpp">
@@ -32,6 +53,27 @@
     </ClCompile>
     <ClCompile Include="Code\Shader.cpp">
       <Filter>Code\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Camera.cpp">
+      <Filter>Code\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Model.cpp">
+      <Filter>Code\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Mesh.cpp">
+      <Filter>Code\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VAO.cpp">
+      <Filter>Code\VAO</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VBO.cpp">
+      <Filter>Code\VBO</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\EBO.cpp">
+      <Filter>Code\EBO</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Texture.cpp">
+      <Filter>Code\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +99,27 @@
   <ItemGroup>
     <ClInclude Include="Code\Shader.hpp">
       <Filter>Code\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Camera.hpp">
+      <Filter>Code\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Model.hpp">
+      <Filter>Code\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Mesh.hpp">
+      <Filter>Code\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VAO.hpp">
+      <Filter>Code\VAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VBO.hpp">
+      <Filter>Code\VBO</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\EBO.hpp">
+      <Filter>Code\EBO</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Texture.hpp">
+      <Filter>Code\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
