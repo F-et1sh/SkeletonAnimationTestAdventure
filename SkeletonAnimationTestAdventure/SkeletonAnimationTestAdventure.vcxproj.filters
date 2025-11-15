@@ -10,6 +10,9 @@
     <Filter Include="ThirdParty\glad">
       <UniqueIdentifier>{bc6b72dd-4f31-4374-a3fd-c0cbce4e4e80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Licenses">
+      <UniqueIdentifier>{0d357dc6-323b-4ff2-892c-0c73c1b8d0a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\main.cpp">
@@ -18,5 +21,22 @@
     <ClCompile Include="ThirdParty\glad\src\glad.c">
       <Filter>ThirdParty\glad</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="ThirdParty\glad\GLAD_LICENSE">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\tiny_gltf\TINY_GLTF_LICENSE">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\GLFW\GLFW_LICENSE.md">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\STBI\STBI_MIT_LICENSE.txt">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\json\JSON_LICENSE.MIT">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
