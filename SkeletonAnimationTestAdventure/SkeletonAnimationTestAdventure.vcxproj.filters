@@ -13,6 +13,15 @@
     <Filter Include="Licenses">
       <UniqueIdentifier>{0d357dc6-323b-4ff2-892c-0c73c1b8d0a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Shader">
+      <UniqueIdentifier>{26ffac6e-4004-481e-a34e-c7529b0d08c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{9ed3f3d4-fcf1-4934-b5f6-c6efe57a831f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Default">
+      <UniqueIdentifier>{4d774312-8ec4-4a8f-ab23-b0e4e37514c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\main.cpp">
@@ -20,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
       <Filter>ThirdParty\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Shader.cpp">
+      <Filter>Code\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,5 +50,21 @@
     <CopyFileToFolders Include="ThirdParty\json\JSON_LICENSE.MIT">
       <Filter>Licenses</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\GLM\GLM_COPYING.txt">
+      <Filter>Licenses</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\Shader.hpp">
+      <Filter>Code\Shader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Files\Shaders\default.frag">
+      <Filter>Shaders\Default</Filter>
+    </None>
+    <None Include="..\Files\Shaders\default.vert">
+      <Filter>Shaders\Default</Filter>
+    </None>
   </ItemGroup>
 </Project>
