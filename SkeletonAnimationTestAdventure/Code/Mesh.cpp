@@ -21,13 +21,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vec
     EBO.Unbind();
 }
 
-void Mesh::Draw(
-    Shader&   shader,
-    Camera&   camera,
-    glm::mat4 matrix,
-    glm::vec3 translation,
-    glm::quat rotation,
-    glm::vec3 scale) {
+void Mesh::Draw(Shader& shader, Camera& camera, glm::mat4 matrix, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) {
     // Bind shader to be able to access uniforms
     shader.Activate();
     VAO.Bind();
