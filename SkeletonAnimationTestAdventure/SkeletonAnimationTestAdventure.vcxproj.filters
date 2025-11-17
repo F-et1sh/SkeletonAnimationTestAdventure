@@ -19,32 +19,11 @@
     <Filter Include="Shaders\Default">
       <UniqueIdentifier>{4d774312-8ec4-4a8f-ab23-b0e4e37514c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\VertexBuffers">
+      <UniqueIdentifier>{03c9813e-3c45-4914-876b-278f14a3901c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Code\Old">
-      <UniqueIdentifier>{7e0a2ec5-541f-4427-b877-e82ba0c3e429}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\VBO">
-      <UniqueIdentifier>{0b0397cc-9ec2-4557-a3e4-8c5bb3014fbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\Shader">
-      <UniqueIdentifier>{26ffac6e-4004-481e-a34e-c7529b0d08c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\Texture">
-      <UniqueIdentifier>{df534680-16c9-46d0-b0df-73fb067fc9a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\VAO">
-      <UniqueIdentifier>{8b20051a-9f9b-4b16-bf08-aaede9d259be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\Model">
-      <UniqueIdentifier>{5ed9f1c9-0727-4c75-ba02-c1ca6c59b115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\EBO">
-      <UniqueIdentifier>{3e861ffa-4476-47fd-86ba-59e13a8572d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\Mesh">
-      <UniqueIdentifier>{be71c6dd-4333-4e81-be78-b3a7d5240a0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Code\Old\Camera">
-      <UniqueIdentifier>{ee2c97a1-ed20-4cfe-91da-74df5625995b}</UniqueIdentifier>
+      <UniqueIdentifier>{b402774e-f216-4759-a6fb-58eb98425aa6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="Code\main.cpp">
       <Filter>Code</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VertexBuffers.cpp">
+      <Filter>Code\VertexBuffers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,56 +64,61 @@
     <None Include="..\Files\Shaders\default.vert">
       <Filter>Shaders\Default</Filter>
     </None>
-    <None Include="Code\main_old.cpp">
+    <None Include="Code\Old\Camera.cpp">
       <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\VBO.hpp">
-      <Filter>Code\Old\VBO</Filter>
+    <None Include="Code\Old\Camera.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\VBO.cpp">
-      <Filter>Code\Old\VBO</Filter>
+    <None Include="Code\Old\EBO.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\VAO.hpp">
-      <Filter>Code\Old\VAO</Filter>
+    <None Include="Code\Old\EBO.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\VAO.cpp">
-      <Filter>Code\Old\VAO</Filter>
+    <None Include="Code\Old\main_old.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Texture.hpp">
-      <Filter>Code\Old\Texture</Filter>
+    <None Include="Code\Old\Mesh.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Texture.cpp">
-      <Filter>Code\Old\Texture</Filter>
+    <None Include="Code\Old\Mesh.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Shader.hpp">
-      <Filter>Code\Old\Shader</Filter>
+    <None Include="Code\Old\Model.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Shader.cpp">
-      <Filter>Code\Old\Shader</Filter>
+    <None Include="Code\Old\Model.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Model.hpp">
-      <Filter>Code\Old\Model</Filter>
+    <None Include="Code\Old\Shader.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Model.cpp">
-      <Filter>Code\Old\Model</Filter>
+    <None Include="Code\Old\Shader.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Mesh.hpp">
-      <Filter>Code\Old\Mesh</Filter>
+    <None Include="Code\Old\Texture.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Mesh.cpp">
-      <Filter>Code\Old\Mesh</Filter>
+    <None Include="Code\Old\Texture.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\EBO.hpp">
-      <Filter>Code\Old\EBO</Filter>
+    <None Include="Code\Old\VAO.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\EBO.cpp">
-      <Filter>Code\Old\EBO</Filter>
+    <None Include="Code\Old\VAO.hpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Camera.hpp">
-      <Filter>Code\Old\Camera</Filter>
+    <None Include="Code\Old\VBO.cpp">
+      <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Camera.cpp">
-      <Filter>Code\Old\Camera</Filter>
+    <None Include="Code\Old\VBO.hpp">
+      <Filter>Code\Old</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\VertexBuffers.hpp">
+      <Filter>Code\VertexBuffers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,28 +29,28 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -143,16 +147,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Code\Camera.cpp" />
-    <None Include="Code\EBO.cpp" />
     <ClCompile Include="Code\main.cpp" />
-    <None Include="Code\main_old.cpp" />
-    <None Include="Code\Mesh.cpp" />
-    <None Include="Code\Model.cpp" />
-    <None Include="Code\Shader.cpp" />
-    <None Include="Code\Texture.cpp" />
-    <None Include="Code\VAO.cpp" />
-    <None Include="Code\VBO.cpp" />
+    <None Include="..\Files\Shaders\default.frag" />
+    <None Include="..\Files\Shaders\default.vert" />
+    <None Include="Code\Old\Camera.cpp" />
+    <None Include="Code\Old\EBO.cpp" />
+    <None Include="Code\Old\main_old.cpp" />
+    <None Include="Code\Old\Mesh.cpp" />
+    <None Include="Code\Old\Model.cpp" />
+    <None Include="Code\Old\Shader.cpp" />
+    <None Include="Code\Old\Texture.cpp" />
+    <None Include="Code\Old\VAO.cpp" />
+    <None Include="Code\Old\VBO.cpp" />
+    <ClCompile Include="Code\VertexBuffers.cpp" />
     <ClCompile Include="ThirdParty\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
@@ -179,21 +186,18 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Code\Camera.hpp" />
-    <None Include="Code\EBO.hpp" />
-    <None Include="Code\Mesh.hpp" />
-    <None Include="Code\Model.hpp" />
-    <None Include="Code\Shader.hpp" />
-    <None Include="Code\Texture.hpp" />
-    <None Include="Code\VAO.hpp" />
-    <None Include="Code\VBO.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Files\Shaders\default.frag" />
-    <None Include="..\Files\Shaders\default.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <CopyFileToFolders Include="ThirdParty\GLM\GLM_COPYING.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Code\Old\Camera.hpp" />
+    <None Include="Code\Old\EBO.hpp" />
+    <None Include="Code\Old\Mesh.hpp" />
+    <None Include="Code\Old\Model.hpp" />
+    <None Include="Code\Old\Shader.hpp" />
+    <None Include="Code\Old\Texture.hpp" />
+    <None Include="Code\Old\VAO.hpp" />
+    <None Include="Code\Old\VBO.hpp" />
+    <ClInclude Include="Code\VertexBuffers.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
