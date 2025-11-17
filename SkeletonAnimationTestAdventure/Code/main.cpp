@@ -30,22 +30,33 @@ int main() {
     glViewport(0, 0, 1920, 1080);
 
     std::vector<Vertex> vertices{};
+    std::vector<GLuint> indices{};
 
-    VBO vbo;
+    VBO vbo{};
     vbo.Create(vertices);
+    vbo.Bind();
 
-    VAO vao;
+    VAO vao{};
     vao.Create();
+    vbo.Bind();
 
-    GLsizei stride = sizeof(Vertex);
+    constexpr GLsizei stride = sizeof(Vertex);
 
-    vao.LinkAttrib(vbo, 0, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, m_Position));
+    VAO::LinkAttrib(vbo, 0, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, m_Position));
+    VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_Normal));
+    VAO::LinkAttrib(vbo, 2, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_Color));
+    VAO::LinkAttrib(vbo, 3, 4, GL_UNSIGNED_INT, stride, (void*) offsetof(Vertex, m_Joints));
+    VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_Weights));
+
+    EBO ebo;
+    ebo.Create(indices);
+    ebo.Bind();
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
+        glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

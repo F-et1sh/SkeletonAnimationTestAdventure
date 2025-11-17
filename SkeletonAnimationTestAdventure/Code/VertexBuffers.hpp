@@ -4,15 +4,19 @@
 #include <glm/glm.hpp>
 
 struct Vertex {
-    glm::vec3 m_Position;
-    glm::vec3 m_Normal;
-    glm::vec3 m_Color;
-    glm::vec2 m_TextureUV;
+    glm::vec3  m_Position;
+    glm::vec3  m_Normal;
+    glm::vec3  m_Color;
+    glm::uvec4 m_Joints;
+    glm::vec4  m_Weights;
+
+    Vertex() = default;
+    ~Vertex() = default;
 };
 
 class VBO {
 public:
-    VBO()  = default;
+    VBO() = default;
     ~VBO();
 
     void Create(std::vector<Vertex>& vertices);
@@ -26,7 +30,7 @@ private:
 
 class VAO {
 public:
-    VAO()  = default;
+    VAO() = default;
     ~VAO();
 
     void Create();
