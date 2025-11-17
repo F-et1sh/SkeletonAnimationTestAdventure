@@ -25,6 +25,9 @@
     <Filter Include="Code\Old">
       <UniqueIdentifier>{b402774e-f216-4759-a6fb-58eb98425aa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Shader">
+      <UniqueIdentifier>{2ecfaa50-673a-4a63-823a-b07981ad0da2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -35,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="Code\VertexBuffers.cpp">
       <Filter>Code\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Shader.cpp">
+      <Filter>Code\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +125,9 @@
   <ItemGroup>
     <ClInclude Include="Code\VertexBuffers.hpp">
       <Filter>Code\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Shader.hpp">
+      <Filter>Code\Shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

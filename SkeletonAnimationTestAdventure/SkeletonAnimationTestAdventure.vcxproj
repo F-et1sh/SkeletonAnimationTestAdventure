@@ -159,6 +159,7 @@
     <None Include="Code\Old\Texture.cpp" />
     <None Include="Code\Old\VAO.cpp" />
     <None Include="Code\Old\VBO.cpp" />
+    <ClCompile Include="Code\Shader.cpp" />
     <ClCompile Include="Code\VertexBuffers.cpp" />
     <ClCompile Include="ThirdParty\glad\src\glad.c" />
   </ItemGroup>
@@ -197,6 +198,7 @@
     <None Include="Code\Old\Texture.hpp" />
     <None Include="Code\Old\VAO.hpp" />
     <None Include="Code\Old\VBO.hpp" />
+    <ClInclude Include="Code\Shader.hpp" />
     <ClInclude Include="Code\VertexBuffers.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
