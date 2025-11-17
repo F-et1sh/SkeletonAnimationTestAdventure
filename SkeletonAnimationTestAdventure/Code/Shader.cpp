@@ -17,7 +17,7 @@ void Shader::Initialize(const std::filesystem::path& file_path) {
     const bool frag_init = this->loadFromFile(fragment_path, Shader::FRAGMENT);
 
     if (vert_init && frag_init) {
-        this->LinkShader();
+        this->linkShader();
         return;
     }
 
@@ -118,10 +118,10 @@ void Shader::linkShader() {
     glValidateProgram(m_Program);
 }
 
-inline void Shader::Bind() const noexcept {
+void Shader::Bind() const noexcept {
     glUseProgram(m_Program);
 }
-inline void Shader::Unbind() const noexcept {
+void Shader::Unbind() const noexcept {
     glUseProgram(0);
 }
 

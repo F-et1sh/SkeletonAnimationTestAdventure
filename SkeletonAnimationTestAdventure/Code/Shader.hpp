@@ -27,8 +27,8 @@ public:
     void Initialize(const std::filesystem::path& file_path);
     void Initialize(const std::filesystem::path& vert_path, const std::filesystem::path& frag_path);
 
-    inline void Bind() const noexcept;
-    inline void Unbind() const noexcept;
+    void Bind() const noexcept;
+    void Unbind() const noexcept;
 
     // Get Shader Program Refecence
     const unsigned int& reference() const noexcept { return m_Program; }

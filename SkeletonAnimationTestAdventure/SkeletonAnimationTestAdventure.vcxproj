@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\main.cpp" />
     <None Include="..\Files\Shaders\default.frag" />
     <None Include="..\Files\Shaders\default.vert" />
@@ -198,6 +199,7 @@
     <None Include="Code\Old\Texture.hpp" />
     <None Include="Code\Old\VAO.hpp" />
     <None Include="Code\Old\VBO.hpp" />
+    <ClInclude Include="Code\Camera.hpp" />
     <ClInclude Include="Code\Shader.hpp" />
     <ClInclude Include="Code\VertexBuffers.hpp" />
   </ItemGroup>
