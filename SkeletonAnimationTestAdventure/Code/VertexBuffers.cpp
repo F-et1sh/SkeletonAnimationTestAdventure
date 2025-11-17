@@ -1,5 +1,9 @@
 #include "VertexBuffers.hpp"
 
+VBO::~VBO() {
+    glDeleteBuffers(1, &m_Index);
+}
+
 void VBO::Create(std::vector<Vertex>& vertices) {
     glGenBuffers(1, &m_Index);
     glBindBuffer(GL_ARRAY_BUFFER, m_Index);
@@ -12,10 +16,6 @@ void VBO::Bind() const {
 
 void VBO::Unbind() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void VBO::Delete() {
-    glDeleteBuffers(1, &m_Index);
 }
 
 
@@ -38,7 +38,7 @@ void VAO::Unbind() {
     glBindVertexArray(0);
 }
 
-void VAO::Delete() {
+VAO::~VAO() {
     glDeleteVertexArrays(1, &m_Index);
 }
 
@@ -56,6 +56,6 @@ void EBO::Unbind() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void EBO::Delete() {
+EBO::~EBO() {
     glDeleteBuffers(1, &m_Index);
 }

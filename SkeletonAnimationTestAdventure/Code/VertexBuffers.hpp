@@ -13,9 +13,8 @@ struct Vertex {
 class VBO {
 public:
     VBO()  = default;
-    ~VBO() = default;
+    ~VBO();
 
-    void Delete();
     void Create(std::vector<Vertex>& vertices);
 
     void        Bind() const;
@@ -28,9 +27,8 @@ private:
 class VAO {
 public:
     VAO()  = default;
-    ~VAO() = default;
+    ~VAO();
 
-    void Delete();
     void Create();
 
     static void LinkAttrib(VBO& vbo, GLuint layout, GLuint num_components, GLenum type, GLsizeiptr stride, void* offset);
@@ -44,7 +42,9 @@ private:
 
 class EBO {
 public:
-    void Delete();
+    EBO() = default;
+    ~EBO();
+
     void Create(std::vector<GLuint>& indices);
 
     void        Bind() const;

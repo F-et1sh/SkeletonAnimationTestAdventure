@@ -1,35 +1,33 @@
 #version 460
 
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec3 aColor;
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec3 a_Normal;
+layout(location = 2) in vec3 a_Color;
+layout(location = 3) in uvec4 a_Joints;
+layout(location = 4) in vec4  a_Weights;
 
-layout(location = 3) in uvec4 aJoints;
-layout(location = 4) in vec4  aWeights;
+out vec3 i_Position;
+out vec3 i_Normal;
+out vec3 i_Color;
 
-out vec3 crntPos;
-out vec3 Normal;
-out vec3 color;
+uniform mat4 u_CameraMatrix;
+uniform mat4 u_Model;
 
-uniform mat4 camMatrix;
-uniform mat4 model;
-
-uniform mat4 bones[128];
+uniform mat4 u_Bones[128];
 
 void main() {
+    mat4 skin_matrix =
+        u_Bones[a_Joints.x] * a_Weights.x +
+        u_Bones[a_Joints.y] * a_Weights.y +
+        u_Bones[a_Joints.z] * a_Weights.z +
+        u_Bones[a_Joints.w] * a_Weights.w;
 
-    mat4 skinMat =
-        bones[aJoints.x] * aWeights.x +
-        bones[aJoints.y] * aWeights.y +
-        bones[aJoints.z] * aWeights.z +
-        bones[aJoints.w] * aWeights.w;
+    vec4 skinned_position = skin_matrix * vec4(a_Position, 1.0f);
+    vec4 skinned_normal = skin_matrix * vec4(a_Normal, 0.0f);
 
-    vec4 skinnedPos = skinMat * vec4(aPos, 1.0);
-    vec4 skinnedNormal = skinMat * vec4(aNormal, 0.0);
+    i_Normal = skinned_normal.xyz;
+    i_Color = a_Color;
 
-    // output
-    Normal = skinnedNormal.xyz;
-    color = aColor;
-
-    gl_Position = camMatrix * model * skinnedPos;
+    gl_Position = u_CameraMatrix * u_Model * skinned_position;
+    i_Position = gl_Position.xyz;
 }

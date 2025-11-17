@@ -1,24 +1,17 @@
 #version 460
 
-// Outputs colors in RGBA
-out vec4 FragColor;
+out vec4 fragColor;
 
-// Imports the current position from the Vertex Shader
-in vec3 crntPos;
-// Imports the normal from the Vertex Shader
-in vec3 Normal;
-// Imports the color from the Vertex Shader
-in vec3 color;
+in vec3 i_Position;
+in vec3 i_Normal;
+in vec3 i_Color;
 
-// Gets the Texture Units from the main function
-uniform sampler2D diffuse0;
-uniform sampler2D specular0;
-// Gets the color of the light from the main function
-uniform vec4 lightColor;
-// Gets the position of the light from the main function
-uniform vec3 lightPos;
-// Gets the position of the camera from the main function
-uniform vec3 camPos;
+uniform sampler2D u_Diffuse0;
+uniform sampler2D u_Specular0;
+
+uniform vec4 u_LightColor;
+uniform vec3 u_LightPosition;
+uniform vec3 u_CameraPosition;
 
 //vec4 pointLight() {	
 //	// used in two variables so I calculate it here to not have to do it twice
@@ -95,6 +88,5 @@ uniform vec3 camPos;
 //}
 
 void main() {
-	// outputs final color
-	FragColor = vec4(1.0f);
+	fragColor = vec4(1.0f);
 }
