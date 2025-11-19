@@ -4,7 +4,7 @@
 
 class Camera {
 public:
-    Camera(int width, int height, glm::vec3 position) : m_Position(position), m_Width(width), m_Height(height) {}
+    Camera(int width, int height, glm::vec3 position) : m_position(position), m_width(width), m_height(height) {}
     ~Camera() = default;
 
     void Inputs(GLFWwindow* window);
@@ -12,16 +12,16 @@ public:
     void UploadUniform(Shader& shader, const char* uniform);
 
 private:
-    glm::vec3 m_Position{};
-    glm::vec3 m_Orientation  = glm::vec3(0.0F, 0.0F, -1.0F);
-    glm::vec3 m_Up           = glm::vec3(0.0F, 1.0F, 0.0F);
-    glm::mat4 m_CameraMatrix = glm::mat4(1.0F);
+    glm::vec3 m_position{};
+    glm::vec3 m_orientation  = glm::vec3(0.0F, 0.0F, -1.0F);
+    glm::vec3 m_up           = glm::vec3(0.0F, 1.0F, 0.0F);
+    glm::mat4 m_cameraMatrix = glm::mat4(1.0F);
 
-    bool m_FirstClick = true;
+    bool m_firstClick = true;
 
-    int m_Width = 0;
-    int m_Height = 0;
+    int m_width  = 0;
+    int m_height = 0;
 
-    float m_Speed       = 0.1F;
-    float m_Sensitivity = 100.0F;
+    float m_speed       = 0.1F;
+    float m_sensitivity = 100.0F;
 };

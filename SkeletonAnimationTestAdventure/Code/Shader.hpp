@@ -28,21 +28,21 @@ public:
     void Initialize(const std::filesystem::path& vert_path, const std::filesystem::path& frag_path);
 
     void Bind() const noexcept;
-    void Unbind() const noexcept;
+    static void Unbind() noexcept;
 
     // Get Shader Program Refecence
-    const unsigned int& reference() const noexcept { return m_Program; }
+    const unsigned int& reference() const noexcept { return m_program; }
 
 private:
     void createProgram() noexcept;
 
-    bool loadFromSource(const char* source, const unsigned int& type);
+    bool loadFromSource(const char* source, const unsigned int& type) const;
     bool loadFromFile(const std::filesystem::path& path, const unsigned int& type);
 
-    void linkShader();
+    void linkShader() const;
 
     // Reference of this Shader Program
-    GLuint m_Program = 0;
+    GLuint m_program = 0;
 
 public:
     // Legacy Methods with Uniform Setting

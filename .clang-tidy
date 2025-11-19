@@ -21,11 +21,11 @@ CheckOptions:
 
   # ──────────────────────────────────────────────────────────────
   # CLASS MEMBERS
-  - { key: readability-identifier-naming.MemberCase,              value: CamelCase }
+  - { key: readability-identifier-naming.MemberCase,              value: camelBack }
   - { key: readability-identifier-naming.MemberPrefix,            value: m_ }
 
   # STRUCT MEMBERS
-  - { key: readability-identifier-naming.StructMemberCase,        value: CamelCase }
+  - { key: readability-identifier-naming.StructMemberCase,        value: lower_case }
   - { key: readability-identifier-naming.StructMemberPrefix,      value: m_ }
 
   # ──────────────────────────────────────────────────────────────

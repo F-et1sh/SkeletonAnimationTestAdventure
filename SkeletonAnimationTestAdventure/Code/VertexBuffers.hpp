@@ -4,13 +4,13 @@
 #include <glm/glm.hpp>
 
 struct Vertex {
-    glm::vec3  m_Position;
-    glm::vec3  m_Normal;
-    glm::vec3  m_Color;
-    glm::uvec4 m_Joints;
-    glm::vec4  m_Weights;
+    glm::vec3  m_position;
+    glm::vec3  m_normal;
+    glm::vec3  m_color;
+    glm::uvec4 m_joints;
+    glm::vec4  m_weights;
 
-    Vertex() = default;
+    Vertex()  = default;
     ~Vertex() = default;
 };
 
@@ -25,7 +25,7 @@ public:
     static void Unbind();
 
 private:
-    GLuint m_Index;
+    GLuint m_index;
 };
 
 class VAO {
@@ -41,7 +41,7 @@ public:
     static void Unbind();
 
 private:
-    GLuint m_Index;
+    GLuint m_index;
 };
 
 class EBO {
@@ -55,5 +55,5 @@ public:
     static void Unbind();
 
 private:
-    GLuint m_Index;
+    GLuint m_index;
 };

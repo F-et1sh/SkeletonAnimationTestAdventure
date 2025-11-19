@@ -88,5 +88,5 @@ uniform vec3 u_CameraPosition;
 //}
 
 void main() {
-	fragColor = vec4(1.0f);
+	fragColor = vec4(i_Normal, 1.0f);
 }
