@@ -377,11 +377,11 @@ std::vector<glm::mat4> getBoneFinalMatrices(const tinygltf::Model&        model,
     return bones;
 }
 
-void loadModel(std::vector<Vertex>&         vertices,
-               std::vector<GLuint>&         indices,
-               std::vector<glm::mat4>&      bone_final_matrices,
-               Animation&                   animation,
-               const std::filesystem::path& path) {
+tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
+                          std::vector<GLuint>&         indices,
+                          std::vector<glm::mat4>&      bone_final_matrices,
+                          Animation&                   animation,
+                          const std::filesystem::path& path) {
 
     tinygltf::Model    model;
     tinygltf::TinyGLTF loader;
@@ -474,49 +474,7 @@ void loadModel(std::vector<Vertex>&         vertices,
         }
     }
 
-    std::vector<glm::mat4> node_local_matrices(model.nodes.size(), glm::mat4{ 1.0F });
-    for (size_t i = 0; i < model.nodes.size(); i++) {
-        node_local_matrices[i] = getLocalNodeMatrix(model.nodes[i]);
-    }
-
-    std::vector<NodeTRS> node_trs(model.nodes.size());
-
-    animation = loadAnimation(model, model.animations[0]);
-    applyAnimationToNodes(animation, 0, node_trs);
-
-    for (size_t i = 0; i < node_trs.size(); i++) {
-        node_local_matrices[i] =
-            glm::translate(glm::mat4(1.0F), node_trs[i].m_translation) *
-            glm::mat4_cast(node_trs[i].m_rotation) *
-            glm::scale(glm::mat4(1.0F), node_trs[i].m_scale);
-    }
-
-    const tinygltf::Skin& skin = model.skins[0];
-
-    std::unordered_map<int, int> node_to_bone;
-
-    for (int i = 0; i < skin.joints.size(); i++) {
-        node_to_bone[skin.joints[i]] = i;
-    }
-
-    for (auto& j : vertices) {
-        j.m_joints.x = node_to_bone[j.m_joints.x];
-        j.m_joints.y = node_to_bone[j.m_joints.y];
-        j.m_joints.z = node_to_bone[j.m_joints.z];
-        j.m_joints.w = node_to_bone[j.m_joints.w];
-    }
-
-    std::vector<glm::mat4> inverse_bind_matrices(skin.joints.size(), glm::mat4{ 1.0F });
-    loadInverseBindMatrices(model, inverse_bind_matrices);
-
-    std::vector<glm::mat4> node_global_matrices(model.nodes.size(), glm::mat4{ 1.0F });
-    const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
-
-    for (int root : scene.nodes) {
-        computeGlobalNodeMatrix(model, root, glm::mat4{ 1.0F }, node_local_matrices, node_global_matrices);
-    }
-
-    bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
+    return model;
 }
 
 int main() {
@@ -559,7 +517,63 @@ int main() {
     glm::mat4 model_matrix{ 1.0F };
     model_matrix *= glm::rotate(glm::radians(-90.0F), glm::vec3(1, 0, 0));
 
-    loadModel(vertices, indices, bone_final_matrices, animation, L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf");
+    tinygltf::Model model;
+    model = loadModel(vertices, indices, bone_final_matrices, animation, L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf");
+
+    const tinygltf::Skin& skin = model.skins[0];
+
+    std::vector<glm::mat4> inverse_bind_matrices(skin.joints.size(), glm::mat4{ 1.0F });
+
+    loadInverseBindMatrices(model, inverse_bind_matrices);
+
+    std::unordered_map<int, int> node_to_bone{};
+
+    for (int i = 0; i < skin.joints.size(); i++) {
+        node_to_bone[skin.joints[i]] = i;
+    }
+
+    for (auto& j : vertices) {
+        j.m_joints.x = node_to_bone[j.m_joints.x];
+        j.m_joints.y = node_to_bone[j.m_joints.y];
+        j.m_joints.z = node_to_bone[j.m_joints.z];
+        j.m_joints.w = node_to_bone[j.m_joints.w];
+    }
+
+    std::vector<glm::mat4> ibm_bone(skin.joints.size());
+
+    for (int bone = 0; bone < skin.joints.size(); bone++) {
+        ibm_bone[bone] = inverse_bind_matrices[bone];
+    }
+
+    inverse_bind_matrices = ibm_bone;
+
+    std::vector<glm::mat4> node_local_matrices(model.nodes.size(), glm::mat4{ 1.0F });
+    std::vector<glm::mat4> node_global_matrices(model.nodes.size(), glm::mat4{ 1.0F });
+
+    for (size_t i = 0; i < model.nodes.size(); i++) {
+        node_local_matrices[i] = getLocalNodeMatrix(model.nodes[i]);
+    }
+
+    std::vector<NodeTRS> base_trs(model.nodes.size());
+    for (size_t i = 0; i < model.nodes.size(); i++) {
+        const auto& n = model.nodes[i];
+
+        if (!n.translation.empty()) base_trs[i].m_translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
+        if (!n.rotation.empty()) base_trs[i].m_rotation = glm::quat(n.rotation[3], n.rotation[0], n.rotation[1], n.rotation[2]);
+        if (!n.scale.empty()) base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
+    }
+
+    std::vector<NodeTRS> node_trs = base_trs;
+    animation                     = loadAnimation(model, model.animations[0]);
+    applyAnimationToNodes(animation, 0, node_trs);
+
+    const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
+
+    for (int root : scene.nodes) {
+        computeGlobalNodeMatrix(model, root, glm::mat4{ 1.0F }, node_local_matrices, node_global_matrices);
+    }
+
+    bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
     VAO vao{};
     vao.Create();
@@ -588,6 +602,26 @@ int main() {
         camera.Inputs(window);
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
         camera.UploadUniform(shader, "u_CameraMatrix");
+
+        float animation_time = fmod(glfwGetTime(), 10);
+
+        node_trs = base_trs;
+
+        applyAnimationToNodes(animation, animation_time, node_trs);
+
+        for (size_t i = 0; i < model.nodes.size(); i++) {
+            const NodeTRS& trs = node_trs[i];
+            node_local_matrices[i] =
+                glm::translate(glm::mat4(1.0f), trs.m_translation) *
+                glm::mat4_cast(trs.m_rotation) *
+                glm::scale(glm::mat4(1.0f), trs.m_scale);
+        }
+
+        for (int root : scene.nodes) {
+            computeGlobalNodeMatrix(model, root, glm::mat4(1.0f), node_local_matrices, node_global_matrices);
+        }
+
+        bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.reference(), "u_Model"), 1, GL_FALSE, glm::value_ptr(model_matrix));
 
