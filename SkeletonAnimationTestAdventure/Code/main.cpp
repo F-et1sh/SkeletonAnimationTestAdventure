@@ -49,6 +49,23 @@ struct NodeTRS {
     ~NodeTRS() = default;
 };
 
+struct MeshPart {
+    int    material_index;
+    size_t index_start;
+    size_t index_count;
+
+    MeshPart()  = default;
+    ~MeshPart() = default;
+};
+
+struct MaterialTextures {
+    Texture diffuse{};
+    Texture specular{};
+
+    MaterialTextures()  = default;
+    ~MaterialTextures() = default;
+};
+
 void readFloatAccessor(const tinygltf::Model& model, int accessor_index, std::vector<float>& out) {
     const tinygltf::Accessor&   accessor = model.accessors[accessor_index];
     const tinygltf::BufferView& view     = model.bufferViews[accessor.bufferView];
@@ -58,7 +75,6 @@ void readFloatAccessor(const tinygltf::Model& model, int accessor_index, std::ve
 
     out.resize(accessor.count);
 
-    // Assume TIME always float (glTF spec requires float32)
     const float* f = reinterpret_cast<const float*>(data_ptr);
 
     for (size_t i = 0; i < accessor.count; i++) {
@@ -385,6 +401,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                           std::vector<GLuint>&         indices,
                           std::vector<glm::mat4>&      bone_final_matrices,
                           Animation&                   animation,
+                          std::vector<MeshPart>&       mesh_parts,
                           const std::filesystem::path& path) {
 
     tinygltf::Model    model;
@@ -456,6 +473,10 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     }
                 }
 
+                MeshPart part{};
+                part.material_index = primitive.material;
+                part.index_start    = indices.size();
+
                 const tinygltf::Accessor&   index_accessor    = model.accessors[primitive.indices];
                 const tinygltf::BufferView& index_buffer_view = model.bufferViews[index_accessor.bufferView];
                 const tinygltf::Buffer&     index_buffer      = model.buffers[index_buffer_view.buffer];
@@ -474,6 +495,9 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                         indices.emplace_back(base_vertex + buffer[i]);
                     }
                 }
+
+                part.index_count = indices.size() - part.index_start;
+                mesh_parts.push_back(part);
             }
         }
     }
@@ -534,6 +558,8 @@ int main() {
     glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), lightPos.x, lightPos.y, lightPos.z);
 
+    std::vector<MeshPart> mesh_parts{};
+
     std::vector<Vertex> vertices{};
     std::vector<GLuint> indices{};
 
@@ -546,48 +572,45 @@ int main() {
 
     std::filesystem::path model_path = L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf";
     tinygltf::Model       model;
-    model = loadModel(vertices, indices, bone_final_matrices, animation, model_path);
+    model = loadModel(vertices, indices, bone_final_matrices, animation, mesh_parts, model_path);
 
-    Texture base_color_texture{};
-    Texture metallic_roughness_texture{};
+    std::vector<MaterialTextures> material_textures{};
 
-    const auto& material = model.materials[0];
-    //std::cerr << "\nMaterial : " << (material.name.empty() ? "[Unnamed]" : material.name) << std::endl;
+    material_textures.reserve(model.materials.size());
 
-    const auto& pbr = material.pbrMetallicRoughness;
+    for (const auto& material : model.materials) {
+        material_textures.emplace_back();
+        auto& textures = material_textures.back();
 
-    auto base_path = model_path.parent_path();
+        const auto& pbr = material.pbrMetallicRoughness;
 
-    if (pbr.baseColorTexture.index > -1) {
-        std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
-        base_color_texture.Create((base_path / uri).string().c_str(), 0);
+        auto base_path = model_path.parent_path();
+
+        if (pbr.baseColorTexture.index > -1) {
+            std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
+            textures.diffuse.Create((base_path / uri).string().c_str(), 0);
+        }
+
+        if (pbr.metallicRoughnessTexture.index > -1) {
+            std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
+            textures.specular.Create((base_path / uri).string().c_str(), 1);
+        }
+
+        if (material.normalTexture.index > -1) {
+            std::string uri = getTextureUri(model, material.normalTexture.index);
+            //std::cout << "  Type: Normal Map, URI : " << uri << std::endl;
+        }
+
+        if (material.occlusionTexture.index > -1) {
+            std::string uri = getTextureUri(model, material.occlusionTexture.index);
+            //std::cout << "  Type: Occlusion Map, URI : " << uri << std::endl;
+        }
+
+        if (material.emissiveTexture.index > -1) {
+            std::string uri = getTextureUri(model, material.emissiveTexture.index);
+            //std::cout << "  Type: Emissive Map, URI : " << uri << std::endl;
+        }
     }
-
-    if (pbr.metallicRoughnessTexture.index > -1) {
-        std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
-        metallic_roughness_texture.Create((base_path / uri).string().c_str(), 1);
-    }
-
-    if (material.normalTexture.index > -1) {
-        std::string uri = getTextureUri(model, material.normalTexture.index);
-        //std::cout << "  Type: Normal Map, URI : " << uri << std::endl;
-    }
-
-    if (material.occlusionTexture.index > -1) {
-        std::string uri = getTextureUri(model, material.occlusionTexture.index);
-        //std::cout << "  Type: Occlusion Map, URI : " << uri << std::endl;
-    }
-
-    if (material.emissiveTexture.index > -1) {
-        std::string uri = getTextureUri(model, material.emissiveTexture.index);
-        //std::cout << "  Type: Emissive Map, URI : " << uri << std::endl;
-    }
-
-    base_color_texture.textureUnit(shader, "u_Diffuse0");
-    metallic_roughness_texture.textureUnit(shader, "u_Specular0");
-
-    base_color_texture.Bind();
-    metallic_roughness_texture.Bind();
 
     const tinygltf::Skin& skin = model.skins[0];
 
@@ -701,7 +724,21 @@ int main() {
                 glm::value_ptr(bone_final_matrices[i]));
         }
 
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        for (auto& part : mesh_parts) {
+
+            const auto& material = model.materials[part.material_index];
+            const auto& pbr      = material.pbrMetallicRoughness;
+
+            auto& textures = material_textures[part.material_index];
+
+            textures.diffuse.textureUnit(shader, "u_Diffuse0");
+            textures.diffuse.Bind();
+
+            textures.specular.textureUnit(shader, "u_Specular0");
+            textures.specular.Bind();
+
+            glDrawElementsBaseVertex(GL_TRIANGLES, part.index_count, GL_UNSIGNED_INT, (void*) (part.index_start * sizeof(GLuint)), 0);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

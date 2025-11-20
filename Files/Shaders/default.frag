@@ -87,6 +87,12 @@ vec4 spotLight() {
 	return (texture(u_Diffuse0, i_TexCoord) * (diffuse * inten + ambient) + texture(u_Specular0, i_TexCoord).r * specular * inten) * u_LightColor;
 }
 
+vec3 desaturate(vec3 color, float amount) {
+    vec3 gray = vec3(dot(vec3(0.2126,0.7152,0.0722), color));
+    return vec3(mix(color, gray, amount));
+}
+
 void main() {
 	fragColor = direcLight() + spotLight() + pointLight();
+	fragColor.xyz = desaturate(fragColor.xyz, -0.1f);
 }
