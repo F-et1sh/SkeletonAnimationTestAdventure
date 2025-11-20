@@ -563,9 +563,18 @@ int main() {
         if (!n.scale.empty()) base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
     }
 
+    animation = loadAnimation(model, model.animations[0]); // load the first animation
+
     std::vector<NodeTRS> node_trs = base_trs;
-    animation                     = loadAnimation(model, model.animations[0]);
-    applyAnimationToNodes(animation, 0, node_trs);
+    applyAnimationToNodes(animation, 0, node_trs); // 0 - time
+
+    for (size_t i = 0; i < model.nodes.size(); i++) {
+        const NodeTRS& trs = node_trs[i];
+        node_local_matrices[i] =
+            glm::translate(glm::mat4(1.0f), trs.m_translation) *
+            glm::mat4_cast(trs.m_rotation) *
+            glm::scale(glm::mat4(1.0f), trs.m_scale);
+    }
 
     const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
 
@@ -602,26 +611,6 @@ int main() {
         camera.Inputs(window);
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
         camera.UploadUniform(shader, "u_CameraMatrix");
-
-        float animation_time = fmod(glfwGetTime(), 10);
-
-        node_trs = base_trs;
-
-        applyAnimationToNodes(animation, animation_time, node_trs);
-
-        for (size_t i = 0; i < model.nodes.size(); i++) {
-            const NodeTRS& trs = node_trs[i];
-            node_local_matrices[i] =
-                glm::translate(glm::mat4(1.0f), trs.m_translation) *
-                glm::mat4_cast(trs.m_rotation) *
-                glm::scale(glm::mat4(1.0f), trs.m_scale);
-        }
-
-        for (int root : scene.nodes) {
-            computeGlobalNodeMatrix(model, root, glm::mat4(1.0f), node_local_matrices, node_global_matrices);
-        }
-
-        bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.reference(), "u_Model"), 1, GL_FALSE, glm::value_ptr(model_matrix));
 

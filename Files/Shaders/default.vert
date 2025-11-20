@@ -21,7 +21,7 @@ void main() {
         u_Bones[a_Joints.z] * a_Weights.z +
         u_Bones[a_Joints.w] * a_Weights.w;
 
-    vec4 skinned_position = skin_matrix * vec4(a_Position, 1.0);
+    vec4 skinned_position = skin_matrix * vec4(a_Position, 1.0f);
 
     mat3 skin3 = mat3(skin_matrix);
     vec3 skinned_normal = normalize(skin3 * a_Normal);
