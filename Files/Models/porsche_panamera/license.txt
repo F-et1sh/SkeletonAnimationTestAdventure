@@ -1,0 +1,8 @@
+Model Information:
+* title:	Porsche Panamera
+* source:	https://sketchfab.com/3d-models/porsche-panamera-a4045a52962f4301b34a839b9c4ed9b9
+* author:	KOElkast1007 (https://sketchfab.com/koelkastasbers)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

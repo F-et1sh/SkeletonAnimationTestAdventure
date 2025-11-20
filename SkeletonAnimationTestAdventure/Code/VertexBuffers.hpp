@@ -10,6 +10,7 @@ struct Vertex {
     glm::vec2     m_texCoord;
     glm::u16vec4  m_joints;
     glm::vec4     m_weights;
+    glm::vec4     m_tangent;
 };
 #pragma pack(pop)
 

@@ -3,15 +3,22 @@
 out vec4 fragColor;
 
 in vec3 i_Position;
-in vec3 i_Normal;
 in vec2 i_TexCoord;
+in mat3 i_TBN;
 
 uniform sampler2D u_Diffuse0;
 uniform sampler2D u_Specular0;
+uniform sampler2D u_Normal0;
 
 uniform vec4 u_LightColor;
 uniform vec3 u_LightPosition;
 uniform vec3 u_CameraPosition;
+
+vec3 getNormal() {
+    vec3 n = texture(u_Normal0, i_TexCoord).xyz;
+    n = n * 2.0f - 1.0f;
+    return normalize(i_TBN * n);
+}
 
 vec4 pointLight() {	
 	// used in two variables so I calculate it here to not have to do it twice
@@ -27,7 +34,7 @@ vec4 pointLight() {
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(i_Normal);
+	vec3 normal = getNormal();
 	vec3 lightDirection = normalize(lightVec);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
@@ -46,7 +53,7 @@ vec4 direcLight() {
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(i_Normal);
+	vec3 normal = getNormal();
 	vec3 lightDirection = normalize(vec3(1.0f, 1.0f, 0.0f));
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
@@ -69,7 +76,7 @@ vec4 spotLight() {
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(i_Normal);
+	vec3 normal = getNormal();
 	vec3 lightDirection = normalize(u_LightPosition - i_Position);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
@@ -88,11 +95,10 @@ vec4 spotLight() {
 }
 
 vec3 desaturate(vec3 color, float amount) {
-    vec3 gray = vec3(dot(vec3(0.2126,0.7152,0.0722), color));
+    vec3 gray = vec3(dot(vec3(0.2126, 0.7152, 0.0722), color));
     return vec3(mix(color, gray, amount));
 }
 
 void main() {
-	fragColor = direcLight() + spotLight() + pointLight();
-	fragColor.xyz = desaturate(fragColor.xyz, -0.1f);
+	fragColor = direcLight();
 }

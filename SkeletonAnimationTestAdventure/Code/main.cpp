@@ -61,6 +61,7 @@ struct MeshPart {
 struct MaterialTextures {
     Texture diffuse{};
     Texture specular{};
+    Texture normal{};
 
     MaterialTextures()  = default;
     ~MaterialTextures() = default;
@@ -450,6 +451,14 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     }
                 }
 
+                if (primitive.attributes.contains("TANGENT")) {
+                    std::vector<glm::vec4> tangent;
+                    readAttribute(model, primitive, "TANGENT", tangent);
+                    for (int i = 0; i < vertex_count; i++) {
+                        vertices[base_vertex + i].m_tangent = tangent[i];
+                    }
+                }
+
                 if (primitive.attributes.contains("TEXCOORD_0")) {
                     std::vector<glm::vec2> tex;
                     readAttribute(model, primitive, "TEXCOORD_0", tex);
@@ -552,8 +561,6 @@ int main() {
 
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 lightPos   = glm::vec3(0.5f, 0.5f, 0.5f);
-    glm::mat4 lightModel = glm::mat4(1.0f);
-    lightModel           = glm::translate(lightModel, lightPos);
 
     glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), lightPos.x, lightPos.y, lightPos.z);
@@ -598,7 +605,7 @@ int main() {
 
         if (material.normalTexture.index > -1) {
             std::string uri = getTextureUri(model, material.normalTexture.index);
-            //std::cout << "  Type: Normal Map, URI : " << uri << std::endl;
+            textures.normal.Create((base_path / uri).string().c_str(), 2);
         }
 
         if (material.occlusionTexture.index > -1) {
@@ -682,6 +689,7 @@ int main() {
     glEnableVertexAttribArray(3);
 
     VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_weights));
+    VAO::LinkAttrib(vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_tangent));
 
     EBO ebo{};
     ebo.Create(indices);
@@ -697,7 +705,11 @@ int main() {
 
         node_trs = base_trs;
 
-        applyAnimationToNodes(animation, glfwGetTime(), node_trs);
+        float time     = glfwGetTime();
+        float duration = animation.m_samplers[0].m_times.back();
+        time           = fmod(time, duration);
+
+        applyAnimationToNodes(animation, time, node_trs);
 
         for (size_t i = 0; i < model.nodes.size(); i++) {
             const NodeTRS& trs = node_trs[i];
@@ -737,7 +749,10 @@ int main() {
             textures.specular.textureUnit(shader, "u_Specular0");
             textures.specular.Bind();
 
-            glDrawElementsBaseVertex(GL_TRIANGLES, part.index_count, GL_UNSIGNED_INT, (void*) (part.index_start * sizeof(GLuint)), 0);
+            textures.normal.textureUnit(shader, "u_Normal0");
+            textures.normal.Bind();
+
+            glDrawElements(GL_TRIANGLES, part.index_count, GL_UNSIGNED_INT, (void*) (part.index_start * sizeof(GLuint)));
         }
 
         glfwSwapBuffers(window);
