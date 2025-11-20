@@ -29,7 +29,7 @@ void main() {
     i_Normal = skinned_normal;
     i_Color = a_Color;
 
-    vec4 world_pos = u_Model * vec4(a_Position, 1.0f);
+    vec4 world_pos = u_Model * skinned_position;
     gl_Position = u_CameraMatrix * world_pos;
 
     i_Position = world_pos.xyz;

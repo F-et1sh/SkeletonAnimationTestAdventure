@@ -528,28 +528,6 @@ int main() {
 
     loadInverseBindMatrices(model, inverse_bind_matrices);
 
-    std::unordered_map<int, int> node_to_bone{};
-
-    for (int i = 0; i < skin.joints.size(); i++) {
-        node_to_bone[skin.joints[i]] = i;
-    }
-
-    auto safe_map = [&](int nodeIndex) -> int {
-        auto it = node_to_bone.find(nodeIndex);
-        if (it == node_to_bone.end()) {
-            //std::cerr << "WARNING : node_to_bone missing for node " << nodeIndex << "\n";
-            return 0;
-        }
-        return it->second;
-    };
-
-    for (auto& v : vertices) {
-        v.m_joints.x = safe_map(v.m_joints.x);
-        v.m_joints.y = safe_map(v.m_joints.y);
-        v.m_joints.z = safe_map(v.m_joints.z);
-        v.m_joints.w = safe_map(v.m_joints.w);
-    }
-
     std::vector<glm::mat4> ibm_bone(skin.joints.size());
 
     for (int bone = 0; bone < skin.joints.size(); bone++) {
@@ -626,6 +604,24 @@ int main() {
         camera.Inputs(window);
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
         camera.UploadUniform(shader, "u_CameraMatrix");
+
+        node_trs = base_trs;
+
+        applyAnimationToNodes(animation, glfwGetTime(), node_trs);
+
+        for (size_t i = 0; i < model.nodes.size(); i++) {
+            const NodeTRS& trs = node_trs[i];
+            node_local_matrices[i] =
+                glm::translate(glm::mat4(1.0f), trs.m_translation) *
+                glm::mat4_cast(trs.m_rotation) *
+                glm::scale(glm::mat4(1.0f), trs.m_scale);
+        }
+
+        for (int root : scene.nodes) {
+            computeGlobalNodeMatrix(model, root, glm::mat4(1.0f), node_local_matrices, node_global_matrices);
+        }
+
+        bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.reference(), "u_Model"), 1, GL_FALSE, glm::value_ptr(model_matrix));
 
