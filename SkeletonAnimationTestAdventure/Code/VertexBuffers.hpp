@@ -3,16 +3,15 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#pragma pack(push, 1)
 struct Vertex {
-    glm::vec3  m_position;
-    glm::vec3  m_normal;
-    glm::vec3  m_color;
-    glm::uvec4 m_joints;
-    glm::vec4  m_weights;
-
-    Vertex()  = default;
-    ~Vertex() = default;
+    glm::vec3     m_position;
+    glm::vec3     m_normal;
+    glm::vec3     m_color;
+    glm::u16vec4  m_joints;
+    glm::vec4     m_weights;
 };
+#pragma pack(pop)
 
 class VBO {
 public:

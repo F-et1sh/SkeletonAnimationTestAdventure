@@ -239,37 +239,39 @@ void readJoints(const tinygltf::Model&     model,
                 std::vector<glm::uvec4>&   out) {
 
     auto it = primitive.attributes.find("JOINTS_0");
-    if (it == primitive.attributes.end()) {
-        return;
-    }
+    if (it == primitive.attributes.end()) return;
 
     int                         accessor_index = it->second;
     const tinygltf::Accessor&   accessor       = model.accessors[accessor_index];
     const tinygltf::BufferView& view           = model.bufferViews[accessor.bufferView];
     const tinygltf::Buffer&     buffer         = model.buffers[view.buffer];
 
-    const uint8_t* data_ptr = buffer.data.data() + view.byteOffset + accessor.byteOffset;
+    const uint8_t* base = buffer.data.data() + view.byteOffset + accessor.byteOffset;
 
-    int component_size = tinygltf::GetComponentSizeInBytes(accessor.componentType);
-    int num_components = tinygltf::GetNumComponentsInType(accessor.type);
+    size_t compSize    = tinygltf::GetComponentSizeInBytes(accessor.componentType);
+    size_t numComp     = tinygltf::GetNumComponentsInType(accessor.type);
+    size_t elementSize = compSize * numComp;
+    size_t stride      = view.byteStride != 0 ? view.byteStride : elementSize;
 
-    size_t element_size = component_size * num_components;
+    out.resize(accessor.count);
 
-    size_t stride = view.byteStride != 0 ? view.byteStride : element_size;
-
-    size_t count = accessor.count;
-    out.resize(count);
-
-    for (size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < accessor.count; i++) {
+        const uint8_t* p = base + i * stride;
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
-
-            const uint8_t* f = data_ptr + (i * stride);
-            out[i]           = glm::uvec4(f[0], f[1], f[2], f[3]);
+            const uint8_t* v = reinterpret_cast<const uint8_t*>(p);
+            out[i]           = glm::u16vec4(v[0], v[1], v[2], v[3]);
         }
         else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-
-            const uint16_t* f = reinterpret_cast<const uint16_t*>(data_ptr + (i * stride));
-            out[i]            = glm::uvec4(f[0], f[1], f[2], f[3]);
+            const uint16_t* v = reinterpret_cast<const uint16_t*>(p);
+            out[i]            = glm::u16vec4(v[0], v[1], v[2], v[3]);
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
+            const uint32_t* v = reinterpret_cast<const uint32_t*>(p);
+            out[i]            = glm::u16vec4(v[0], v[1], v[2], v[3]);
+        }
+        else {
+            std::cerr << "Unsupported JOINTS componentType\n";
+            out[i] = glm::u16vec4(0);
         }
     }
 }
@@ -488,7 +490,7 @@ int main() {
 
     GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", NULL, NULL);
     if (window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -532,11 +534,20 @@ int main() {
         node_to_bone[skin.joints[i]] = i;
     }
 
-    for (auto& j : vertices) {
-        j.m_joints.x = node_to_bone[j.m_joints.x];
-        j.m_joints.y = node_to_bone[j.m_joints.y];
-        j.m_joints.z = node_to_bone[j.m_joints.z];
-        j.m_joints.w = node_to_bone[j.m_joints.w];
+    auto safe_map = [&](int nodeIndex) -> int {
+        auto it = node_to_bone.find(nodeIndex);
+        if (it == node_to_bone.end()) {
+            //std::cerr << "WARNING : node_to_bone missing for node " << nodeIndex << "\n";
+            return 0;
+        }
+        return it->second;
+    };
+
+    for (auto& v : vertices) {
+        v.m_joints.x = safe_map(v.m_joints.x);
+        v.m_joints.y = safe_map(v.m_joints.y);
+        v.m_joints.z = safe_map(v.m_joints.z);
+        v.m_joints.w = safe_map(v.m_joints.w);
     }
 
     std::vector<glm::mat4> ibm_bone(skin.joints.size());
@@ -597,7 +608,11 @@ int main() {
     VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_position));
     VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_normal));
     VAO::LinkAttrib(vbo, 2, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_color));
-    VAO::LinkAttrib(vbo, 3, 4, GL_UNSIGNED_INT, stride, (void*) offsetof(Vertex, m_joints));
+
+    vbo.Bind();
+    glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, m_joints));
+    glEnableVertexAttribArray(3);
+
     VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_weights));
 
     EBO ebo{};
