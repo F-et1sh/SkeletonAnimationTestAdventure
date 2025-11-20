@@ -31,6 +31,9 @@
     <Filter Include="Code\Camera">
       <UniqueIdentifier>{300c2454-553c-4352-a50d-4aba01def041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Texture">
+      <UniqueIdentifier>{d0d6bef9-2109-4abc-b7a1-fa8f60972ff2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -47,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="Code\Camera.cpp">
       <Filter>Code\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Texture.cpp">
+      <Filter>Code\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="Code\Camera.hpp">
       <Filter>Code\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Texture.hpp">
+      <Filter>Code\Texture</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

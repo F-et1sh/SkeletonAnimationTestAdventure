@@ -7,7 +7,7 @@
 struct Vertex {
     glm::vec3     m_position;
     glm::vec3     m_normal;
-    glm::vec3     m_color;
+    glm::vec2     m_texCoord;
     glm::u16vec4  m_joints;
     glm::vec4     m_weights;
 };

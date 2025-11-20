@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Texture.hpp"
+
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -432,10 +434,10 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                 }
 
                 if (primitive.attributes.contains("TEXCOORD_0")) {
-                    /*std::vector<glm::vec2> tex;
-                    readAttribute("TEXCOORD_0", tex);
-                    for (int i = 0; i < vertexCount; i++)
-                        vertices[base_vertex + i].m_UV = tex[i];*/
+                    std::vector<glm::vec2> tex;
+                    readAttribute(model, primitive, "TEXCOORD_0", tex);
+                    for (int i = 0; i < vertex_count; i++)
+                        vertices[base_vertex + i].m_texCoord = tex[i];
                 }
 
                 if (primitive.attributes.contains("JOINTS_0")) {
@@ -479,6 +481,21 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
     return model;
 }
 
+std::string getTextureUri(const tinygltf::Model& model, int texture_index) {
+    if (texture_index < 0 || texture_index >= model.textures.size()) return "";
+
+    const tinygltf::Texture& texture     = model.textures[texture_index];
+    int                      image_index = texture.source;
+
+    if (image_index < 0 || image_index >= model.images.size()) return "";
+
+    const tinygltf::Image& image = model.images[image_index];
+
+    if (!image.uri.empty()) return image.uri;
+
+    return "[Embedded Data]";
+}
+
 int main() {
     if (glfwInit() == 0) {
         return -1;
@@ -509,6 +526,14 @@ int main() {
     shader.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default");
     shader.Bind();
 
+    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec3 lightPos   = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::mat4 lightModel = glm::mat4(1.0f);
+    lightModel           = glm::translate(lightModel, lightPos);
+
+    glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+    glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), lightPos.x, lightPos.y, lightPos.z);
+
     std::vector<Vertex> vertices{};
     std::vector<GLuint> indices{};
 
@@ -519,8 +544,50 @@ int main() {
     glm::mat4 model_matrix{ 1.0F };
     model_matrix *= glm::rotate(glm::radians(-90.0F), glm::vec3(1, 0, 0));
 
-    tinygltf::Model model;
-    model = loadModel(vertices, indices, bone_final_matrices, animation, L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf");
+    std::filesystem::path model_path = L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf";
+    tinygltf::Model       model;
+    model = loadModel(vertices, indices, bone_final_matrices, animation, model_path);
+
+    Texture base_color_texture{};
+    Texture metallic_roughness_texture{};
+
+    const auto& material = model.materials[0];
+    //std::cerr << "\nMaterial : " << (material.name.empty() ? "[Unnamed]" : material.name) << std::endl;
+
+    const auto& pbr = material.pbrMetallicRoughness;
+
+    auto base_path = model_path.parent_path();
+
+    if (pbr.baseColorTexture.index > -1) {
+        std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
+        base_color_texture.Create((base_path / uri).string().c_str(), 0);
+    }
+
+    if (pbr.metallicRoughnessTexture.index > -1) {
+        std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
+        metallic_roughness_texture.Create((base_path / uri).string().c_str(), 1);
+    }
+
+    if (material.normalTexture.index > -1) {
+        std::string uri = getTextureUri(model, material.normalTexture.index);
+        //std::cout << "  Type: Normal Map, URI : " << uri << std::endl;
+    }
+
+    if (material.occlusionTexture.index > -1) {
+        std::string uri = getTextureUri(model, material.occlusionTexture.index);
+        //std::cout << "  Type: Occlusion Map, URI : " << uri << std::endl;
+    }
+
+    if (material.emissiveTexture.index > -1) {
+        std::string uri = getTextureUri(model, material.emissiveTexture.index);
+        //std::cout << "  Type: Emissive Map, URI : " << uri << std::endl;
+    }
+
+    base_color_texture.textureUnit(shader, "u_Diffuse0");
+    metallic_roughness_texture.textureUnit(shader, "u_Specular0");
+
+    base_color_texture.Bind();
+    metallic_roughness_texture.Bind();
 
     const tinygltf::Skin& skin = model.skins[0];
 
@@ -585,7 +652,7 @@ int main() {
 
     VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_position));
     VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_normal));
-    VAO::LinkAttrib(vbo, 2, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_color));
+    VAO::LinkAttrib(vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, m_texCoord));
 
     vbo.Bind();
     glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, m_joints));
