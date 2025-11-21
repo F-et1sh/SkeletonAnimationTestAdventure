@@ -50,18 +50,18 @@ struct NodeTRS {
 };
 
 struct MeshPart {
-    int    material_index;
-    size_t index_start;
-    size_t index_count;
+    int    m_materialIndex;
+    size_t m_indexStart;
+    size_t m_indexCount;
 
     MeshPart()  = default;
     ~MeshPart() = default;
 };
 
 struct MaterialTextures {
-    Texture diffuse{};
-    Texture specular{};
-    Texture normal{};
+    Texture m_diffuse{};
+    Texture m_specular{};
+    Texture m_normal{};
 
     MaterialTextures()  = default;
     ~MaterialTextures() = default;
@@ -258,7 +258,9 @@ void readJoints(const tinygltf::Model&     model,
                 std::vector<glm::uvec4>&   out) {
 
     auto it = primitive.attributes.find("JOINTS_0");
-    if (it == primitive.attributes.end()) return;
+    if (it == primitive.attributes.end()) {
+        return;
+    }
 
     int                         accessor_index = it->second;
     const tinygltf::Accessor&   accessor       = model.accessors[accessor_index];
@@ -267,17 +269,17 @@ void readJoints(const tinygltf::Model&     model,
 
     const uint8_t* base = buffer.data.data() + view.byteOffset + accessor.byteOffset;
 
-    size_t compSize    = tinygltf::GetComponentSizeInBytes(accessor.componentType);
-    size_t numComp     = tinygltf::GetNumComponentsInType(accessor.type);
-    size_t elementSize = compSize * numComp;
-    size_t stride      = view.byteStride != 0 ? view.byteStride : elementSize;
+    size_t comp_size    = tinygltf::GetComponentSizeInBytes(accessor.componentType);
+    size_t num_comp     = tinygltf::GetNumComponentsInType(accessor.type);
+    size_t element_size = comp_size * num_comp;
+    size_t stride       = view.byteStride != 0 ? view.byteStride : element_size;
 
     out.resize(accessor.count);
 
     for (size_t i = 0; i < accessor.count; i++) {
-        const uint8_t* p = base + i * stride;
+        const uint8_t* p = base + (i * stride);
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
-            const uint8_t* v = reinterpret_cast<const uint8_t*>(p);
+            const uint8_t* v = p;
             out[i]           = glm::u16vec4(v[0], v[1], v[2], v[3]);
         }
         else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
@@ -462,8 +464,9 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                 if (primitive.attributes.contains("TEXCOORD_0")) {
                     std::vector<glm::vec2> tex;
                     readAttribute(model, primitive, "TEXCOORD_0", tex);
-                    for (int i = 0; i < vertex_count; i++)
+                    for (int i = 0; i < vertex_count; i++) {
                         vertices[base_vertex + i].m_texCoord = tex[i];
+                    }
                 }
 
                 if (primitive.attributes.contains("JOINTS_0")) {
@@ -483,8 +486,8 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                 }
 
                 MeshPart part{};
-                part.material_index = primitive.material;
-                part.index_start    = indices.size();
+                part.m_materialIndex = primitive.material;
+                part.m_indexStart    = indices.size();
 
                 const tinygltf::Accessor&   index_accessor    = model.accessors[primitive.indices];
                 const tinygltf::BufferView& index_buffer_view = model.bufferViews[index_accessor.bufferView];
@@ -505,7 +508,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     }
                 }
 
-                part.index_count = indices.size() - part.index_start;
+                part.m_indexCount = indices.size() - part.m_indexStart;
                 mesh_parts.push_back(part);
             }
         }
@@ -515,16 +518,22 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
 }
 
 std::string getTextureUri(const tinygltf::Model& model, int texture_index) {
-    if (texture_index < 0 || texture_index >= model.textures.size()) return "";
+    if (texture_index < 0 || texture_index >= model.textures.size()) {
+        return "";
+    }
 
     const tinygltf::Texture& texture     = model.textures[texture_index];
     int                      image_index = texture.source;
 
-    if (image_index < 0 || image_index >= model.images.size()) return "";
+    if (image_index < 0 || image_index >= model.images.size()) {
+        return "";
+    }
 
     const tinygltf::Image& image = model.images[image_index];
 
-    if (!image.uri.empty()) return image.uri;
+    if (!image.uri.empty()) {
+        return image.uri;
+    }
 
     return "[Embedded Data]";
 }
@@ -559,11 +568,11 @@ int main() {
     shader.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default");
     shader.Bind();
 
-    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    glm::vec3 lightPos   = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec4 light_color = glm::vec4(1.0F, 1.0F, 1.0F, 1.0F);
+    glm::vec3 light_pos   = glm::vec3(0.5F, 0.5F, 0.5F);
 
-    glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-    glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), light_color.x, light_color.y, light_color.z, light_color.w);
+    glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), light_pos.x, light_pos.y, light_pos.z);
 
     std::vector<MeshPart> mesh_parts{};
 
@@ -595,17 +604,17 @@ int main() {
 
         if (pbr.baseColorTexture.index > -1) {
             std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
-            textures.diffuse.Create((base_path / uri).string().c_str(), 0);
+            textures.m_diffuse.Create((base_path / uri).string().c_str(), 0);
         }
 
         if (pbr.metallicRoughnessTexture.index > -1) {
             std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
-            textures.specular.Create((base_path / uri).string().c_str(), 1);
+            textures.m_specular.Create((base_path / uri).string().c_str(), 1);
         }
 
         if (material.normalTexture.index > -1) {
             std::string uri = getTextureUri(model, material.normalTexture.index);
-            textures.normal.Create((base_path / uri).string().c_str(), 2);
+            textures.m_normal.Create((base_path / uri).string().c_str(), 2);
         }
 
         if (material.occlusionTexture.index > -1) {
@@ -644,9 +653,15 @@ int main() {
     for (size_t i = 0; i < model.nodes.size(); i++) {
         const auto& n = model.nodes[i];
 
-        if (!n.translation.empty()) base_trs[i].m_translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
-        if (!n.rotation.empty()) base_trs[i].m_rotation = glm::quat(n.rotation[3], n.rotation[0], n.rotation[1], n.rotation[2]);
-        if (!n.scale.empty()) base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
+        if (!n.translation.empty()) {
+            base_trs[i].m_translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
+        }
+        if (!n.rotation.empty()) {
+            base_trs[i].m_rotation = glm::quat(n.rotation[3], n.rotation[0], n.rotation[1], n.rotation[2]);
+        }
+        if (!n.scale.empty()) {
+            base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
+        }
     }
 
     animation = loadAnimation(model, model.animations[0]); // load the first animation
@@ -657,9 +672,9 @@ int main() {
     for (size_t i = 0; i < model.nodes.size(); i++) {
         const NodeTRS& trs = node_trs[i];
         node_local_matrices[i] =
-            glm::translate(glm::mat4(1.0f), trs.m_translation) *
+            glm::translate(glm::mat4(1.0F), trs.m_translation) *
             glm::mat4_cast(trs.m_rotation) *
-            glm::scale(glm::mat4(1.0f), trs.m_scale);
+            glm::scale(glm::mat4(1.0F), trs.m_scale);
     }
 
     const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
@@ -714,13 +729,13 @@ int main() {
         for (size_t i = 0; i < model.nodes.size(); i++) {
             const NodeTRS& trs = node_trs[i];
             node_local_matrices[i] =
-                glm::translate(glm::mat4(1.0f), trs.m_translation) *
+                glm::translate(glm::mat4(1.0F), trs.m_translation) *
                 glm::mat4_cast(trs.m_rotation) *
-                glm::scale(glm::mat4(1.0f), trs.m_scale);
+                glm::scale(glm::mat4(1.0F), trs.m_scale);
         }
 
         for (int root : scene.nodes) {
-            computeGlobalNodeMatrix(model, root, glm::mat4(1.0f), node_local_matrices, node_global_matrices);
+            computeGlobalNodeMatrix(model, root, glm::mat4(1.0F), node_local_matrices, node_global_matrices);
         }
 
         bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
@@ -738,21 +753,21 @@ int main() {
 
         for (auto& part : mesh_parts) {
 
-            const auto& material = model.materials[part.material_index];
+            const auto& material = model.materials[part.m_materialIndex];
             const auto& pbr      = material.pbrMetallicRoughness;
 
-            auto& textures = material_textures[part.material_index];
+            auto& textures = material_textures[part.m_materialIndex];
 
-            textures.diffuse.textureUnit(shader, "u_Diffuse0");
-            textures.diffuse.Bind();
+            textures.m_diffuse.textureUnit(shader, "u_Diffuse0");
+            textures.m_diffuse.Bind();
 
-            textures.specular.textureUnit(shader, "u_Specular0");
-            textures.specular.Bind();
+            textures.m_specular.textureUnit(shader, "u_Specular0");
+            textures.m_specular.Bind();
 
-            textures.normal.textureUnit(shader, "u_Normal0");
-            textures.normal.Bind();
+            textures.m_normal.textureUnit(shader, "u_Normal0");
+            textures.m_normal.Bind();
 
-            glDrawElements(GL_TRIANGLES, part.index_count, GL_UNSIGNED_INT, (void*) (part.index_start * sizeof(GLuint)));
+            glDrawElements(GL_TRIANGLES, part.m_indexCount, GL_UNSIGNED_INT, (void*) (part.m_indexStart * sizeof(GLuint)));
         }
 
         glfwSwapBuffers(window);

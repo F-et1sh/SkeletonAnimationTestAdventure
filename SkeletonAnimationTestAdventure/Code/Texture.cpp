@@ -7,11 +7,11 @@ Texture::~Texture() {
 }
 
 void Texture::Create(const char* image, GLuint slot) {
-    int widthImg;
-    int heightImg;
-    int numColCh;
-    stbi_set_flip_vertically_on_load(false);
-    unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
+    int width_img  = 0;
+    int height_img = 0;
+    int num_col_ch = 0;
+    stbi_set_flip_vertically_on_load(0);
+    unsigned char* bytes = stbi_load(image, &width_img, &height_img, &num_col_ch, 0);
 
     glGenTextures(1, &m_index);
     glActiveTexture(GL_TEXTURE0 + slot);
@@ -24,37 +24,37 @@ void Texture::Create(const char* image, GLuint slot) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    if (numColCh == 4) {
+    if (num_col_ch == 4) {
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
             GL_RGBA,
-            widthImg,
-            heightImg,
+            width_img,
+            height_img,
             0,
             GL_RGBA,
             GL_UNSIGNED_BYTE,
             bytes);
     }
-    else if (numColCh == 3) {
+    else if (num_col_ch == 3) {
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
             GL_RGBA,
-            widthImg,
-            heightImg,
+            width_img,
+            height_img,
             0,
             GL_RGB,
             GL_UNSIGNED_BYTE,
             bytes);
     }
-    else if (numColCh == 1) {
+    else if (num_col_ch == 1) {
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
             GL_RGBA,
-            widthImg,
-            heightImg,
+            width_img,
+            height_img,
             0,
             GL_RED,
             GL_UNSIGNED_BYTE,
@@ -71,7 +71,7 @@ void Texture::Create(const char* image, GLuint slot) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::textureUnit(Shader& shader, const char* uniform) {
+void Texture::textureUnit(Shader& shader, const char* uniform) const {
     GLuint tex_uni = glGetUniformLocation(shader.reference(), uniform);
     shader.Bind();
     glUniform1i(tex_uni, m_unit);

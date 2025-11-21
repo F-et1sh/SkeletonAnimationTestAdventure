@@ -16,30 +16,30 @@ struct Vertex {
     glm::vec2 uv;
 
     glm::uvec4 joints;
-    glm::vec4 weights;
+    glm::vec4  weights;
 };
 
 struct Skin {
-    std::vector<int> joints;
+    std::vector<int>       joints;
     std::vector<glm::mat4> inverseBindMatrices;
 };
 
 struct AnimSampler {
-    std::vector<float> times;
+    std::vector<float>     times;
     std::vector<glm::vec3> translations;
     std::vector<glm::quat> rotations;
     std::vector<glm::vec3> scales;
 };
 
 struct Node {
-    int parent = -1;
+    int              parent = -1;
     std::vector<int> children;
 
     glm::vec3 translation = glm::vec3(0.0f);
-    glm::quat rotation = glm::quat(1, 0, 0, 0);
-    glm::vec3 scale = glm::vec3(1.0f);
+    glm::quat rotation    = glm::quat(1, 0, 0, 0);
+    glm::vec3 scale       = glm::vec3(1.0f);
 
-    glm::mat4 localMatrix = glm::mat4(1.0f);
+    glm::mat4 localMatrix  = glm::mat4(1.0f);
     glm::mat4 globalMatrix = glm::mat4(1.0f);
 };
 
@@ -55,8 +55,8 @@ std::vector<Node> LoadNodes(const tinygltf::Model& gltf) {
     std::vector<Node> nodes(gltf.nodes.size());
 
     for (size_t i = 0; i < gltf.nodes.size(); i++) {
-        const auto& n = gltf.nodes[i];
-        Node& node = nodes[i];
+        const auto& n    = gltf.nodes[i];
+        Node&       node = nodes[i];
 
         if (n.translation.size() == 3)
             node.translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
@@ -97,9 +97,9 @@ Skin LoadSkin(const tinygltf::Model& gltf) {
     result.joints = s.joints;
 
     // inverseBindMatrices
-    const tinygltf::Accessor& acc = gltf.accessors[s.inverseBindMatrices];
+    const tinygltf::Accessor&   acc  = gltf.accessors[s.inverseBindMatrices];
     const tinygltf::BufferView& view = gltf.bufferViews[acc.bufferView];
-    const tinygltf::Buffer& buf = gltf.buffers[view.buffer];
+    const tinygltf::Buffer&     buf  = gltf.buffers[view.buffer];
 
     const float* raw = reinterpret_cast<const float*>(&buf.data[view.byteOffset + acc.byteOffset]);
 
@@ -251,14 +251,17 @@ bool LoadGLTF(const std::string& filename, std::vector<Vertex>& outVertices, std
         nodes = LoadNodes(gltf);
         skin  = LoadSkin(gltf);
         boneMatrices.resize(skin.joints.size());
-        
-        for (size_t i = 0; i < skin.joints.size(); i++) {
+        
+
+         i = 0; i < skin.joints.size(); i++) {
             int jointIndex = skin.joints[i];
-        
-            glm::mat4 globalTransform = nodes[jointIndex].globalMatrix;
+        
+
+            lobalTransform = nodes[jointIndex].globalMatrix;
             glm::mat4 invBind         = skin.inverseBindMatrices[i];
-        
-            boneMatrices[i] = globalTransform * invBind;
+        
+
+            s[i] = globalTransform * invBind;
         }
     }
 
@@ -320,24 +323,34 @@ int main() {
 
     glBindVertexArray(VAO);
     
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+   
+
+    r(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+   
+
+    r(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
     
-    GLsizei stride = sizeof(Vertex);
+   
+
+    ide = sizeof(Vertex);
     
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, pos));
+   
+
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Ve rtex, pos));
     glEnableVertexAttribArray(0);
     
-    // normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, normal));
+   
+
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Ve rtex, normal));
     glEnableVertexAttribArray(1);
     
-    // uv
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, uv));
+   
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Ve rtex, uv));
     glEnableVertexAttribArray(2);
 
     // JOINTS_0
@@ -348,7 +361,9 @@ int main() {
     glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, stride, (void*) offsetof(Vertex, weights));
     glEnableVertexAttribArray(4);
     
-    glBindVertexArray(0);
+   
+
+    xArray(0);
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the background
@@ -371,26 +386,31 @@ int main() {
         glm::mat4 modelMat = glm::mat4(1.0f);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 
-        float t = (float)glfwGetTime();
+        float t = (float)glfwGetTime ();
 
         // вращаем первую кость — просто тест
-        nodes[ skin.joints[0] ].rotation = glm::angleAxis(t, glm::vec3(0, 1, 0));
+        nodes[ skin.joints[0] ].rotation = glm::angleAxs(t, glm::vec30, 1, 0));
         
-        // пересчёт local + global
-        for (size_t i = 0; i < nodes.size(); i++) {
+        // пересчёт local + g
+
+        size_t i = 0; i < nodes.size(); i++) {
             nodes[i].localMatrix =
                 glm::translate(glm::mat4(1.0f), nodes[i].translation) *
                 glm::mat4_cast(nodes[i].rotation) *
                 glm::scale(glm::mat4(1.0f), nodes[i].scale);
         }
         
-        for (int root : gltf.scenes[gltf.defaultScene].nodes) {
+        for (int root : gltf.scenes[g
+
+        des) {
             ComputeGlobal(nodes[root], nodes, glm::mat4(1.0f));
         }
         
-        for (size_t i = 0; i < skin.joints.size(); i++) {
+        for (size_t i = 0; i < skin.j
+
+        
             int joint = skin.joints[i];
-            boneMatrices[i] = nodes[joint].globalMatrix * skin.inverseBindMatrices[i];
+            boneMatrices[i] =       nodes[joint].globalMatrix * skin.inverseBindMatrices[i];
         }
 
         glBindVertexArray(VAO);

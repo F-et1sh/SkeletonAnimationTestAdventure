@@ -9,11 +9,11 @@ public:
 
     void Create(const char* image, GLuint slot);
 
-    void textureUnit(Shader& shader, const char* uniform);
+    void        textureUnit(Shader& shader, const char* uniform) const;
     void        Bind() const;
     static void Unbind();
 
 private:
-    GLuint      m_index;
-    GLuint      m_unit;
+    GLuint m_index;
+    GLuint m_unit;
 };
