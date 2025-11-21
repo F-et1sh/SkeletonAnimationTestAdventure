@@ -22,22 +22,20 @@ CheckOptions:
   # ──────────────────────────────────────────────────────────────
   # CLASS MEMBERS
   - { key: readability-identifier-naming.MemberCase,              value: camelBack }
-  - { key: readability-identifier-naming.MemberPrefix,            value: m_ }
+  - { key: readability-identifier-naming.MemberPrefix,            value: m_        }
 
   # STRUCT MEMBERS
   - { key: readability-identifier-naming.StructMemberCase,        value: lower_case }
-  - { key: readability-identifier-naming.StructMemberPrefix,      value: m_ }
+  - { key: readability-identifier-naming.StructMemberPrefix,      value: ""         }
+
+  # MEMBER POINTERS
+  - { key: readability-identifier-naming.MemberPointerPrefix,	  value: "p_"	    }
+  - { key: readability-identifier-naming.MemberPointerCase,		  value: camelBack  }
 
   # ──────────────────────────────────────────────────────────────
   # ENUMS / TYPES
   - { key: readability-identifier-naming.EnumConstantCase,        value: UPPER_CASE }
-  - { key: readability-identifier-naming.EnumCase,                value: CamelCase }
-  - { key: readability-identifier-naming.ClassCase,               value: CamelCase }
-  - { key: readability-identifier-naming.StructCase,              value: CamelCase }
-  - { key: readability-identifier-naming.TypedefCase,             value: CamelCase }
-
-WarningsAsErrors: ''
-HeaderFileExtensions:         ['h','hpp']
-ImplementationFileExtensions: ['c','cpp']
-HeaderFilterRegex: '.*SkeletonAnimationTestAdventure/Code/.*'
-FormatStyle: none
+  - { key: readability-identifier-naming.EnumCase,                value: CamelCase  }
+  - { key: readability-identifier-naming.ClassCase,               value: CamelCase  }
+  - { key: readability-identifier-naming.StructCase,              value: CamelCase  }
+  - { key: readability-identifier-naming.TypedefCase,             value: CamelCase  }

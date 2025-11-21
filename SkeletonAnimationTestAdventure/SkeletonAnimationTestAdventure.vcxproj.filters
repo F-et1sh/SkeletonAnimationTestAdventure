@@ -34,6 +34,9 @@
     <Filter Include="Code\Texture">
       <UniqueIdentifier>{d0d6bef9-2109-4abc-b7a1-fa8f60972ff2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Model">
+      <UniqueIdentifier>{de078d21-b204-4a48-8f43-61cf4302fc66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -53,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="Code\Texture.cpp">
       <Filter>Code\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Model.cpp">
+      <Filter>Code\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="Code\Texture.hpp">
       <Filter>Code\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Model.hpp">
+      <Filter>Code\Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
