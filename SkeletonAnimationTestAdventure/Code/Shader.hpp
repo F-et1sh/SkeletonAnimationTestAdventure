@@ -31,7 +31,7 @@ public:
     static void Unbind() noexcept;
 
     // Get Shader Program Refecence
-    const unsigned int& reference() const noexcept { return m_program; }
+    [[nodiscard]] const unsigned int& reference() const noexcept { return m_program; }
 
 private:
     void createProgram() noexcept;

@@ -1,10 +1,10 @@
 #include "Camera.hpp"
 
-#include <math.h>
+#include <cmath>
 
 void Camera::UpdateMatrix(float fov_deg, float near_plane, float far_plane) {
-    glm::mat4 view       = glm::mat4(1.0F);
-    glm::mat4 projection = glm::mat4(1.0F);
+    auto view       = glm::mat4(1.0F);
+    auto projection = glm::mat4(1.0F);
 
     view       = glm::lookAt(m_position, m_position + m_orientation, m_up);
     projection = glm::perspective(glm::radians(fov_deg), (float) m_width / m_height, near_plane, far_plane);

@@ -8,7 +8,7 @@ void Shader::Initialize(const std::filesystem::path& file_path) {
 
     this->createProgram();
 
-    const std::filesystem::path path = file_path;
+    const std::filesystem::path& path = file_path;
 
     const std::filesystem::path vertex_path   = path.wstring() + L".vert";
     const std::filesystem::path fragment_path = path.wstring() + L".frag";
@@ -39,8 +39,8 @@ void Shader::Initialize(const std::filesystem::path& vert_path, const std::files
 
     this->createProgram();
 
-    const std::filesystem::path vertex_path   = vert_path;
-    const std::filesystem::path fragment_path = frag_path;
+    const std::filesystem::path& vertex_path   = vert_path;
+    const std::filesystem::path& fragment_path = frag_path;
 
     bool vert_init = this->loadFromFile(vertex_path, Shader::VERTEX);
     bool frag_init = this->loadFromFile(fragment_path, Shader::FRAGMENT);
@@ -82,8 +82,8 @@ bool Shader::loadFromSource(const char* source, const unsigned int& type) const 
         glGetShaderInfoLog(shader, length, &length, message);
 
         std::wcerr << "ERROR : Failed to Compile Shader\n"
-                   << message << std::endl
-                   << std::endl;
+                   << message << '\n'
+                   << '\n';
 
         glDeleteShader(shader);
 
@@ -96,8 +96,8 @@ bool Shader::loadFromSource(const char* source, const unsigned int& type) const 
 bool Shader::loadFromFile(const std::filesystem::path& path, const unsigned int& type) {
     std::ifstream file(path);
     if (!file.good()) {
-        std::wcerr << L"ERROR: Failed to open shader file\nPath : " << path.c_str() << std::endl
-                   << std::endl;
+        std::wcerr << L"ERROR: Failed to open shader file\nPath : " << path.c_str() << '\n'
+                   << '\n';
         return false;
     }
 
@@ -106,8 +106,8 @@ bool Shader::loadFromFile(const std::filesystem::path& path, const unsigned int&
     file.close();
 
     if (source.empty()) {
-        std::wcerr << L"ERROR: Shader file is empty\nPath: " << path.c_str() << std::endl
-                   << std::endl;
+        std::wcerr << L"ERROR: Shader file is empty\nPath: " << path.c_str() << '\n'
+                   << '\n';
         return false;
     }
 

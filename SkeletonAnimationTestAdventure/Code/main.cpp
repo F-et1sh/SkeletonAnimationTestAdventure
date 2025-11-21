@@ -1,4 +1,6 @@
+#include <cstddef>
 #include <iostream>
+#include <print>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -76,7 +78,7 @@ void readFloatAccessor(const tinygltf::Model& model, int accessor_index, std::ve
 
     out.resize(accessor.count);
 
-    const float* f = reinterpret_cast<const float*>(data_ptr);
+    const auto* f = reinterpret_cast<const float*>(data_ptr);
 
     for (size_t i = 0; i < accessor.count; i++) {
         out[i] = f[i];
@@ -98,8 +100,8 @@ void readVec4Accessor(const tinygltf::Model& model, int accessor_index, std::vec
     out.resize(accessor.count);
 
     for (size_t i = 0; i < accessor.count; i++) {
-        const float* f = reinterpret_cast<const float*>(data_ptr + (stride * i));
-        out[i]         = glm::vec4(f[0], f[1], f[2], f[3]);
+        const auto* f = reinterpret_cast<const float*>(data_ptr + (stride * i));
+        out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
     }
 }
 
@@ -118,8 +120,8 @@ void readVec3toVec4Accessor(const tinygltf::Model& model, int accessor_index, st
     out.resize(accessor.count);
 
     for (size_t i = 0; i < accessor.count; i++) {
-        const float* f = reinterpret_cast<const float*>(data_ptr + (stride * i));
-        out[i]         = glm::vec4(f[0], f[1], f[2], 0.0F);
+        const auto* f = reinterpret_cast<const float*>(data_ptr + (stride * i));
+        out[i]        = glm::vec4(f[0], f[1], f[2], 0.0F);
     }
 }
 
@@ -229,7 +231,7 @@ void readAttribute(const tinygltf::Model&     model,
     int component_size = tinygltf::GetComponentSizeInBytes(accessor.componentType);
     int num_components = tinygltf::GetNumComponentsInType(accessor.type);
 
-    size_t element_size = component_size * num_components;
+    size_t element_size = static_cast<size_t>(component_size * num_components);
 
     size_t stride = view.byteStride != 0 ? view.byteStride : element_size;
 
@@ -239,16 +241,16 @@ void readAttribute(const tinygltf::Model&     model,
         const uint8_t* p = data_ptr + (i * stride);
 
         if constexpr (std::is_same_v<T, glm::vec2>) {
-            const float* f = reinterpret_cast<const float*>(p);
-            out[i]         = glm::vec2(f[0], f[1]);
+            const auto* f = reinterpret_cast<const float*>(p);
+            out[i]        = glm::vec2(f[0], f[1]);
         }
         else if constexpr (std::is_same_v<T, glm::vec3>) {
-            const float* f = reinterpret_cast<const float*>(p);
-            out[i]         = glm::vec3(f[0], f[1], f[2]);
+            const auto* f = reinterpret_cast<const float*>(p);
+            out[i]        = glm::vec3(f[0], f[1], f[2]);
         }
         else if constexpr (std::is_same_v<T, glm::vec4>) {
-            const float* f = reinterpret_cast<const float*>(p);
-            out[i]         = glm::vec4(f[0], f[1], f[2], f[3]);
+            const auto* f = reinterpret_cast<const float*>(p);
+            out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
         }
     }
 }
@@ -283,12 +285,12 @@ void readJoints(const tinygltf::Model&     model,
             out[i]           = glm::u16vec4(v[0], v[1], v[2], v[3]);
         }
         else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-            const uint16_t* v = reinterpret_cast<const uint16_t*>(p);
-            out[i]            = glm::u16vec4(v[0], v[1], v[2], v[3]);
+            const auto* v = reinterpret_cast<const uint16_t*>(p);
+            out[i]        = glm::u16vec4(v[0], v[1], v[2], v[3]);
         }
         else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-            const uint32_t* v = reinterpret_cast<const uint32_t*>(p);
-            out[i]            = glm::u16vec4(v[0], v[1], v[2], v[3]);
+            const auto* v = reinterpret_cast<const uint32_t*>(p);
+            out[i]        = glm::u16vec4(v[0], v[1], v[2], v[3]);
         }
         else {
             std::cerr << "Unsupported JOINTS componentType\n";
@@ -416,15 +418,15 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
     bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filename);
 
     if (!warn.empty()) {
-        printf("Warn : %s\n", warn.c_str());
+        std::println("Warn : {}", warn);
     }
 
     if (!err.empty()) {
-        printf("Err : %s\n", err.c_str());
+        std::println("Err : {}", err);
     }
 
     if (!ret) {
-        printf("Failed to parse glTF : %s\n", filename.c_str());
+        std::println("Failed to parse glTF : {}", filename);
     }
 
     for (const auto& node : model.nodes) {
@@ -496,13 +498,13 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                 const uint8_t* data_ptr = index_buffer.data.data() + index_buffer_view.byteOffset + index_accessor.byteOffset;
 
                 if (index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-                    const uint16_t* buffer = reinterpret_cast<const uint16_t*>(data_ptr);
+                    const auto* buffer = reinterpret_cast<const uint16_t*>(data_ptr);
                     for (size_t i = 0; i < index_accessor.count; i++) {
                         indices.emplace_back(base_vertex + buffer[i]);
                     }
                 }
                 else if (index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-                    const uint32_t* buffer = reinterpret_cast<const uint32_t*>(data_ptr);
+                    const auto* buffer = reinterpret_cast<const uint32_t*>(data_ptr);
                     for (size_t i = 0; i < index_accessor.count; i++) {
                         indices.emplace_back(base_vertex + buffer[i]);
                     }
@@ -547,9 +549,9 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", nullptr, nullptr);
     if (window == nullptr) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        std::cerr << "Failed to create GLFW window" << '\n';
         glfwTerminate();
         return -1;
     }

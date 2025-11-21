@@ -1,0 +1,47 @@
+Checks: >
+  readability-*,
+  cppcoreguidelines-*,
+  bugprone-*,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  clang-analyzer-*,
+
+CheckOptions:
+  # ──────────────────────────────────────────────────────────────
+  # DEFINE
+  - { key: readability-identifier-naming.MacroDefinitionCase,     value: UPPER_CASE }
+
+  # ──────────────────────────────────────────────────────────────
+  # LOCAL VARIABLES
+  - { key: readability-identifier-naming.LocalVariableCase,       value: lower_case }
+
+  # FUNCTION PARAMETERS
+  - { key: readability-identifier-naming.ParameterCase,           value: lower_case }
+
+  # ───────────────-──────────────────────────────────────────────
+  # GLOBAL VARIABLES
+  - { key: readability-identifier-naming.GlobalVariableCase,      value: UPPER_CASE }
+
+  # ──────────────────────────────────────────────────────────────
+  # CLASS MEMBERS ( DISABLED. DOES NOT WORK )
+  # - { key: readability-identifier-naming.MemberCase,              value: camelBack }
+  # - { key: readability-identifier-naming.MemberPrefix,            value: m_ }
+
+  # STRUCT MEMBERS ( DISABLED. DOES NOT WORK )
+  # - { key: readability-identifier-naming.StructMemberCase,        value: lower_case }
+  # - { key: readability-identifier-naming.StructMemberPrefix,      value: m_ }
+
+  # ──────────────────────────────────────────────────────────────
+  # ENUMS / TYPES
+  - { key: readability-identifier-naming.EnumConstantCase,        value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumCase,                value: CamelCase }
+  - { key: readability-identifier-naming.ClassCase,               value: CamelCase }
+  - { key: readability-identifier-naming.StructCase,              value: CamelCase }
+  - { key: readability-identifier-naming.TypedefCase,             value: CamelCase }
+
+WarningsAsErrors: ''
+HeaderFileExtensions:         ['h','hpp']
+ImplementationFileExtensions: ['c','cpp']
+HeaderFilterRegex: '.*SkeletonAnimationTestAdventure/Code/.*'
+FormatStyle: none
