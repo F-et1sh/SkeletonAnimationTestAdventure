@@ -1,22 +1,31 @@
 #pragma once
-#include "Shader.hpp"
+#include <filesystem>
 
 #include "stb_image.h"
 #include "tiny_gltf.h"
+#include <glad/glad.h>
 
 class Texture {
 public:
     Texture() = default;
     ~Texture();
 
-    void Create(const char* image, GLuint slot);
+    void Create(const std::filesystem::path& path);
     void Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler);
 
-    void        textureUnit(Shader& shader, const char* uniform, GLuint unit = 0);
     void        Bind() const;
     static void Unbind();
 
 private:
-    GLuint m_index = ~0;
-    GLuint m_unit  = ~0;
+    void createOpenGLTexture(int                  width,
+                             int                  height,
+                             int                  component,
+                             const unsigned char* bytes,
+                             int                  min_filter,
+                             int                  mag_filter,
+                             int                  wrap_s,
+                             int                  wrap_t);
+
+private:
+    GLuint m_index{ 0 };
 };

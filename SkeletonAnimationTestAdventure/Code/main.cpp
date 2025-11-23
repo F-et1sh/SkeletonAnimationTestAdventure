@@ -541,238 +541,238 @@ std::string getTextureUri(const tinygltf::Model& model, int texture_index) {
 }
 
 int main() {
-    if (glfwInit() == 0) {
-        return -1;
-    }
+    //if (glfwInit() == 0) {
+    //    return -1;
+    //}
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", nullptr, nullptr);
-    if (window == nullptr) {
-        std::cerr << "Failed to create GLFW window" << '\n';
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
+    //GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", nullptr, nullptr);
+    //if (window == nullptr) {
+    //    std::cerr << "Failed to create GLFW window" << '\n';
+    //    glfwTerminate();
+    //    return -1;
+    //}
+    //glfwMakeContextCurrent(window);
 
-    if (gladLoadGLLoader((GLADloadproc) glfwGetProcAddress) == 0) {
-        return -1;
-    }
+    //if (gladLoadGLLoader((GLADloadproc) glfwGetProcAddress) == 0) {
+    //    return -1;
+    //}
 
-    glViewport(0, 0, 1920, 1080);
-    glEnable(GL_DEPTH_TEST);
+    //glViewport(0, 0, 1920, 1080);
+    //glEnable(GL_DEPTH_TEST);
 
-    Camera camera(1920, 1080, glm::vec3{});
+    //Camera camera(1920, 1080, glm::vec3{});
 
-    Shader shader;
-    shader.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default");
-    shader.Bind();
+    //Shader shader;
+    //shader.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default");
+    //shader.Bind();
 
-    glm::vec4 light_color = glm::vec4(1.0F, 1.0F, 1.0F, 1.0F);
-    glm::vec3 light_pos   = glm::vec3(0.5F, 0.5F, 0.5F);
+    //glm::vec4 light_color = glm::vec4(1.0F, 1.0F, 1.0F, 1.0F);
+    //glm::vec3 light_pos   = glm::vec3(0.5F, 0.5F, 0.5F);
 
-    glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), light_color.x, light_color.y, light_color.z, light_color.w);
-    glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), light_pos.x, light_pos.y, light_pos.z);
+    //glUniform4f(glGetUniformLocation(shader.reference(), "u_LightColor"), light_color.x, light_color.y, light_color.z, light_color.w);
+    //glUniform3f(glGetUniformLocation(shader.reference(), "u_LightPosition"), light_pos.x, light_pos.y, light_pos.z);
 
-    std::vector<MeshPart> mesh_parts{};
+    //std::vector<MeshPart> mesh_parts{};
 
-    std::vector<Vertex> vertices{};
-    std::vector<GLuint> indices{};
+    //std::vector<Vertex> vertices{};
+    //std::vector<GLuint> indices{};
 
-    std::vector<glm::mat4> bone_final_matrices(128, glm::mat4{ 1.0F });
+    //std::vector<glm::mat4> bone_final_matrices(128, glm::mat4{ 1.0F });
 
-    Animation animation{};
+    //Animation animation{};
 
-    glm::mat4 model_matrix{ 1.0F };
-    model_matrix *= glm::rotate(glm::radians(-90.0F), glm::vec3(1, 0, 0));
+    //glm::mat4 model_matrix{ 1.0F };
+    //model_matrix *= glm::rotate(glm::radians(-90.0F), glm::vec3(1, 0, 0));
 
-    std::filesystem::path model_path = L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf";
-    tinygltf::Model       model;
-    model = loadModel(vertices, indices, bone_final_matrices, animation, mesh_parts, model_path);
+    //std::filesystem::path model_path = L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf";
+    //tinygltf::Model       model;
+    //model = loadModel(vertices, indices, bone_final_matrices, animation, mesh_parts, model_path);
 
-    std::vector<MaterialTextures> material_textures{};
+    //std::vector<MaterialTextures> material_textures{};
 
-    material_textures.reserve(model.materials.size());
+    //material_textures.reserve(model.materials.size());
 
-    for (const auto& material : model.materials) {
-        material_textures.emplace_back();
-        auto& textures = material_textures.back();
+    //for (const auto& material : model.materials) {
+    //    material_textures.emplace_back();
+    //    auto& textures = material_textures.back();
 
-        const auto& pbr = material.pbrMetallicRoughness;
+    //    const auto& pbr = material.pbrMetallicRoughness;
 
-        auto base_path = model_path.parent_path();
+    //    auto base_path = model_path.parent_path();
 
-        if (pbr.baseColorTexture.index > -1) {
-            std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
-            textures.m_diffuse.Create((base_path / uri).string().c_str(), 0);
-        }
+    //    if (pbr.baseColorTexture.index > -1) {
+    //        std::string uri = getTextureUri(model, pbr.baseColorTexture.index);
+    //        textures.m_diffuse.Create((base_path / uri).string().c_str(), 0);
+    //    }
 
-        if (pbr.metallicRoughnessTexture.index > -1) {
-            std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
-            textures.m_specular.Create((base_path / uri).string().c_str(), 1);
-        }
+    //    if (pbr.metallicRoughnessTexture.index > -1) {
+    //        std::string uri = getTextureUri(model, pbr.metallicRoughnessTexture.index);
+    //        textures.m_specular.Create((base_path / uri).string().c_str(), 1);
+    //    }
 
-        if (material.normalTexture.index > -1) {
-            std::string uri = getTextureUri(model, material.normalTexture.index);
-            textures.m_normal.Create((base_path / uri).string().c_str(), 2);
-        }
+    //    if (material.normalTexture.index > -1) {
+    //        std::string uri = getTextureUri(model, material.normalTexture.index);
+    //        textures.m_normal.Create((base_path / uri).string().c_str(), 2);
+    //    }
 
-        if (material.occlusionTexture.index > -1) {
-            std::string uri = getTextureUri(model, material.occlusionTexture.index);
-            //std::cout << "  Type: Occlusion Map, URI : " << uri << std::endl;
-        }
+    //    if (material.occlusionTexture.index > -1) {
+    //        std::string uri = getTextureUri(model, material.occlusionTexture.index);
+    //        //std::cout << "  Type: Occlusion Map, URI : " << uri << std::endl;
+    //    }
 
-        if (material.emissiveTexture.index > -1) {
-            std::string uri = getTextureUri(model, material.emissiveTexture.index);
-            //std::cout << "  Type: Emissive Map, URI : " << uri << std::endl;
-        }
-    }
+    //    if (material.emissiveTexture.index > -1) {
+    //        std::string uri = getTextureUri(model, material.emissiveTexture.index);
+    //        //std::cout << "  Type: Emissive Map, URI : " << uri << std::endl;
+    //    }
+    //}
 
-    const tinygltf::Skin& skin = model.skins[0];
+    //const tinygltf::Skin& skin = model.skins[0];
 
-    std::vector<glm::mat4> inverse_bind_matrices(skin.joints.size(), glm::mat4{ 1.0F });
+    //std::vector<glm::mat4> inverse_bind_matrices(skin.joints.size(), glm::mat4{ 1.0F });
 
-    loadInverseBindMatrices(model, inverse_bind_matrices);
+    //loadInverseBindMatrices(model, inverse_bind_matrices);
 
-    std::vector<glm::mat4> ibm_bone(skin.joints.size());
+    //std::vector<glm::mat4> ibm_bone(skin.joints.size());
 
-    for (int bone = 0; bone < skin.joints.size(); bone++) {
-        ibm_bone[bone] = inverse_bind_matrices[bone];
-    }
+    //for (int bone = 0; bone < skin.joints.size(); bone++) {
+    //    ibm_bone[bone] = inverse_bind_matrices[bone];
+    //}
 
-    inverse_bind_matrices = ibm_bone;
+    //inverse_bind_matrices = ibm_bone;
 
-    std::vector<glm::mat4> node_local_matrices(model.nodes.size(), glm::mat4{ 1.0F });
-    std::vector<glm::mat4> node_global_matrices(model.nodes.size(), glm::mat4{ 1.0F });
+    //std::vector<glm::mat4> node_local_matrices(model.nodes.size(), glm::mat4{ 1.0F });
+    //std::vector<glm::mat4> node_global_matrices(model.nodes.size(), glm::mat4{ 1.0F });
 
-    for (size_t i = 0; i < model.nodes.size(); i++) {
-        node_local_matrices[i] = getLocalNodeMatrix(model.nodes[i]);
-    }
+    //for (size_t i = 0; i < model.nodes.size(); i++) {
+    //    node_local_matrices[i] = getLocalNodeMatrix(model.nodes[i]);
+    //}
 
-    std::vector<NodeTRS> base_trs(model.nodes.size());
-    for (size_t i = 0; i < model.nodes.size(); i++) {
-        const auto& n = model.nodes[i];
+    //std::vector<NodeTRS> base_trs(model.nodes.size());
+    //for (size_t i = 0; i < model.nodes.size(); i++) {
+    //    const auto& n = model.nodes[i];
 
-        if (!n.translation.empty()) {
-            base_trs[i].m_translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
-        }
-        if (!n.rotation.empty()) {
-            base_trs[i].m_rotation = glm::quat(n.rotation[3], n.rotation[0], n.rotation[1], n.rotation[2]);
-        }
-        if (!n.scale.empty()) {
-            base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
-        }
-    }
+    //    if (!n.translation.empty()) {
+    //        base_trs[i].m_translation = glm::vec3(n.translation[0], n.translation[1], n.translation[2]);
+    //    }
+    //    if (!n.rotation.empty()) {
+    //        base_trs[i].m_rotation = glm::quat(n.rotation[3], n.rotation[0], n.rotation[1], n.rotation[2]);
+    //    }
+    //    if (!n.scale.empty()) {
+    //        base_trs[i].m_scale = glm::vec3(n.scale[0], n.scale[1], n.scale[2]);
+    //    }
+    //}
 
-    animation = loadAnimation(model, model.animations[0]); // load the first animation
+    //animation = loadAnimation(model, model.animations[0]); // load the first animation
 
-    std::vector<NodeTRS> node_trs = base_trs;
-    applyAnimationToNodes(animation, 0, node_trs); // 0 - time
+    //std::vector<NodeTRS> node_trs = base_trs;
+    //applyAnimationToNodes(animation, 0, node_trs); // 0 - time
 
-    for (size_t i = 0; i < model.nodes.size(); i++) {
-        const NodeTRS& trs = node_trs[i];
-        node_local_matrices[i] =
-            glm::translate(glm::mat4(1.0F), trs.m_translation) *
-            glm::mat4_cast(trs.m_rotation) *
-            glm::scale(glm::mat4(1.0F), trs.m_scale);
-    }
+    //for (size_t i = 0; i < model.nodes.size(); i++) {
+    //    const NodeTRS& trs = node_trs[i];
+    //    node_local_matrices[i] =
+    //        glm::translate(glm::mat4(1.0F), trs.m_translation) *
+    //        glm::mat4_cast(trs.m_rotation) *
+    //        glm::scale(glm::mat4(1.0F), trs.m_scale);
+    //}
 
-    const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
+    //const tinygltf::Scene& scene = model.scenes[model.defaultScene > -1 ? model.defaultScene : 0];
 
-    for (int root : scene.nodes) {
-        computeGlobalNodeMatrix(model, root, glm::mat4{ 1.0F }, node_local_matrices, node_global_matrices);
-    }
+    //for (int root : scene.nodes) {
+    //    computeGlobalNodeMatrix(model, root, glm::mat4{ 1.0F }, node_local_matrices, node_global_matrices);
+    //}
 
-    bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
+    //bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
-    VAO vao{};
-    vao.Create();
-    vao.Bind();
+    //VAO vao{};
+    //vao.Create();
+    //vao.Bind();
 
-    VBO vbo{};
-    vbo.Create(vertices);
-    vbo.Bind();
+    //VBO vbo{};
+    //vbo.Create(vertices);
+    //vbo.Bind();
 
-    constexpr GLsizei stride = sizeof(Vertex);
+    //constexpr GLsizei stride = sizeof(Vertex);
 
-    VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, position));
-    VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, normal));
-    VAO::LinkAttrib(vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, texture_coord));
+    //VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, position));
+    //VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, normal));
+    //VAO::LinkAttrib(vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, texture_coord));
 
-    vbo.Bind();
-    glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, joints));
-    glEnableVertexAttribArray(3);
+    //vbo.Bind();
+    //glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, joints));
+    //glEnableVertexAttribArray(3);
 
-    VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
-    VAO::LinkAttrib(vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
+    //VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
+    //VAO::LinkAttrib(vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
 
-    EBO ebo{};
-    ebo.Create(indices);
-    ebo.Bind();
+    //EBO ebo{};
+    //ebo.Create(indices);
+    //ebo.Bind();
 
-    while (glfwWindowShouldClose(window) == 0) {
-        glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //while (glfwWindowShouldClose(window) == 0) {
+    //    glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
+    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        camera.Inputs(window);
-        camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
-        camera.UploadUniform(shader, "u_CameraMatrix");
+    //    camera.Inputs(window);
+    //    camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
+    //    camera.UploadUniform(shader, "u_CameraMatrix");
 
-        node_trs = base_trs;
+    //    node_trs = base_trs;
 
-        float time     = glfwGetTime();
-        float duration = animation.m_samplers[0].m_times.back();
-        time           = fmod(time, duration);
+    //    float time     = glfwGetTime();
+    //    float duration = animation.m_samplers[0].m_times.back();
+    //    time           = fmod(time, duration);
 
-        applyAnimationToNodes(animation, time, node_trs);
+    //    applyAnimationToNodes(animation, time, node_trs);
 
-        for (size_t i = 0; i < model.nodes.size(); i++) {
-            const NodeTRS& trs = node_trs[i];
-            node_local_matrices[i] =
-                glm::translate(glm::mat4(1.0F), trs.m_translation) *
-                glm::mat4_cast(trs.m_rotation) *
-                glm::scale(glm::mat4(1.0F), trs.m_scale);
-        }
+    //    for (size_t i = 0; i < model.nodes.size(); i++) {
+    //        const NodeTRS& trs = node_trs[i];
+    //        node_local_matrices[i] =
+    //            glm::translate(glm::mat4(1.0F), trs.m_translation) *
+    //            glm::mat4_cast(trs.m_rotation) *
+    //            glm::scale(glm::mat4(1.0F), trs.m_scale);
+    //    }
 
-        for (int root : scene.nodes) {
-            computeGlobalNodeMatrix(model, root, glm::mat4(1.0F), node_local_matrices, node_global_matrices);
-        }
+    //    for (int root : scene.nodes) {
+    //        computeGlobalNodeMatrix(model, root, glm::mat4(1.0F), node_local_matrices, node_global_matrices);
+    //    }
 
-        bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
+    //    bone_final_matrices = getBoneFinalMatrices(model, node_global_matrices, inverse_bind_matrices);
 
-        glUniformMatrix4fv(glGetUniformLocation(shader.reference(), "u_Model"), 1, GL_FALSE, glm::value_ptr(model_matrix));
+    //    glUniformMatrix4fv(glGetUniformLocation(shader.reference(), "u_Model"), 1, GL_FALSE, glm::value_ptr(model_matrix));
 
-        for (int i = 0; i < bone_final_matrices.size(); i++) {
-            std::string uniform = "u_Bones[" + std::to_string(i) + "]";
-            glUniformMatrix4fv(
-                glGetUniformLocation(shader.reference(), uniform.c_str()),
-                1,
-                GL_FALSE,
-                glm::value_ptr(bone_final_matrices[i]));
-        }
+    //    for (int i = 0; i < bone_final_matrices.size(); i++) {
+    //        std::string uniform = "u_Bones[" + std::to_string(i) + "]";
+    //        glUniformMatrix4fv(
+    //            glGetUniformLocation(shader.reference(), uniform.c_str()),
+    //            1,
+    //            GL_FALSE,
+    //            glm::value_ptr(bone_final_matrices[i]));
+    //    }
 
-        for (auto& part : mesh_parts) {
+    //    for (auto& part : mesh_parts) {
 
-            auto& textures = material_textures[part.m_materialIndex];
+    //        auto& textures = material_textures[part.m_materialIndex];
 
-            textures.m_diffuse.textureUnit(shader, "u_Diffuse0");
-            textures.m_diffuse.Bind();
+    //        textures.m_diffuse.textureUnit(shader, "u_Diffuse0");
+    //        textures.m_diffuse.Bind();
 
-            textures.m_specular.textureUnit(shader, "u_Specular0");
-            textures.m_specular.Bind();
+    //        textures.m_specular.textureUnit(shader, "u_Specular0");
+    //        textures.m_specular.Bind();
 
-            textures.m_normal.textureUnit(shader, "u_Normal0");
-            textures.m_normal.Bind();
+    //        textures.m_normal.textureUnit(shader, "u_Normal0");
+    //        textures.m_normal.Bind();
 
-            glDrawElements(GL_TRIANGLES, part.m_indexCount, GL_UNSIGNED_INT, (void*) (part.m_indexStart * sizeof(GLuint)));
-        }
+    //        glDrawElements(GL_TRIANGLES, part.m_indexCount, GL_UNSIGNED_INT, (void*) (part.m_indexStart * sizeof(GLuint)));
+    //    }
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+    //    glfwSwapBuffers(window);
+    //    glfwPollEvents();
+    //}
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    //glfwDestroyWindow(window);
+    //glfwTerminate();
 }

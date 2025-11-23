@@ -5,6 +5,7 @@
 
 #include "tiny_gltf.h"
 
+#include "Shader.hpp"
 #include "VertexBuffers.hpp"
 #include "Texture.hpp"
 #include "Material.hpp"

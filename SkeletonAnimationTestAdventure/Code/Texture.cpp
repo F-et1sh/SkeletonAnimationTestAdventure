@@ -8,69 +8,15 @@ Texture::~Texture() {
     glDeleteTextures(1, &m_index);
 }
 
-void Texture::Create(const char* image, GLuint slot) {
-    int width_img  = 0;
-    int height_img = 0;
-    int num_col_ch = 0;
-    stbi_set_flip_vertically_on_load(0);
-    unsigned char* bytes = stbi_load(image, &width_img, &height_img, &num_col_ch, 0);
+void Texture::Create(const std::filesystem::path& path) {
+    int            width     = 0;
+    int            height    = 0;
+    int            component = 0;
+    unsigned char* bytes     = stbi_load(path.string().c_str(), &width, &height, &component, 0);
 
-    glGenTextures(1, &m_index);
-    glActiveTexture(GL_TEXTURE0 + slot);
-    m_unit = slot;
-    glBindTexture(GL_TEXTURE_2D, m_index);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    if (num_col_ch == 4) {
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            width_img,
-            height_img,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            bytes);
-    }
-    else if (num_col_ch == 3) {
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            width_img,
-            height_img,
-            0,
-            GL_RGB,
-            GL_UNSIGNED_BYTE,
-            bytes);
-    }
-    else if (num_col_ch == 1) {
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            width_img,
-            height_img,
-            0,
-            GL_RED,
-            GL_UNSIGNED_BYTE,
-            bytes);
-    }
-    else {
-        throw std::invalid_argument("Automatic Texture type recognition failed");
-    }
-
-    glGenerateMipmap(GL_TEXTURE_2D);
+    this->createOpenGLTexture(width, height, component, bytes, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT);
 
     stbi_image_free(bytes);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler) {
@@ -79,8 +25,8 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
     int                  component = image.component; // number of color channels
     const unsigned char* bytes     = image.image.data();
 
-    int min_filter = sampler.minFilter == -1 ? GL_LINEAR_MIPMAP_LINEAR : sampler.minFilter;
-    int mag_filter = sampler.magFilter == -1 ? GL_LINEAR : sampler.magFilter;
+    int min_filter = sampler.minFilter;
+    int mag_filter = sampler.magFilter;
 
     int wrap_s = sampler.wrapS;
     int wrap_t = sampler.wrapT;
@@ -104,6 +50,9 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
         case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
             min_filter = GL_LINEAR_MIPMAP_LINEAR;
             break;
+        default:
+            min_filter = GL_LINEAR_MIPMAP_LINEAR;
+            break;
     }
 
     switch (mag_filter) {
@@ -112,6 +61,9 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             break;
         case TINYGLTF_TEXTURE_FILTER_LINEAR:
             mag_filter = GL_LINEAR;
+            break;
+        default:
+            min_filter = GL_LINEAR;
             break;
     }
 
@@ -139,6 +91,19 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             break;
     }
 
+    this->createOpenGLTexture(width, height, component, bytes, min_filter, mag_filter, wrap_s, wrap_t);
+}
+
+void Texture::Bind() const {
+    assert(m_index != 0);
+    glBindTexture(GL_TEXTURE_2D, m_index);
+}
+
+void Texture::Unbind() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture::createOpenGLTexture(int width, int height, int component, const unsigned char* bytes, int min_filter, int mag_filter, int wrap_s, int wrap_t) {
     glCreateTextures(GL_TEXTURE_2D, 1, &m_index);
     glBindTexture(GL_TEXTURE_2D, m_index);
 
@@ -165,7 +130,7 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,
-                GL_RGBA,
+                GL_RGB,
                 width,
                 height,
                 0,
@@ -177,7 +142,7 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,
-                GL_RGBA,
+                GL_RED,
                 width,
                 height,
                 0,
@@ -193,21 +158,4 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
     glGenerateMipmap(GL_TEXTURE_2D);
 
     this->Unbind();
-}
-
-void Texture::textureUnit(Shader& shader, const char* uniform, GLuint unit) {
-    if (m_unit == ~0) m_unit = unit;
-
-    GLuint tex_uni = glGetUniformLocation(shader.reference(), uniform);
-    shader.Bind();
-    glUniform1i(tex_uni, m_unit);
-}
-
-void Texture::Bind() const {
-    glActiveTexture(GL_TEXTURE0 + m_unit);
-    glBindTexture(GL_TEXTURE_2D, m_index);
-}
-
-void Texture::Unbind() {
-    glBindTexture(GL_TEXTURE_2D, 0);
 }

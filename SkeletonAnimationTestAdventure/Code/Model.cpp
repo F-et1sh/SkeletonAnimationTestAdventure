@@ -219,6 +219,30 @@ void Model::loadTextures(const tinygltf::Model& model) {
 }
 
 void Model::loadMaterials(const tinygltf::Model& model) {
+    m_materials.reserve(model.materials.size());
+    for (const tinygltf::Material& material : model.materials) {
+        auto& this_material = m_materials.emplace_back();
+        
+        /*
+        
+        std::string m_name;
+
+        glm::f64vec3     m_emissiveFactor{ 0.0, 0.0, 0.0 }; // default [0, 0, 0]
+        AlphaMode        m_alphaMode{ AlphaMode::OPAQUE };  // default - OPAQUE
+        double           m_alphaCutoff{ 0.5 };              // default 0.5
+        bool             m_doubleSided{ false };            // default false
+        std::vector<int> m_lods;                             // level of detail materials (MSFT_lod)
+
+        PbrMetallicRoughness m_pbrMetallicRoughness;
+
+        NormalTextureInfo    m_normalTexture;
+        OcclusionTextureInfo m_occlusionTexture;
+        TextureInfo          m_emissiveTexture;
+
+        */
+
+        //this_material
+    }
 }
 
 void Model::loadAnimations(const tinygltf::Model& model) {
