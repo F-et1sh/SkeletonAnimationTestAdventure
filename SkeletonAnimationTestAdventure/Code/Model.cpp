@@ -29,15 +29,16 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadSceneRoots(model);
     this->loadSkins(model);
     this->loadMeshes(model);
-    this->loadTextures(model);
     this->loadMaterials(model);
+    this->loadTextures(model);
     this->loadAnimations(model);
 }
 
 void Model::loadNodes(const tinygltf::Model& model) {
-    m_nodes.reserve(model.nodes.size());
-    for (const tinygltf::Node& node : model.nodes) {
-        auto& this_node = this->m_nodes.emplace_back();
+    m_nodes.resize(model.nodes.size());
+    for (size_t i = 0; i < model.nodes.size(); i++) {
+        const tinygltf::Node& node      = model.nodes[i];
+        auto&                 this_node = m_nodes[i];
 
         this_node.camera   = node.camera;
         this_node.name     = node.name;
@@ -46,25 +47,9 @@ void Model::loadNodes(const tinygltf::Model& model) {
         this_node.light    = node.light;
         this_node.emitter  = node.emitter;
         this_node.children = node.children;
-        if (node.rotation.size() == 4) {
-            this_node.rotation = glm::quat(
-                static_cast<float>(node.rotation[3]),
-                static_cast<float>(node.rotation[0]),
-                static_cast<float>(node.rotation[1]),
-                static_cast<float>(node.rotation[2]));
-        }
-        if (node.scale.size() == 3) {
-            this_node.scale = glm::vec3(
-                static_cast<float>(node.scale[0]),
-                static_cast<float>(node.scale[1]),
-                static_cast<float>(node.scale[2]));
-        }
-        if (node.translation.size() == 3) {
-            this_node.translation = glm::vec3(
-                static_cast<float>(node.translation[0]),
-                static_cast<float>(node.translation[1]),
-                static_cast<float>(node.translation[2]));
-        }
+        this->readVector(this_node.rotation, node.rotation);
+        this->readVector(this_node.scale, node.scale);
+        this->readVector(this_node.translation, node.translation);
         if (!node.matrix.empty()) {
             glm::mat4 m(1.0f);
             for (int i = 0; i < 16; i++) {
@@ -91,9 +76,10 @@ void Model::loadSceneRoots(const tinygltf::Model& model) {
 }
 
 void Model::loadSkins(const tinygltf::Model& model) {
-    m_skins.reserve(model.skins.size());
-    for (const tinygltf::Skin& skin : model.skins) {
-        auto& this_skin = this->m_skins.emplace_back();
+    m_skins.resize(model.skins.size());
+    for (size_t i = 0; i < model.skins.size(); i++) {
+        const tinygltf::Skin& skin      = model.skins[i];
+        auto&                 this_skin = m_skins[i];
 
         this_skin.name                  = skin.name;
         this_skin.inverse_bind_matrices = skin.inverseBindMatrices;
@@ -103,9 +89,10 @@ void Model::loadSkins(const tinygltf::Model& model) {
 }
 
 void Model::loadMeshes(const tinygltf::Model& model) {
-    m_meshes.reserve(model.meshes.size());
-    for (const tinygltf::Mesh& mesh : model.meshes) {
-        auto& this_mesh = this->m_meshes.emplace_back();
+    m_meshes.resize(model.meshes.size());
+    for (size_t i = 0; i < model.meshes.size(); i++) {
+        const tinygltf::Mesh& mesh      = model.meshes[i];
+        auto&                 this_mesh = m_meshes[i];
 
         this_mesh.name = mesh.name;
         this->loadPrimitives(model, this_mesh.primitives, mesh.primitives);
@@ -114,9 +101,10 @@ void Model::loadMeshes(const tinygltf::Model& model) {
 }
 
 void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives) {
-    this_primitives.reserve(primitives.size());
-    for (const tinygltf::Primitive& primitive : primitives) {
-        auto& this_primitive = this_primitives.emplace_back();
+    this_primitives.resize(primitives.size());
+    for (size_t i = 0; i < primitives.size(); i++) {
+        const tinygltf::Primitive& primitive      = primitives[i];
+        auto&                      this_primitive = this_primitives[i];
 
         loadVertices(model, this_primitive.vertices, primitive);
         loadIndices(model, this_primitive.indices, primitive);
@@ -204,44 +192,80 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive::Indices& this_i
         }
         default:
             throw std::runtime_error("Unsupported index component type");
+            break;
     }
 }
 
 void Model::loadTextures(const tinygltf::Model& model) {
-    m_textures.reserve(model.textures.size());
-    for (const tinygltf::Texture& texture : model.textures) {
-        const tinygltf::Image& image = model.images[texture.source];
-        const tinygltf::Sampler& sampler = model.samplers[texture.sampler];
+    m_textures.resize(model.textures.size());
+    for (size_t i = 0; i < model.textures.size(); i++) {
+        const tinygltf::Texture& texture = model.textures[i];
+        const tinygltf::Image&   image   = model.images[texture.source];
+        tinygltf::Sampler        sampler{};
+
+        if (texture.sampler >= 0)
+            sampler = model.samplers[texture.sampler];
+        else { // default settings
+            sampler.minFilter = TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
+            sampler.magFilter = TINYGLTF_TEXTURE_FILTER_LINEAR;
+            sampler.wrapS     = TINYGLTF_TEXTURE_WRAP_REPEAT;
+            sampler.wrapT     = TINYGLTF_TEXTURE_WRAP_REPEAT;
+        }
+
+        const int                  gltf_texture_index  = &texture - model.textures.data();
+        Texture::TextureColorSpace texture_color_space = Texture::TextureColorSpace::Linear;
+
+        for (auto& material : m_materials) {
+            if (material.pbr_metallic_roughness.base_color_texture.index == gltf_texture_index ||
+                material.emissive_texture.index == gltf_texture_index)
+
+                texture_color_space = Texture::TextureColorSpace::SRGB;
+        }
 
         auto& this_texture = m_textures.emplace_back();
-        this_texture.Create(image, sampler);
+        this_texture.Create(image, sampler, texture_color_space);
     }
 }
 
 void Model::loadMaterials(const tinygltf::Model& model) {
-    m_materials.reserve(model.materials.size());
-    for (const tinygltf::Material& material : model.materials) {
-        auto& this_material = m_materials.emplace_back();
-        
-        /*
-        
-        std::string m_name;
+    m_materials.resize(model.materials.size());
+    for (size_t i = 0; i < model.materials.size(); i++) {
+        const tinygltf::Material& material      = model.materials[i];
+        auto&                     this_material = m_materials[i];
 
-        glm::f64vec3     m_emissiveFactor{ 0.0, 0.0, 0.0 }; // default [0, 0, 0]
-        AlphaMode        m_alphaMode{ AlphaMode::OPAQUE };  // default - OPAQUE
-        double           m_alphaCutoff{ 0.5 };              // default 0.5
-        bool             m_doubleSided{ false };            // default false
-        std::vector<int> m_lods;                             // level of detail materials (MSFT_lod)
+        this_material.name = material.name;
+        this->readVector(this_material.emissive_factor, material.emissiveFactor);
+        if (material.alphaMode == "OPAQUE")
+            this_material.alpha_mode = Material::AlphaMode::OPAQUE;
+        else if (material.alphaMode == "MASK")
+            this_material.alpha_mode = Material::AlphaMode::MASK;
+        else if (material.alphaMode == "BLEND")
+            this_material.alpha_mode = Material::AlphaMode::BLEND;
+        this_material.alpha_cutoff = material.alphaCutoff;
+        this_material.double_sided = material.doubleSided;
+        this_material.lods         = material.lods;
 
-        PbrMetallicRoughness m_pbrMetallicRoughness;
+#define THIS_PBR this_material.pbr_metallic_roughness
+#define PBR material.pbrMetallicRoughness
 
-        NormalTextureInfo    m_normalTexture;
-        OcclusionTextureInfo m_occlusionTexture;
-        TextureInfo          m_emissiveTexture;
+        this->readVector(THIS_PBR.base_color_factor, PBR.baseColorFactor);
+        THIS_PBR.base_color_texture.index                 = PBR.baseColorTexture.index;
+        THIS_PBR.base_color_texture.texture_coord         = PBR.baseColorTexture.texCoord;
+        THIS_PBR.metallic_factor                          = PBR.metallicFactor;
+        THIS_PBR.roughness_factor                         = PBR.roughnessFactor;
+        THIS_PBR.metallic_roughness_texture.index         = PBR.metallicRoughnessTexture.index;
+        THIS_PBR.metallic_roughness_texture.texture_coord = PBR.metallicRoughnessTexture.texCoord;
 
-        */
+        this_material.normal_texture.index         = material.normalTexture.index;
+        this_material.normal_texture.texture_coord = material.normalTexture.texCoord;
+        this_material.normal_texture.scale         = material.normalTexture.scale;
 
-        //this_material
+        this_material.occlusion_texture.index         = material.occlusionTexture.index;
+        this_material.occlusion_texture.texture_coord = material.occlusionTexture.texCoord;
+        this_material.occlusion_texture.strength      = material.occlusionTexture.strength;
+
+        this_material.emissive_texture.index         = material.emissiveTexture.index;
+        this_material.emissive_texture.texture_coord = material.emissiveTexture.texCoord;
     }
 }
 

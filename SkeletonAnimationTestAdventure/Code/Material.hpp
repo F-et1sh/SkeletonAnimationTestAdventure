@@ -5,8 +5,7 @@
 
 #undef OPAQUE
 
-class Material {
-public:
+struct Material {
     enum class AlphaMode {
         OPAQUE,
         MASK,
@@ -33,32 +32,27 @@ public:
     };
 
     struct PbrMetallicRoughness {
-        glm::f64vec4 base_color_factor{ 1.0, 1.0, 1.0, 1.0 }; // default [1,1,1,1]
-        TextureInfo  base_color_texture;
-        double       metallic_factor{ 1.0 };  // default 1
-        double       roughness_factor{ 1.0 }; // default 1
-        TextureInfo  metallic_roughness_texture;
+        glm::vec4   base_color_factor{ 1.0, 1.0, 1.0, 1.0 }; // default [1,1,1,1]
+        TextureInfo base_color_texture;
+        double      metallic_factor{ 1.0 };  // default 1
+        double      roughness_factor{ 1.0 }; // default 1
+        TextureInfo metallic_roughness_texture;
     };
 
-public:
+    std::string name;
+
+    glm::vec3        emissive_factor{ 0.0, 0.0, 0.0 }; // default [0, 0, 0]
+    AlphaMode        alpha_mode{ AlphaMode::OPAQUE };  // default - OPAQUE
+    double           alpha_cutoff{ 0.5 };              // default 0.5
+    bool             double_sided{ false };            // default false
+    std::vector<int> lods;                             // level of detail materials (MSFT_lod)
+
+    PbrMetallicRoughness pbr_metallic_roughness;
+
+    NormalTextureInfo    normal_texture;
+    OcclusionTextureInfo occlusion_texture;
+    TextureInfo          emissive_texture;
+
     Material()  = default;
-    ~Material() { this->Release(); }
-
-    void Release();
-    void Initialize(const tinygltf::Model& model);
-
-private:
-    std::string m_name;
-
-    glm::f64vec3     m_emissiveFactor{ 0.0, 0.0, 0.0 }; // default [0, 0, 0]
-    AlphaMode        m_alphaMode{ AlphaMode::OPAQUE };  // default - OPAQUE
-    double           m_alphaCutoff{ 0.5 };              // default 0.5
-    bool             m_doubleSided{ false };            // default false
-    std::vector<int> m_lods;                             // level of detail materials (MSFT_lod)
-
-    PbrMetallicRoughness m_pbrMetallicRoughness;
-
-    NormalTextureInfo    m_normalTexture;
-    OcclusionTextureInfo m_occlusionTexture;
-    TextureInfo          m_emissiveTexture;
+    ~Material() = default;
 };

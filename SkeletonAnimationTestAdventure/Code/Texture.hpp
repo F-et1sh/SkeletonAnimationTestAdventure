@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 class Texture {
+public:
     enum class TextureColorSpace {
         Linear,
         SRGB

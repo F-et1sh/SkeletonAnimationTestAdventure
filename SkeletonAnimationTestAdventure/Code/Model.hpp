@@ -115,8 +115,8 @@ private:
     void loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
     void loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive);
     void loadIndices(const tinygltf::Model& model, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive);
-    void loadTextures(const tinygltf::Model& model);
     void loadMaterials(const tinygltf::Model& model);
+    void loadTextures(const tinygltf::Model& model);
     void loadAnimations(const tinygltf::Model& model);
 
 private:
@@ -163,7 +163,7 @@ private:
 
         out.resize(accessor.count);
 
-        if (fast_copy<T>(accessor, buffer_view, buffer, out)) return;
+        if (fastCopy<T>(accessor, buffer_view, buffer, out)) return;
 
         for (size_t i = 0; i < accessor.count; i++) {
             const uint8_t* p = data_ptr + (i * stride);
@@ -192,7 +192,7 @@ private:
     }
 
     template <typename T>
-    [[nodiscard]] bool fast_copy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
+    [[nodiscard]] bool fastCopy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
             size_t element_size = sizeof(T);
             size_t stride       = buffer_view.byteStride ? buffer_view.byteStride : element_size;
@@ -206,12 +206,32 @@ private:
         return false;
     }
 
+    void readVector(glm::vec2& dst, const std::vector<double>& src) {
+        assert(src.size() == 2);
+        dst = glm::vec2(static_cast<float>(src[0]), static_cast<float>(src[1]));
+    }
+
+    void readVector(glm::vec3& dst, const std::vector<double>& src) {
+        assert(src.size() == 3);
+        dst = glm::vec3(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
+    }
+
+    void readVector(glm::vec4& dst, const std::vector<double>& src) {
+        assert(src.size() == 4);
+        dst = glm::vec4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
+    }
+
+    void readVector(glm::quat& dst, const std::vector<double>& src) {
+        assert(src.size() == 4);
+        dst = glm::quat(static_cast<float>(src[3]), static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
+    }
+
 private:
     std::vector<Node>      m_nodes{};
     std::vector<int>       m_sceneRoots{};
     std::vector<Skin>      m_skins{};
     std::vector<Mesh>      m_meshes{};
-    std::vector<Texture>   m_textures{};
     std::vector<Material>  m_materials{};
+    std::vector<Texture>   m_textures{};
     std::vector<Animation> m_animations{};
 };
