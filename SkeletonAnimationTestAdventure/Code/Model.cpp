@@ -208,6 +208,14 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive::Indices& this_i
 }
 
 void Model::loadTextures(const tinygltf::Model& model) {
+    m_textures.reserve(model.textures.size());
+    for (const tinygltf::Texture& texture : model.textures) {
+        const tinygltf::Image& image = model.images[texture.source];
+        const tinygltf::Sampler& sampler = model.samplers[texture.sampler];
+
+        auto& this_texture = m_textures.emplace_back();
+        this_texture.Create(image, sampler);
+    }
 }
 
 void Model::loadMaterials(const tinygltf::Model& model) {
