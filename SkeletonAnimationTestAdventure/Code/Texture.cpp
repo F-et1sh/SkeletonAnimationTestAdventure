@@ -139,10 +139,65 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             break;
     }
 
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_index);
+    glBindTexture(GL_TEXTURE_2D, m_index);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
+
+    switch (component) {
+        case 4:
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGBA,
+                width,
+                height,
+                0,
+                GL_RGBA,
+                GL_UNSIGNED_BYTE,
+                bytes);
+            break;
+        case 3:
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGBA,
+                width,
+                height,
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                bytes);
+            break;
+        case 1:
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGBA,
+                width,
+                height,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                bytes);
+            break;
+        default:
+            throw std::invalid_argument("ERROR : Wrong number of colors");
+            break;
+    }
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    this->Unbind();
 }
 
-void Texture::textureUnit(Shader& shader, const char* uniform) const {
+void Texture::textureUnit(Shader& shader, const char* uniform, GLuint unit) {
+    if (m_unit == ~0) m_unit = unit;
+
     GLuint tex_uni = glGetUniformLocation(shader.reference(), uniform);
     shader.Bind();
     glUniform1i(tex_uni, m_unit);
