@@ -11,6 +11,9 @@ struct Vertex {
     glm::u16vec4 joints;
     glm::vec4    weights;
     glm::vec4    tangent;
+
+    Vertex()  = default;
+    ~Vertex() = default;
 };
 #pragma pack(pop)
 

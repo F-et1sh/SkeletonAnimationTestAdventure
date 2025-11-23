@@ -3,9 +3,6 @@
 #include <string>
 #include <variant>
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
 
 #include "VertexBuffers.hpp"
@@ -13,11 +10,14 @@
 #include "Material.hpp"
 
 struct Primitive {
-    using Vertex = Vertex;
-    using Index  = std::variant<uint8_t, uint16_t, uint32_t>;
+    using Vertices = std::vector<Vertex>;
+    using Indices  = std::variant<
+         std::vector<uint8_t>,
+         std::vector<uint16_t>,
+         std::vector<uint32_t>>;
 
-    std::vector<Vertex> vertices{};
-    std::vector<Index>  indices{};
+    Vertices vertices{};
+    Indices  indices{};
 
     int material{ -1 };
     int mode{ 4 };
@@ -112,8 +112,8 @@ private:
     void loadSkins(const tinygltf::Model& model);
     void loadMeshes(const tinygltf::Model& model);
     void loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
-    void loadVertices(const tinygltf::Model& model, std::vector<Primitive::Vertex>& this_vertices, const tinygltf::Primitive& primitive);
-    void loadIndices(const tinygltf::Model& model, std::vector<Primitive::Index>& this_indices, const tinygltf::Primitive& primitive);
+    void loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive);
+    void loadIndices(const tinygltf::Model& model, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive);
     void loadTextures(const tinygltf::Model& model);
     void loadMaterials(const tinygltf::Model& model);
     void loadAnimations(const tinygltf::Model& model);
@@ -126,11 +126,23 @@ private:
                        std::vector<T>&            out,
                        bool                       is_indices = false) {
 
+        if constexpr (!(
+                          std::is_same_v<T, glm::vec2> ||
+                          std::is_same_v<T, glm::vec3> ||
+                          std::is_same_v<T, glm::vec4> ||
+                          std::is_same_v<T, glm::u8vec4> ||
+                          std::is_same_v<T, glm::u16vec4>) ) {
+            assert("Unsupported attribute type");
+        }
+
         int accessor_index = -1;
 
         if (!is_indices) {
             auto it = primitive.attributes.find(attribute_name);
-            if (it == primitive.attributes.end()) assert(1);
+            if (it == primitive.attributes.end()) {
+                out.clear();
+                return;
+            }
             accessor_index = it->second;
         }
         else {
@@ -150,60 +162,52 @@ private:
 
         out.resize(accessor.count);
 
-        if constexpr (std::is_same_v<T, glm::vec2> ||
-                      std::is_same_v<T, glm::vec3> ||
-                      std::is_same_v<T, glm::vec4>) {
-            if (fast_copy<T>(accessor, buffer_view, buffer, out)) return;
+        if (fast_copy<T>(accessor, buffer_view, buffer, out)) return;
 
-            for (size_t i = 0; i < accessor.count; i++) {
-                const uint8_t* p = data_ptr + (i * stride);
+        for (size_t i = 0; i < accessor.count; i++) {
+            const uint8_t* p = data_ptr + (i * stride);
 
-                if constexpr (std::is_same_v<T, glm::vec2>) {
-                    const auto* f = reinterpret_cast<const float*>(p);
-                    out[i]        = glm::vec2(f[0], f[1]);
-                }
-                else if constexpr (std::is_same_v<T, glm::vec3>) {
-                    const auto* f = reinterpret_cast<const float*>(p);
-                    out[i]        = glm::vec3(f[0], f[1], f[2]);
-                }
-                else if constexpr (std::is_same_v<T, glm::vec4>) {
-                    const auto* f = reinterpret_cast<const float*>(p);
-                    out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
-                }
+            if constexpr (std::is_same_v<T, glm::vec2>) {
+                const auto* f = reinterpret_cast<const float*>(p);
+                out[i]        = glm::vec2(f[0], f[1]);
             }
-
-            return;
-        }
-
-        if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
-            const auto* _buffer = reinterpret_cast<const uint8_t*>(data_ptr);
-            for (size_t i = 0; i < accessor.count; i++) out[i] = _buffer[i];
-        }
-        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-            const auto* _buffer = reinterpret_cast<const uint16_t*>(data_ptr);
-            for (size_t i = 0; i < accessor.count; i++) out[i] = _buffer[i];
-        }
-        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-            const auto* _buffer = reinterpret_cast<const uint32_t*>(data_ptr);
-            for (size_t i = 0; i < accessor.count; i++) out[i] = _buffer[i];
+            else if constexpr (std::is_same_v<T, glm::vec3>) {
+                const auto* f = reinterpret_cast<const float*>(p);
+                out[i]        = glm::vec3(f[0], f[1], f[2]);
+            }
+            else if constexpr (std::is_same_v<T, glm::vec4>) {
+                const auto* f = reinterpret_cast<const float*>(p);
+                out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
+            }
+            else if constexpr (std::is_same_v<T, glm::u8vec4>) {
+                const auto* ptr = reinterpret_cast<const uint8_t*>(p);
+                out[i]          = glm::u8vec4(ptr[0], ptr[1], ptr[2], ptr[3]);
+            }
+            else if constexpr (std::is_same_v<T, glm::u16vec4>) {
+                const auto* ptr = reinterpret_cast<const uint16_t*>(p);
+                out[i]          = glm::u16vec4(ptr[0], ptr[1], ptr[2], ptr[3]);
+            }
         }
     }
 
     template <typename T>
     [[nodiscard]] bool fast_copy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
-        if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT && accessor.ByteStride(buffer_view) == sizeof(T)) {
-            const float* src = reinterpret_cast<const float*>(buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset);
-            memcpy(out.data(), src, accessor.count * sizeof(T));
-
-            return true;
+        if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+            size_t element_size = sizeof(T);
+            size_t stride       = buffer_view.byteStride ? buffer_view.byteStride : element_size;
+            if (stride == element_size) {
+                const uint8_t* src = buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset;
+                out.resize(accessor.count);
+                memcpy(out.data(), src, accessor.count * element_size);
+                return true;
+            }
         }
-        else
-            return false;
+        return false;
     }
 
 private:
     std::vector<Node>      m_nodes{};
-    std::vector<int>       m_scene_roots{};
+    std::vector<int>       m_sceneRoots{};
     std::vector<Skin>      m_skins{};
     std::vector<Mesh>      m_meshes{};
     std::vector<Texture>   m_textures{};

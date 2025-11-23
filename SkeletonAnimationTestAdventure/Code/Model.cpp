@@ -1,5 +1,9 @@
 #include "Model.hpp"
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
 void Model::Initialize(const std::filesystem::path& path) {
     tinygltf::Model    model{};
     tinygltf::TinyGLTF loader{};
@@ -7,7 +11,7 @@ void Model::Initialize(const std::filesystem::path& path) {
     std::string        warning{};
     std::string        filename = path.string();
 
-    bool good = loader.LoadASCIIFromFile(&model, &error, &warning, filename);
+    bool good = loader.LoadBinaryFromFile(&model, &error, &warning, filename);
 
     if (!warning.empty()) {
         std::println("WARNING : {}", warning);
@@ -23,6 +27,11 @@ void Model::Initialize(const std::filesystem::path& path) {
 
     this->loadNodes(model);
     this->loadSceneRoots(model);
+    this->loadSkins(model);
+    this->loadMeshes(model);
+    this->loadTextures(model);
+    this->loadMaterials(model);
+    this->loadAnimations(model);
 }
 
 void Model::loadNodes(const tinygltf::Model& model) {
@@ -77,7 +86,7 @@ void Model::loadSceneRoots(const tinygltf::Model& model) {
         scene_index = 0;
     }
     if (scene_index >= 0) {
-        m_scene_roots = model.scenes[scene_index].nodes;
+        m_sceneRoots = model.scenes[scene_index].nodes;
     }
 }
 
@@ -116,15 +125,15 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
     }
 }
 
-void Model::loadVertices(const tinygltf::Model& model, std::vector<Primitive::Vertex>& this_vertices, const tinygltf::Primitive& primitive) {
+void Model::loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive) {
     std::vector<glm::vec3> positions{};
     this->readAttribute(model, primitive, "POSITION", positions);
 
     std::vector<glm::vec3> normals{};
     this->readAttribute(model, primitive, "NORMAL", normals);
 
-    std::vector<glm::vec4> tangent{};
-    this->readAttribute(model, primitive, "TANGENT", tangent);
+    std::vector<glm::vec4> tangents{};
+    this->readAttribute(model, primitive, "TANGENT", tangents);
 
     std::vector<glm::vec2> texture_coords{};
     this->readAttribute(model, primitive, "TEXCOORD_0", texture_coords);
@@ -135,22 +144,67 @@ void Model::loadVertices(const tinygltf::Model& model, std::vector<Primitive::Ve
     std::vector<glm::vec4> weights{};
     this->readAttribute(model, primitive, "WEIGHTS_0", weights);
 
-    this_vertices.resize(positions.size()); // positions, normals, tangent, etc are they have the same size ?
+    size_t count = positions.size();
+    this_vertices.resize(count);
 
-    for (size_t i = 0; i < this_vertices.size(); i++) {
-        Vertex& vertex       = this_vertices[i];
-        vertex.position      = positions[i];
-        vertex.normal        = normals[i];
-        vertex.tangent       = tangent[i];
-        vertex.texture_coord = texture_coords[i];
-        vertex.joints        = joints[i];
-        vertex.weights       = weights[i];
+    for (size_t i = 0; i < count; i++) {
+        auto& v    = this_vertices[i];
+        v.position = positions[i];
+        if (i < normals.size()) v.normal = normals[i];
+        if (i < tangents.size()) v.tangent = tangents[i];
+        if (i < texture_coords.size()) v.texture_coord = texture_coords[i];
+        if (i < joints.size()) v.joints = joints[i];
+        if (i < weights.size()) v.weights = weights[i];
     }
 }
 
-void Model::loadIndices(const tinygltf::Model& model, std::vector<Primitive::Index>& this_indices, const tinygltf::Primitive& primitive) {
-    constexpr inline static bool IS_INDICES = true;
-    this->readAttribute(model, primitive, "", this_indices, IS_INDICES);
+void Model::loadIndices(const tinygltf::Model& model, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive) {
+    if (primitive.indices < 0) assert(1);
+
+    const tinygltf::Accessor&   accessor   = model.accessors[primitive.indices];
+    const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+    const tinygltf::Buffer&     buffer     = model.buffers[bufferView.buffer];
+    const uint8_t*              data_ptr   = buffer.data.data() + bufferView.byteOffset + accessor.byteOffset;
+
+    switch (accessor.componentType) {
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE: {
+            this_indices = std::vector<uint8_t>{};
+            auto& vec    = std::get<std::vector<uint8_t>>(this_indices);
+            vec.resize(accessor.count);
+            memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint8_t));
+            break;
+        }
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
+            this_indices = std::vector<uint16_t>{};
+            auto& vec    = std::get<std::vector<uint16_t>>(this_indices);
+            vec.resize(accessor.count);
+            if (bufferView.byteStride == 0 || bufferView.byteStride == sizeof(uint16_t)) { // tightly packed
+                memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint16_t));
+            }
+            else {
+                for (size_t i = 0; i < accessor.count; i++) {
+                    vec[i] = *reinterpret_cast<const uint16_t*>(data_ptr + i * bufferView.byteStride);
+                }
+            }
+            break;
+        }
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT: {
+            this_indices = std::vector<uint32_t>{};
+            auto& vec    = std::get<std::vector<uint32_t>>(this_indices);
+            vec.resize(accessor.count);
+            if (bufferView.byteStride == 0 || bufferView.byteStride == sizeof(uint32_t)) { // tightly packed
+                memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint16_t));
+            }
+            else {
+                for (size_t i = 0; i < accessor.count; i++) {
+                    vec[i] = *reinterpret_cast<const uint32_t*>(data_ptr + i * bufferView.byteStride);
+                }
+            }
+            break;
+        }
+        default:
+            throw std::runtime_error("Unsupported index component type");
+    }
 }
 
 void Model::loadTextures(const tinygltf::Model& model) {
