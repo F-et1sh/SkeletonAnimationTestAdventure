@@ -755,9 +755,6 @@ int main() {
 
         for (auto& part : mesh_parts) {
 
-            const auto& material = model.materials[part.m_materialIndex];
-            const auto& pbr      = material.pbrMetallicRoughness;
-
             auto& textures = material_textures[part.m_materialIndex];
 
             textures.m_diffuse.textureUnit(shader, "u_Diffuse0");

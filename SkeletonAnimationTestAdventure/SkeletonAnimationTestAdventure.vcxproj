@@ -160,11 +160,13 @@
     <None Include="Code\Old\Texture.cpp" />
     <None Include="Code\Old\VAO.cpp" />
     <None Include="Code\Old\VBO.cpp" />
+    <ClCompile Include="Code\Material.cpp" />
     <ClCompile Include="Code\Model.cpp" />
     <ClCompile Include="Code\Shader.cpp" />
     <ClCompile Include="Code\Texture.cpp" />
     <ClCompile Include="Code\VertexBuffers.cpp" />
     <ClCompile Include="ThirdParty\glad\src\glad.c" />
+    <None Include="Code\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="ThirdParty\glad\GLAD_LICENSE">
@@ -202,7 +204,9 @@
     <None Include="Code\Old\VAO.hpp" />
     <None Include="Code\Old\VBO.hpp" />
     <ClInclude Include="Code\Camera.hpp" />
+    <ClInclude Include="Code\Material.hpp" />
     <ClInclude Include="Code\Model.hpp" />
+    <ClInclude Include="Code\Scene.hpp" />
     <ClInclude Include="Code\Shader.hpp" />
     <ClInclude Include="Code\Texture.hpp" />
     <ClInclude Include="Code\VertexBuffers.hpp" />
