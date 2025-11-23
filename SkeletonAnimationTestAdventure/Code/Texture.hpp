@@ -6,12 +6,17 @@
 #include <glad/glad.h>
 
 class Texture {
+    enum class TextureColorSpace {
+        Linear,
+        SRGB
+    };
+
 public:
     Texture() = default;
     ~Texture();
 
     void Create(const std::filesystem::path& path);
-    void Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler);
+    void Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler, TextureColorSpace texture_color_space);
 
     void        Bind() const;
     static void Unbind();
@@ -24,7 +29,9 @@ private:
                              int                  min_filter,
                              int                  mag_filter,
                              int                  wrap_s,
-                             int                  wrap_t);
+                             int                  wrap_t,
+                             GLenum               internal_format,
+                             GLenum               data_format);
 
 private:
     GLuint m_index{ 0 };

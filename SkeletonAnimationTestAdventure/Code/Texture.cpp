@@ -14,12 +14,51 @@ void Texture::Create(const std::filesystem::path& path) {
     int            component = 0;
     unsigned char* bytes     = stbi_load(path.string().c_str(), &width, &height, &component, 0);
 
-    this->createOpenGLTexture(width, height, component, bytes, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT);
+    GLenum internal_format{};
+    GLenum data_format{};
+
+    switch (component) {
+        case 4:
+            internal_format = GL_RGBA8;
+            break;
+        case 3:
+            internal_format = GL_RGB8;
+            break;
+        case 2:
+            internal_format = GL_RG8;
+            break;
+        case 1:
+            internal_format = GL_R8;
+            break;
+        default:
+            assert(1);
+            break;
+    }
+
+    switch (component) {
+        case 4:
+            data_format = GL_RGBA;
+            break;
+        case 3:
+            data_format = GL_RGB;
+            break;
+        case 2:
+            data_format = GL_RG;
+            break;
+        case 1:
+            data_format = GL_RED;
+            break;
+        default:
+            assert(1);
+            break;
+    }
+
+    this->createOpenGLTexture(width, height, component, bytes, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, internal_format, data_format);
 
     stbi_image_free(bytes);
 }
 
-void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler) {
+void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler, TextureColorSpace texture_color_space) {
     int                  width     = image.width;
     int                  height    = image.height;
     int                  component = image.component; // number of color channels
@@ -30,6 +69,53 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
 
     int wrap_s = sampler.wrapS;
     int wrap_t = sampler.wrapT;
+
+    GLenum internal_format{};
+    GLenum data_format{};
+
+    if (texture_color_space == TextureColorSpace::SRGB) {
+        if (component == 4)
+            internal_format = GL_SRGB8_ALPHA8;
+        else
+            internal_format = GL_SRGB8;
+    }
+    else {
+        switch (component) {
+            case 4:
+                internal_format = GL_RGBA8;
+                break;
+            case 3:
+                internal_format = GL_RGB8;
+                break;
+            case 2:
+                internal_format = GL_RG8;
+                break;
+            case 1:
+                internal_format = GL_R8;
+                break;
+            default:
+                assert(1);
+                break;
+        }
+    }
+
+    switch (component) {
+        case 4:
+            data_format = GL_RGBA;
+            break;
+        case 3:
+            data_format = GL_RGB;
+            break;
+        case 2:
+            data_format = GL_RG;
+            break;
+        case 1:
+            data_format = GL_RED;
+            break;
+        default:
+            assert(1);
+            break;
+    }
 
     switch (min_filter) {
         case TINYGLTF_TEXTURE_FILTER_NEAREST:
@@ -91,7 +177,7 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             break;
     }
 
-    this->createOpenGLTexture(width, height, component, bytes, min_filter, mag_filter, wrap_s, wrap_t);
+    this->createOpenGLTexture(width, height, component, bytes, min_filter, mag_filter, wrap_s, wrap_t, internal_format, data_format);
 }
 
 void Texture::Bind() const {
@@ -103,7 +189,7 @@ void Texture::Unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::createOpenGLTexture(int width, int height, int component, const unsigned char* bytes, int min_filter, int mag_filter, int wrap_s, int wrap_t) {
+void Texture::createOpenGLTexture(int width, int height, int component, const unsigned char* bytes, int min_filter, int mag_filter, int wrap_s, int wrap_t, GLenum internal_format, GLenum data_format) {
     glCreateTextures(GL_TEXTURE_2D, 1, &m_index);
     glBindTexture(GL_TEXTURE_2D, m_index);
 
@@ -118,11 +204,11 @@ void Texture::createOpenGLTexture(int width, int height, int component, const un
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,
-                GL_RGBA,
+                internal_format,
                 width,
                 height,
                 0,
-                GL_RGBA,
+                data_format,
                 GL_UNSIGNED_BYTE,
                 bytes);
             break;
@@ -130,11 +216,11 @@ void Texture::createOpenGLTexture(int width, int height, int component, const un
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,
-                GL_RGB,
+                internal_format,
                 width,
                 height,
                 0,
-                GL_RGB,
+                data_format,
                 GL_UNSIGNED_BYTE,
                 bytes);
             break;
@@ -142,11 +228,11 @@ void Texture::createOpenGLTexture(int width, int height, int component, const un
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,
-                GL_RED,
+                internal_format,
                 width,
                 height,
                 0,
-                GL_RED,
+                data_format,
                 GL_UNSIGNED_BYTE,
                 bytes);
             break;
