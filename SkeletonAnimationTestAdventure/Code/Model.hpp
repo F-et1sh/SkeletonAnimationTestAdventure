@@ -21,7 +21,7 @@ struct Primitive {
     Indices  indices{};
 
     int material{ -1 };
-    int mode{ 4 };
+    int mode{ 4 }; // triangles by default
 
     Primitive()  = default;
     ~Primitive() = default;

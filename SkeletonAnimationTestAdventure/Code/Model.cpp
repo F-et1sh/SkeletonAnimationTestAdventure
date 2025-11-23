@@ -10,8 +10,12 @@ void Model::Initialize(const std::filesystem::path& path) {
     std::string        error{};
     std::string        warning{};
     std::string        filename = path.string();
+    bool               good     = false;
 
-    bool good = loader.LoadBinaryFromFile(&model, &error, &warning, filename);
+    if (path.extension() == ".gltf")
+        good = loader.LoadASCIIFromFile(&model, &error, &warning, filename);
+    else if (path.extension() == ".glb")
+        good = loader.LoadBinaryFromFile(&model, &error, &warning, filename);
 
     if (!warning.empty()) {
         std::println("WARNING : {}", warning);
@@ -212,7 +216,7 @@ void Model::loadTextures(const tinygltf::Model& model) {
             sampler.wrapT     = TINYGLTF_TEXTURE_WRAP_REPEAT;
         }
 
-        const int                  gltf_texture_index  = &texture - model.textures.data();
+        int                        gltf_texture_index  = static_cast<int>(i);
         Texture::TextureColorSpace texture_color_space = Texture::TextureColorSpace::Linear;
 
         for (auto& material : m_materials) {
@@ -222,7 +226,7 @@ void Model::loadTextures(const tinygltf::Model& model) {
                 texture_color_space = Texture::TextureColorSpace::SRGB;
         }
 
-        auto& this_texture = m_textures.emplace_back();
+        auto& this_texture = m_textures[i];
         this_texture.Create(image, sampler, texture_color_space);
     }
 }
