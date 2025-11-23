@@ -444,14 +444,14 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                 vertices.resize(base_vertex + vertex_count);
 
                 for (int i = 0; i < vertex_count; i++) {
-                    vertices[base_vertex + i].m_position = positions[i];
+                    vertices[base_vertex + i].position = positions[i];
                 }
 
                 if (primitive.attributes.contains("NORMAL")) {
                     std::vector<glm::vec3> normals;
                     readAttribute(model, primitive, "NORMAL", normals);
                     for (int i = 0; i < vertex_count; i++) {
-                        vertices[base_vertex + i].m_normal = normals[i];
+                        vertices[base_vertex + i].normal = normals[i];
                     }
                 }
 
@@ -459,7 +459,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     std::vector<glm::vec4> tangent;
                     readAttribute(model, primitive, "TANGENT", tangent);
                     for (int i = 0; i < vertex_count; i++) {
-                        vertices[base_vertex + i].m_tangent = tangent[i];
+                        vertices[base_vertex + i].tangent = tangent[i];
                     }
                 }
 
@@ -467,7 +467,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     std::vector<glm::vec2> tex;
                     readAttribute(model, primitive, "TEXCOORD_0", tex);
                     for (int i = 0; i < vertex_count; i++) {
-                        vertices[base_vertex + i].m_texCoord = tex[i];
+                        vertices[base_vertex + i].texture_coord = tex[i];
                     }
                 }
 
@@ -475,7 +475,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     std::vector<glm::uvec4> joints;
                     readJoints(model, primitive, joints);
                     for (int i = 0; i < vertex_count; i++) {
-                        vertices[base_vertex + i].m_joints = joints[i];
+                        vertices[base_vertex + i].joints = joints[i];
                     }
                 }
 
@@ -483,7 +483,7 @@ tinygltf::Model loadModel(std::vector<Vertex>&         vertices,
                     std::vector<glm::vec4> weights;
                     readAttribute(model, primitive, "WEIGHTS_0", weights);
                     for (int i = 0; i < vertex_count; i++) {
-                        vertices[base_vertex + i].m_weights = weights[i];
+                        vertices[base_vertex + i].weights = weights[i];
                     }
                 }
 
@@ -697,16 +697,16 @@ int main() {
 
     constexpr GLsizei stride = sizeof(Vertex);
 
-    VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_position));
-    VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, m_normal));
-    VAO::LinkAttrib(vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, m_texCoord));
+    VAO::LinkAttrib(vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, position));
+    VAO::LinkAttrib(vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, normal));
+    VAO::LinkAttrib(vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, texture_coord));
 
     vbo.Bind();
-    glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, m_joints));
+    glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, joints));
     glEnableVertexAttribArray(3);
 
-    VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_weights));
-    VAO::LinkAttrib(vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, m_tangent));
+    VAO::LinkAttrib(vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
+    VAO::LinkAttrib(vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
 
     EBO ebo{};
     ebo.Create(indices);

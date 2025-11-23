@@ -2,6 +2,8 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#undef OPAQUE
+
 struct TextureInfo {
     int index{ -1 };
     int texture_coord{ 0 };

@@ -45,11 +45,18 @@ struct AnimationChannel {
 };
 
 struct AnimationSampler {
+    enum class InterpolationMode {
+        LINEAR,
+        STEP,
+        CUBICSPLINE
+    };
+
     std::vector<float>     times{};
     std::vector<glm::vec4> values{}; // rotation as quat, translation/scale as vec3
-    std::string            interpolation;
+    InterpolationMode      interpolation;
 
-    AnimationSampler() : interpolation("LINEAR") {}
+    AnimationSampler()
+        : interpolation{ InterpolationMode::LINEAR } {}
     ~AnimationSampler() = default;
 };
 
@@ -116,15 +123,23 @@ private:
     void readAttribute(const tinygltf::Model&     model,
                        const tinygltf::Primitive& primitive,
                        const std::string&         attribute_name,
-                       std::vector<T>&            out) {
+                       std::vector<T>&            out,
+                       bool                       is_indices = false) {
 
-        auto it = primitive.attributes.find(attribute_name);
-        if (it == primitive.attributes.end()) assert(1);
+        int accessor_index = -1;
 
-        int                         accessor_index = it->second;
-        const tinygltf::Accessor&   accessor       = model.accessors[accessor_index];
-        const tinygltf::BufferView& buffer_view    = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer&     buffer         = model.buffers[buffer_view.buffer];
+        if (!is_indices) {
+            auto it = primitive.attributes.find(attribute_name);
+            if (it == primitive.attributes.end()) assert(1);
+            accessor_index = it->second;
+        }
+        else {
+            accessor_index = primitive.indices;
+        }
+
+        const tinygltf::Accessor&   accessor    = model.accessors[accessor_index];
+        const tinygltf::BufferView& buffer_view = model.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer&     buffer      = model.buffers[buffer_view.buffer];
 
         const uint8_t* data_ptr       = buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset;
         int            component_size = tinygltf::GetComponentSizeInBytes(accessor.componentType);
@@ -133,7 +148,7 @@ private:
         size_t element_size = static_cast<size_t>(component_size * num_components);
         size_t stride       = buffer_view.byteStride != 0 ? buffer_view.byteStride : element_size;
 
-        out.reserve(accessor.count);
+        out.resize(accessor.count);
 
         if constexpr (std::is_same_v<T, glm::vec2> ||
                       std::is_same_v<T, glm::vec3> ||
@@ -178,7 +193,6 @@ private:
     [[nodiscard]] bool fast_copy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT && accessor.ByteStride(buffer_view) == sizeof(T)) {
             const float* src = reinterpret_cast<const float*>(buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset);
-            out.resize(accessor.count);
             memcpy(out.data(), src, accessor.count * sizeof(T));
 
             return true;

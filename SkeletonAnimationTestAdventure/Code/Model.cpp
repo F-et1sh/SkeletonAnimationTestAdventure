@@ -117,10 +117,40 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
 }
 
 void Model::loadVertices(const tinygltf::Model& model, std::vector<Primitive::Vertex>& this_vertices, const tinygltf::Primitive& primitive) {
+    std::vector<glm::vec3> positions{};
+    this->readAttribute(model, primitive, "POSITION", positions);
+
+    std::vector<glm::vec3> normals{};
+    this->readAttribute(model, primitive, "NORMAL", normals);
+
+    std::vector<glm::vec4> tangent{};
+    this->readAttribute(model, primitive, "TANGENT", tangent);
+
+    std::vector<glm::vec2> texture_coords{};
+    this->readAttribute(model, primitive, "TEXCOORD_0", texture_coords);
+
+    std::vector<glm::uvec4> joints{};
+    this->readAttribute(model, primitive, "JOINTS_0", joints);
+
+    std::vector<glm::vec4> weights{};
+    this->readAttribute(model, primitive, "WEIGHTS_0", weights);
+
+    this_vertices.resize(positions.size()); // positions, normals, tangent, etc are they have the same size ?
+
+    for (size_t i = 0; i < this_vertices.size(); i++) {
+        Vertex& vertex       = this_vertices[i];
+        vertex.position      = positions[i];
+        vertex.normal        = normals[i];
+        vertex.tangent       = tangent[i];
+        vertex.texture_coord = texture_coords[i];
+        vertex.joints        = joints[i];
+        vertex.weights       = weights[i];
+    }
 }
 
 void Model::loadIndices(const tinygltf::Model& model, std::vector<Primitive::Index>& this_indices, const tinygltf::Primitive& primitive) {
-    
+    constexpr inline static bool IS_INDICES = true;
+    this->readAttribute(model, primitive, "", this_indices, IS_INDICES);
 }
 
 void Model::loadTextures(const tinygltf::Model& model) {
