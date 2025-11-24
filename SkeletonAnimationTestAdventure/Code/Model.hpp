@@ -106,6 +106,7 @@ public:
 
     void Release();
     void Initialize(const std::filesystem::path& path);
+    void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj);
 
 private:
     void loadNodes(const tinygltf::Model& model);
@@ -118,6 +119,10 @@ private:
     void loadMaterials(const tinygltf::Model& model);
     void loadTextures(const tinygltf::Model& model);
     void loadAnimations(const tinygltf::Model& model);
+
+private:
+    void updateNodeTransforms();
+    void updateNodeRecursive(int index, const glm::mat4& parent);
 
 private:
     template <typename T>

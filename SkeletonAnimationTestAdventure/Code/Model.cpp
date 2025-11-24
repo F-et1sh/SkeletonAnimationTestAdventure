@@ -38,6 +38,14 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadAnimations(model);
 }
 
+void Model::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj) {
+    shader.Bind();
+    glm::mat4 camera_matrix = view * proj;
+    shader.setUniformMat4("u_CameraMatrix", camera_matrix);
+
+
+}
+
 void Model::loadNodes(const tinygltf::Model& model) {
     m_nodes.resize(model.nodes.size());
     for (size_t i = 0; i < model.nodes.size(); i++) {
@@ -307,6 +315,25 @@ void Model::loadAnimations(const tinygltf::Model& model) {
                 this_sampler.interpolation = AnimationSampler::InterpolationMode::CUBICSPLINE;
         }
     }
+}
+
+void Model::updateNodeTransforms() {
+    for (int root : m_sceneRoots)
+        updateNodeRecursive(root, glm::mat4(1.0f));
+}
+
+void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
+    Node& node = m_nodes[index];
+
+    glm::mat4 local =
+        glm::translate(glm::mat4(1), node.translation) *
+        glm::mat4_cast(node.rotation) *
+        glm::scale(glm::mat4(1), node.scale);
+
+    node.matrix = parent * local;
+
+    for (int child : node.children)
+        updateNodeRecursive(child, node.matrix);
 }
 
 void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {
