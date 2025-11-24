@@ -101,10 +101,13 @@ void Model::loadSkins(const tinygltf::Model& model) {
         const tinygltf::Skin& skin      = model.skins[i];
         auto&                 this_skin = m_skins[i];
 
-        this_skin.name                  = skin.name;
-        this_skin.inverse_bind_matrices = skin.inverseBindMatrices;
-        this_skin.skeleton              = skin.skeleton;
-        this_skin.joints                = skin.joints;
+        this_skin.name = skin.name;
+
+        size_t accessor_index = skin.inverseBindMatrices;
+        this->readAttribute(model, accessor_index, this_skin.inverse_bind_matrices);
+
+        this_skin.skeleton = skin.skeleton;
+        this_skin.joints   = skin.joints;
     }
 }
 
@@ -160,23 +163,33 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
 }
 
 void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, const tinygltf::Primitive& primitive) {
+
+    auto read_attribute = [&](const std::string& attribute_name, auto& data) {
+        auto it = primitive.attributes.find(attribute_name);
+        if (it == primitive.attributes.end()) {
+            data.clear();
+            return;
+        }
+        this->readAttribute(model, it->second, data);
+    };
+
     std::vector<glm::vec3> positions{};
-    this->readAttribute(model, primitive, "POSITION", positions);
+    read_attribute("POSITION", positions);
 
     std::vector<glm::vec3> normals{};
-    this->readAttribute(model, primitive, "NORMAL", normals);
+    read_attribute("NORMAL", normals);
 
     std::vector<glm::vec4> tangents{};
-    this->readAttribute(model, primitive, "TANGENT", tangents);
+    read_attribute("TANGENT", tangents);
 
     std::vector<glm::vec2> texture_coords{};
-    this->readAttribute(model, primitive, "TEXCOORD_0", texture_coords);
+    read_attribute("TEXCOORD_0", texture_coords);
 
     std::vector<glm::uvec4> joints{};
-    this->readAttribute(model, primitive, "JOINTS_0", joints);
+    read_attribute("JOINTS_0", joints);
 
     std::vector<glm::vec4> weights{};
-    this->readAttribute(model, primitive, "WEIGHTS_0", weights);
+    read_attribute("WEIGHTS_0", weights);
 
     size_t count = positions.size();
     this_vertices.resize(count);
@@ -437,7 +450,7 @@ void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
     primitive.vao.Bind();
 
     if (primitive.index_count > 0) {
-        glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, (void*)primitive.index_offset);
+        glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, (void*) primitive.index_offset);
     }
     else {
         glDrawArrays(GL_TRIANGLES, 0, primitive.vertices.size());

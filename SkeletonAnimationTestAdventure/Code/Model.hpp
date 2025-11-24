@@ -88,10 +88,10 @@ struct Node {
 };
 
 struct Skin {
-    std::string      name;
-    int              inverse_bind_matrices{ -1 }; // required here but not in the spec
-    int              skeleton{ -1 };              // The index of the node used as a skeleton root
-    std::vector<int> joints;                      // Indices of skeleton nodes
+    std::string            name;
+    std::vector<glm::mat4> inverse_bind_matrices;
+    int                    skeleton{ -1 }; // the index of the node used as a skeleton root
+    std::vector<int>       joints;         // indices of skeleton nodes
 
     Skin()  = default;
     ~Skin() = default;
@@ -130,11 +130,7 @@ private:
 
 private:
     template <typename T>
-    void readAttribute(const tinygltf::Model&     model,
-                       const tinygltf::Primitive& primitive,
-                       const std::string&         attribute_name,
-                       std::vector<T>&            out,
-                       bool                       is_indices = false) {
+    void readAttribute(const tinygltf::Model& model, size_t accessor_index, std::vector<T>& out) {
 
         if constexpr (!(
                           std::is_same_v<T, glm::vec2> ||
@@ -143,20 +139,6 @@ private:
                           std::is_same_v<T, glm::u8vec4> ||
                           std::is_same_v<T, glm::u16vec4>) ) {
             assert("Unsupported attribute type");
-        }
-
-        int accessor_index = -1;
-
-        if (!is_indices) {
-            auto it = primitive.attributes.find(attribute_name);
-            if (it == primitive.attributes.end()) {
-                out.clear();
-                return;
-            }
-            accessor_index = it->second;
-        }
-        else {
-            accessor_index = primitive.indices;
         }
 
         const tinygltf::Accessor&   accessor    = model.accessors[accessor_index];
@@ -198,6 +180,11 @@ private:
             else if constexpr (std::is_same_v<T, glm::u16vec4>) {
                 const auto* ptr = reinterpret_cast<const uint16_t*>(p);
                 out[i]          = glm::u16vec4(ptr[0], ptr[1], ptr[2], ptr[3]);
+            }
+            else if constexpr (std::is_same_v<T, glm::mat4>) {
+                glm::mat4 m{};
+                memcpy(glm::value_ptr(m), data_ptr + (i * sizeof(glm::mat4)), sizeof(glm::mat4));
+                out[i] = m;
             }
         }
     }
