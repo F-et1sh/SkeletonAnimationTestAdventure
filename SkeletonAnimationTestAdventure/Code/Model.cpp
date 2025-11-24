@@ -274,4 +274,173 @@ void Model::loadMaterials(const tinygltf::Model& model) {
 }
 
 void Model::loadAnimations(const tinygltf::Model& model) {
+    m_animations.resize(model.animations.size());
+    for (size_t i = 0; i < model.animations.size(); i++) {
+        const tinygltf::Animation& animation      = model.animations[i];
+        auto&                      this_animation = m_animations[i];
+
+        this_animation.channels.resize(animation.channels.size());
+
+        for (size_t j = 0; j < animation.channels.size(); j++) {
+            const tinygltf::AnimationChannel& channel      = animation.channels[j];
+            auto&                             this_channel = this_animation.channels[j];
+
+            this_channel.sampler     = channel.sampler;
+            this_channel.target_node = channel.target_node;
+            this_channel.target_path = channel.target_path;
+        }
+
+        this_animation.samplers.resize(animation.samplers.size());
+
+        for (size_t j = 0; j < animation.samplers.size(); j++) {
+            const tinygltf::AnimationSampler& sampler      = animation.samplers[j];
+            auto&                             this_sampler = this_animation.samplers[j];
+
+            this->readAccessorFloat(model, sampler.input, this_sampler.times);
+            this->readAccessorVec4(model, sampler.output, this_sampler.values);
+
+            if (sampler.interpolation == "LINEAR")
+                this_sampler.interpolation = AnimationSampler::InterpolationMode::LINEAR;
+            else if (sampler.interpolation == "STEP")
+                this_sampler.interpolation = AnimationSampler::InterpolationMode::STEP;
+            else if (sampler.interpolation == "CUBICSPLINE")
+                this_sampler.interpolation = AnimationSampler::InterpolationMode::CUBICSPLINE;
+        }
+    }
+}
+
+void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {
+    assert(src.size() == 2);
+    dst = glm::vec2(static_cast<float>(src[0]), static_cast<float>(src[1]));
+}
+
+void Model::readVector(glm::vec3& dst, const std::vector<double>& src) {
+    assert(src.size() == 3);
+    dst = glm::vec3(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
+}
+
+void Model::readVector(glm::vec4& dst, const std::vector<double>& src) {
+    assert(src.size() == 4);
+    dst = glm::vec4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
+}
+
+void Model::readVector(glm::quat& dst, const std::vector<double>& src) {
+    assert(src.size() == 4);
+    dst = glm::quat(static_cast<float>(src[3]), static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
+}
+
+float Model::readComponentAsFloat(const uint8_t* data, int component_type, bool normalized) {
+    switch (component_type) {
+        case TINYGLTF_COMPONENT_TYPE_FLOAT:
+            return *reinterpret_cast<const float*>(data);
+
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
+            uint16_t v = *reinterpret_cast<const uint16_t*>(data);
+            return normalized ? (float) v / 65535.0f : (float) v;
+        }
+
+        case TINYGLTF_COMPONENT_TYPE_SHORT: {
+            int16_t v = *reinterpret_cast<const int16_t*>(data);
+            return normalized ? glm::clamp((float) v / 32767.0f, -1.0f, 1.0f) : (float) v;
+        }
+
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE: {
+            uint8_t v = *reinterpret_cast<const uint8_t*>(data);
+            return normalized ? (float) v / 255.0f : (float) v;
+        }
+
+        case TINYGLTF_COMPONENT_TYPE_BYTE: {
+            int8_t v = *reinterpret_cast<const int8_t*>(data);
+            return normalized ? glm::clamp((float) v / 127.0f, -1.0f, 1.0f) : (float) v;
+        }
+
+        default:
+            std::cerr << "WARNING : Unsupported component type : " << component_type << "\n";
+            return 0.0f;
+            break;
+    }
+}
+
+void Model::readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out) {
+    const auto& accessor    = model.accessors[accessor_index];
+    const auto& buffer_view = model.bufferViews[accessor.bufferView];
+    const auto& buffer      = model.buffers[buffer_view.buffer];
+
+    const uint8_t* data = buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset;
+
+    int num_components{};
+
+    switch (accessor.type) {
+        case TINYGLTF_TYPE_SCALAR:
+            num_components = 1;
+            break;
+        case TINYGLTF_TYPE_VEC2:
+            num_components = 2;
+            break;
+        case TINYGLTF_TYPE_VEC3:
+            num_components = 3;
+            break;
+        case TINYGLTF_TYPE_VEC4:
+            num_components = 4;
+            break;
+        default:
+            num_components = 0;
+            std::cerr << "ERROR : Unsupported accessor type!\n";
+            return;
+            break;
+    }
+
+    size_t component_size{};
+
+    switch (accessor.componentType) {
+        case TINYGLTF_COMPONENT_TYPE_FLOAT:
+            component_size = 4;
+            break;
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+            component_size = 2;
+            break;
+        case TINYGLTF_COMPONENT_TYPE_SHORT:
+            component_size = 2;
+            break;
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+            component_size = 1;
+            break;
+        case TINYGLTF_COMPONENT_TYPE_BYTE:
+            component_size = 1;
+            break;
+        default:
+            component_size = 0;
+            std::cerr << "ERROR : Unsupported component size!\n";
+            return;
+            break;
+    }
+
+    size_t stride = buffer_view.byteStride ? buffer_view.byteStride : num_components * component_size;
+
+    out.resize(accessor.count);
+
+    for (size_t i = 0; i < accessor.count; i++) {
+
+        glm::vec4 v(0.0f);
+
+        const uint8_t* element = data + i * stride;
+
+        for (int component = 0; component < num_components; component++) {
+            v[component] = readComponentAsFloat(
+                element + component * component_size,
+                accessor.componentType,
+                accessor.normalized);
+        }
+
+        out[i] = v;
+    }
+}
+
+void Model::readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out) {
+    std::vector<glm::vec4> tmp;
+    readAccessorVec4(model, accessor_index, tmp);
+
+    out.resize(tmp.size());
+    for (size_t i = 0; i < tmp.size(); i++)
+        out[i] = tmp[i].x;
 }

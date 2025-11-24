@@ -37,9 +37,9 @@ struct Mesh {
 };
 
 struct AnimationChannel {
-    int         node{ -1 };
-    std::string path; // "rotation", "translation", "scale"
     int         sampler{ -1 };
+    int         target_node{ -1 };
+    std::string target_path; // "rotation", "translation", "scale"
 
     AnimationChannel()  = default;
     ~AnimationChannel() = default;
@@ -121,11 +121,11 @@ private:
 
 private:
     template <typename T>
-    void readAttribute(const tinygltf::Model&     model,
-                       const tinygltf::Primitive& primitive,
-                       const std::string&         attribute_name,
-                       std::vector<T>&            out,
-                       bool                       is_indices = false) {
+    inline void readAttribute(const tinygltf::Model&     model,
+                              const tinygltf::Primitive& primitive,
+                              const std::string&         attribute_name,
+                              std::vector<T>&            out,
+                              bool                       is_indices = false) {
 
         if constexpr (!(
                           std::is_same_v<T, glm::vec2> ||
@@ -192,7 +192,7 @@ private:
     }
 
     template <typename T>
-    [[nodiscard]] bool fastCopy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
+    inline [[nodiscard]] bool fastCopy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
             size_t element_size = sizeof(T);
             size_t stride       = buffer_view.byteStride ? buffer_view.byteStride : element_size;
@@ -206,25 +206,14 @@ private:
         return false;
     }
 
-    void readVector(glm::vec2& dst, const std::vector<double>& src) {
-        assert(src.size() == 2);
-        dst = glm::vec2(static_cast<float>(src[0]), static_cast<float>(src[1]));
-    }
+    void readVector(glm::vec2& dst, const std::vector<double>& src);
+    void readVector(glm::vec3& dst, const std::vector<double>& src);
+    void readVector(glm::vec4& dst, const std::vector<double>& src);
+    void readVector(glm::quat& dst, const std::vector<double>& src);
 
-    void readVector(glm::vec3& dst, const std::vector<double>& src) {
-        assert(src.size() == 3);
-        dst = glm::vec3(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
-    }
-
-    void readVector(glm::vec4& dst, const std::vector<double>& src) {
-        assert(src.size() == 4);
-        dst = glm::vec4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
-    }
-
-    void readVector(glm::quat& dst, const std::vector<double>& src) {
-        assert(src.size() == 4);
-        dst = glm::quat(static_cast<float>(src[3]), static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
-    }
+    float readComponentAsFloat(const uint8_t* data, int component_type, bool normalized);
+    void  readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out);
+    void  readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out);
 
 private:
     std::vector<Node>      m_nodes{};
