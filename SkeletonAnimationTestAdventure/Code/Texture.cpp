@@ -74,10 +74,12 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
     GLenum data_format{};
 
     if (texture_color_space == TextureColorSpace::SRGB) {
-        if (component == 4)
+        if (component == 4) {
             internal_format = GL_SRGB8_ALPHA8;
-        else
+        }
+        else {
             internal_format = GL_SRGB8;
+        }
     }
     else {
         switch (component) {
@@ -243,5 +245,5 @@ void Texture::createOpenGLTexture(int width, int height, int component, const un
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    this->Unbind();
+    Texture::Unbind();
 }

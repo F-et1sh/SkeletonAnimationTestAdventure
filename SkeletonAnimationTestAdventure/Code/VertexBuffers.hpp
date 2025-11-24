@@ -62,7 +62,7 @@ public:
     void        Bind() const;
     static void Unbind();
 
-    inline unsigned int index() const noexcept { return m_index; }
+    [[nodiscard]] unsigned int index() const noexcept { return m_index; }
 
 private:
     GLuint m_index;

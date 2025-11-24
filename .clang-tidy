@@ -6,6 +6,7 @@ Checks: >
   -modernize-use-trailing-return-type,
   performance-*,
   clang-analyzer-*,
+  -readability-redundant-access-specifiers
 
 CheckOptions:
   # ──────────────────────────────────────────────────────────────

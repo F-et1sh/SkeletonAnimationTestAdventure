@@ -37,9 +37,6 @@
     <Filter Include="Code\Model">
       <UniqueIdentifier>{de078d21-b204-4a48-8f43-61cf4302fc66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code\Scene">
-      <UniqueIdentifier>{1687b142-7515-4a47-8612-2d253b6f688e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Code\Material">
       <UniqueIdentifier>{0e356cad-7859-4664-9365-fea1b16c7ada}</UniqueIdentifier>
     </Filter>
@@ -148,9 +145,6 @@
     <None Include="Code\Old\VBO.hpp">
       <Filter>Code\Old</Filter>
     </None>
-    <None Include="Code\Scene.cpp">
-      <Filter>Code\Scene</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\VertexBuffers.hpp">
@@ -167,9 +161,6 @@
     </ClInclude>
     <ClInclude Include="Code\Model.hpp">
       <Filter>Code\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Scene.hpp">
-      <Filter>Code\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Code\Material.hpp">
       <Filter>Code\Material</Filter>

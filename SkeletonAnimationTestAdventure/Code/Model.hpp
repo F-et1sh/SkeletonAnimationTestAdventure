@@ -5,10 +5,10 @@
 
 #include "tiny_gltf.h"
 
-#include "Shader.hpp"
-#include "VertexBuffers.hpp"
-#include "Texture.hpp"
 #include "Material.hpp"
+#include "Shader.hpp"
+#include "Texture.hpp"
+#include "VertexBuffers.hpp"
 
 struct Primitive {
     using Vertices = std::vector<Vertex>;
@@ -64,7 +64,7 @@ struct AnimationSampler {
     std::vector<glm::vec4> values; // rotation as quat, translation/scale as vec3
     InterpolationMode      interpolation{ InterpolationMode::LINEAR };
 
-    AnimationSampler() {}
+    AnimationSampler()  = default;
     ~AnimationSampler() = default;
 };
 
@@ -127,6 +127,7 @@ private:
     void        loadTextures(const tinygltf::Model& model);
     void        loadAnimations(const tinygltf::Model& model);
 
+private:
     void updateNodeTransforms();
     void updateNodeRecursive(int index, const glm::mat4& parent);
     void updateSkinMatrices(const Shader& shader);
@@ -136,6 +137,7 @@ private:
     void bindMaterial(const Material& material, const Shader& shader);
     void bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot);
 
+private:
     template <typename T>
     void readAttribute(const tinygltf::Model&     model,
                        const tinygltf::Primitive& primitive,
@@ -230,9 +232,10 @@ private:
     static void readVector(glm::quat& dst, const std::vector<double>& src);
 
     static float readComponentAsFloat(const uint8_t* data, int component_type, bool normalized);
-    void         readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out);
-    void         readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out);
+    static void  readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out);
+    static void  readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out);
 
+private:
     std::vector<Node>      m_nodes;
     std::vector<int>       m_sceneRoots;
     std::vector<Skin>      m_skins;

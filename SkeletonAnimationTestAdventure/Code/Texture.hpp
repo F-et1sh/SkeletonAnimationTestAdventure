@@ -12,6 +12,7 @@ public:
         SRGB
     };
 
+public:
     Texture() = default;
     ~Texture();
 

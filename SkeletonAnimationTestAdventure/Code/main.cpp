@@ -61,9 +61,9 @@ struct MeshPart {
 };
 
 struct MaterialTextures {
-    Texture m_diffuse{};
-    Texture m_specular{};
-    Texture m_normal{};
+    Texture m_diffuse;
+    Texture m_specular;
+    Texture m_normal;
 
     MaterialTextures()  = default;
     ~MaterialTextures() = default;
@@ -231,7 +231,7 @@ void readAttribute(const tinygltf::Model&     model,
     int component_size = tinygltf::GetComponentSizeInBytes(accessor.componentType);
     int num_components = tinygltf::GetNumComponentsInType(accessor.type);
 
-    size_t element_size = static_cast<size_t>(component_size * num_components);
+    auto element_size = static_cast<size_t>(component_size * num_components);
 
     size_t stride = view.byteStride != 0 ? view.byteStride : element_size;
 

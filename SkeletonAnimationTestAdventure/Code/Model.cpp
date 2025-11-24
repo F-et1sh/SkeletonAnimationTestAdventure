@@ -12,10 +12,12 @@ void Model::Initialize(const std::filesystem::path& path) {
     std::string        filename = path.string();
     bool               good     = false;
 
-    if (path.extension() == ".gltf")
+    if (path.extension() == ".gltf") {
         good = loader.LoadASCIIFromFile(&model, &error, &warning, filename);
-    else if (path.extension() == ".glb")
+    }
+    else if (path.extension() == ".glb") {
         good = loader.LoadBinaryFromFile(&model, &error, &warning, filename);
+    }
 
     if (!warning.empty()) {
         std::println("WARNING : {}", warning);
@@ -47,8 +49,9 @@ void Model::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& p
     this->updateNodeTransforms();
     this->updateSkinMatrices(shader);
 
-    for (int i : m_sceneRoots)
+    for (int i : m_sceneRoots) {
         drawNode(m_nodes[i], shader);
+    }
 }
 
 void Model::loadNodes(const tinygltf::Model& model) {
@@ -64,11 +67,11 @@ void Model::loadNodes(const tinygltf::Model& model) {
         this_node.light    = node.light;
         this_node.emitter  = node.emitter;
         this_node.children = node.children;
-        this->readVector(this_node.rotation, node.rotation);
-        this->readVector(this_node.scale, node.scale);
-        this->readVector(this_node.translation, node.translation);
+        Model::readVector(this_node.rotation, node.rotation);
+        Model::readVector(this_node.scale, node.scale);
+        Model::readVector(this_node.translation, node.translation);
         if (!node.matrix.empty()) {
-            glm::mat4 m(1.0f);
+            glm::mat4 m(1.0F);
             for (int i = 0; i < 16; i++) {
                 m[i / 4][i % 4] = node.matrix[i];
             }
@@ -163,9 +166,9 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
             this_primitive.ebo.Bind();
         }
 
-        this_primitive.vbo.Unbind();
-        this_primitive.vao.Unbind();
-        this_primitive.ebo.Unbind();
+        VBO::Unbind();
+        VAO::Unbind();
+        EBO::Unbind();
     }
 }
 
@@ -194,17 +197,28 @@ void Model::loadVertices(const tinygltf::Model& model, Primitive::Vertices& this
     for (size_t i = 0; i < count; i++) {
         auto& v    = this_vertices[i];
         v.position = positions[i];
-        if (i < normals.size()) v.normal = normals[i];
-        if (i < tangents.size()) v.tangent = tangents[i];
-        if (i < texture_coords.size()) v.texture_coord = texture_coords[i];
-        if (i < joints.size()) v.joints = joints[i];
-        if (i < weights.size()) v.weights = weights[i];
+        if (i < normals.size()) {
+            v.normal = normals[i];
+        }
+        if (i < tangents.size()) {
+            v.tangent = tangents[i];
+        }
+        if (i < texture_coords.size()) {
+            v.texture_coord = texture_coords[i];
+        }
+        if (i < joints.size()) {
+            v.joints = joints[i];
+        }
+        if (i < weights.size()) {
+            v.weights = weights[i];
+        }
     }
 }
 
 void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive) {
-    if (primitive.indices < 0)
+    if (primitive.indices < 0) {
         throw std::runtime_error("Primitive has no indices");
+    }
 
     const tinygltf::Accessor&   accessor    = model.accessors[primitive.indices];
     const tinygltf::BufferView& buffer_view = model.bufferViews[accessor.bufferView];
@@ -233,7 +247,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
             }
             else {
                 for (size_t i = 0; i < accessor.count; i++) {
-                    vec[i] = *reinterpret_cast<const uint16_t*>(data_ptr + i * buffer_view.byteStride);
+                    vec[i] = *reinterpret_cast<const uint16_t*>(data_ptr + (i * buffer_view.byteStride));
                 }
             }
 
@@ -252,7 +266,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
             }
             else {
                 for (size_t i = 0; i < accessor.count; i++) {
-                    vec[i] = *reinterpret_cast<const uint32_t*>(data_ptr + i * buffer_view.byteStride);
+                    vec[i] = *reinterpret_cast<const uint32_t*>(data_ptr + (i * buffer_view.byteStride));
                 }
             }
 
@@ -275,8 +289,9 @@ void Model::loadTextures(const tinygltf::Model& model) {
         const tinygltf::Image&   image   = model.images[texture.source];
         tinygltf::Sampler        sampler{};
 
-        if (texture.sampler >= 0)
+        if (texture.sampler >= 0) {
             sampler = model.samplers[texture.sampler];
+        }
         else { // default settings
             sampler.minFilter = TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
             sampler.magFilter = TINYGLTF_TEXTURE_FILTER_LINEAR;
@@ -289,9 +304,10 @@ void Model::loadTextures(const tinygltf::Model& model) {
 
         for (auto& material : m_materials) {
             if (material.pbr_metallic_roughness.base_color_texture.index == gltf_texture_index ||
-                material.emissive_texture.index == gltf_texture_index)
+                material.emissive_texture.index == gltf_texture_index) {
 
                 texture_color_space = Texture::TextureColorSpace::SRGB;
+            }
         }
 
         auto& this_texture = m_textures[i];
@@ -306,13 +322,16 @@ void Model::loadMaterials(const tinygltf::Model& model) {
         auto&                     this_material = m_materials[i];
 
         this_material.name = material.name;
-        this->readVector(this_material.emissive_factor, material.emissiveFactor);
-        if (material.alphaMode == "OPAQUE")
+        Model::readVector(this_material.emissive_factor, material.emissiveFactor);
+        if (material.alphaMode == "OPAQUE") {
             this_material.alpha_mode = Material::AlphaMode::OPAQUE;
-        else if (material.alphaMode == "MASK")
+        }
+        else if (material.alphaMode == "MASK") {
             this_material.alpha_mode = Material::AlphaMode::MASK;
-        else if (material.alphaMode == "BLEND")
+        }
+        else if (material.alphaMode == "BLEND") {
             this_material.alpha_mode = Material::AlphaMode::BLEND;
+        }
         this_material.alpha_cutoff = material.alphaCutoff;
         this_material.double_sided = material.doubleSided;
         this_material.lods         = material.lods;
@@ -320,7 +339,7 @@ void Model::loadMaterials(const tinygltf::Model& model) {
 #define THIS_PBR this_material.pbr_metallic_roughness
 #define PBR material.pbrMetallicRoughness
 
-        this->readVector(THIS_PBR.base_color_factor, PBR.baseColorFactor);
+        Model::readVector(THIS_PBR.base_color_factor, PBR.baseColorFactor);
         THIS_PBR.base_color_texture.index                 = PBR.baseColorTexture.index;
         THIS_PBR.base_color_texture.texture_coord         = PBR.baseColorTexture.texCoord;
         THIS_PBR.metallic_factor                          = PBR.metallicFactor;
@@ -365,21 +384,25 @@ void Model::loadAnimations(const tinygltf::Model& model) {
             auto&                             this_sampler = this_animation.samplers[j];
 
             this->readAccessorFloat(model, sampler.input, this_sampler.times);
-            this->readAccessorVec4(model, sampler.output, this_sampler.values);
+            Model::readAccessorVec4(model, sampler.output, this_sampler.values);
 
-            if (sampler.interpolation == "LINEAR")
+            if (sampler.interpolation == "LINEAR") {
                 this_sampler.interpolation = AnimationSampler::InterpolationMode::LINEAR;
-            else if (sampler.interpolation == "STEP")
+            }
+            else if (sampler.interpolation == "STEP") {
                 this_sampler.interpolation = AnimationSampler::InterpolationMode::STEP;
-            else if (sampler.interpolation == "CUBICSPLINE")
+            }
+            else if (sampler.interpolation == "CUBICSPLINE") {
                 this_sampler.interpolation = AnimationSampler::InterpolationMode::CUBICSPLINE;
+            }
         }
     }
 }
 
 void Model::updateNodeTransforms() {
-    for (int root : m_sceneRoots)
-        this->updateNodeRecursive(root, glm::mat4(1.0f));
+    for (int root : m_sceneRoots) {
+        this->updateNodeRecursive(root, glm::mat4(1.0F));
+    }
 }
 
 void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
@@ -392,8 +415,9 @@ void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
 
     node.matrix = parent * local;
 
-    for (int child : node.children)
+    for (int child : node.children) {
         this->updateNodeRecursive(child, node.matrix);
+    }
 }
 
 void Model::updateSkinMatrices(const Shader& shader) {
@@ -401,18 +425,21 @@ void Model::updateSkinMatrices(const Shader& shader) {
 }
 
 void Model::drawNode(const Node& node, const Shader& shader) {
-    if (node.mesh >= 0)
+    if (node.mesh >= 0) {
         this->drawMesh(m_meshes[node.mesh], shader, node.matrix);
+    }
 
-    for (int child : node.children)
+    for (int child : node.children) {
         this->drawNode(m_nodes[child], shader);
+    }
 }
 
 void Model::drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix) {
     shader.setUniformMat4("u_Model", matrix);
 
-    for (const Primitive& primitive : mesh.primitives)
+    for (const Primitive& primitive : mesh.primitives) {
         this->drawPrimitive(primitive, shader);
+    }
 }
 
 void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
@@ -422,10 +449,12 @@ void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
 
     primitive.vao.Bind();
 
-    if (primitive.index_count > 0)
+    if (primitive.index_count > 0) {
         glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, &primitive.index_offset);
-    else
+    }
+    else {
         glDrawArrays(GL_TRIANGLES, 0, primitive.vertices.size());
+    }
 }
 
 void Model::bindMaterial(const Material& material, const Shader& shader) {
@@ -445,7 +474,9 @@ void Model::bindMaterial(const Material& material, const Shader& shader) {
 void Model::bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot) {
     shader.setUniformInt(uniform.c_str(), slot);
 
-    if (texture_index < 0) return;
+    if (texture_index < 0) {
+        return;
+    }
 
     glActiveTexture(GL_TEXTURE0 + slot);
     m_textures[texture_index].Bind();
@@ -478,27 +509,27 @@ float Model::readComponentAsFloat(const uint8_t* data, int component_type, bool 
 
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
             uint16_t v = *reinterpret_cast<const uint16_t*>(data);
-            return normalized ? (float) v / 65535.0f : (float) v;
+            return normalized ? (float) v / 65535.0F : (float) v;
         }
 
         case TINYGLTF_COMPONENT_TYPE_SHORT: {
             int16_t v = *reinterpret_cast<const int16_t*>(data);
-            return normalized ? glm::clamp((float) v / 32767.0f, -1.0f, 1.0f) : (float) v;
+            return normalized ? glm::clamp((float) v / 32767.0F, -1.0F, 1.0F) : (float) v;
         }
 
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE: {
-            uint8_t v = *reinterpret_cast<const uint8_t*>(data);
-            return normalized ? (float) v / 255.0f : (float) v;
+            uint8_t v = *data;
+            return normalized ? (float) v / 255.0F : (float) v;
         }
 
         case TINYGLTF_COMPONENT_TYPE_BYTE: {
             int8_t v = *reinterpret_cast<const int8_t*>(data);
-            return normalized ? glm::clamp((float) v / 127.0f, -1.0f, 1.0f) : (float) v;
+            return normalized ? glm::clamp((float) v / 127.0F, -1.0F, 1.0F) : (float) v;
         }
 
         default:
             std::cerr << "WARNING : Unsupported component type : " << component_type << "\n";
-            return 0.0f;
+            return 0.0F;
             break;
     }
 }
@@ -557,19 +588,19 @@ void Model::readAccessorVec4(const tinygltf::Model& model, int accessor_index, s
             break;
     }
 
-    size_t stride = buffer_view.byteStride ? buffer_view.byteStride : num_components * component_size;
+    size_t stride = (buffer_view.byteStride != 0U) ? buffer_view.byteStride : num_components * component_size;
 
     out.resize(accessor.count);
 
     for (size_t i = 0; i < accessor.count; i++) {
 
-        glm::vec4 v(0.0f);
+        glm::vec4 v(0.0F);
 
-        const uint8_t* element = data + i * stride;
+        const uint8_t* element = data + (i * stride);
 
         for (int component = 0; component < num_components; component++) {
             v[component] = readComponentAsFloat(
-                element + component * component_size,
+                element + (component * component_size),
                 accessor.componentType,
                 accessor.normalized);
         }
@@ -583,6 +614,7 @@ void Model::readAccessorFloat(const tinygltf::Model& model, int accessor_index, 
     readAccessorVec4(model, accessor_index, tmp);
 
     out.resize(tmp.size());
-    for (size_t i = 0; i < tmp.size(); i++)
+    for (size_t i = 0; i < tmp.size(); i++) {
         out[i] = tmp[i].x;
+    }
 }

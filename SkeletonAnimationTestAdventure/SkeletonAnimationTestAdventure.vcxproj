@@ -166,7 +166,6 @@
     <ClCompile Include="Code\Texture.cpp" />
     <ClCompile Include="Code\VertexBuffers.cpp" />
     <ClCompile Include="ThirdParty\glad\src\glad.c" />
-    <None Include="Code\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="ThirdParty\glad\GLAD_LICENSE">
@@ -206,7 +205,6 @@
     <ClInclude Include="Code\Camera.hpp" />
     <ClInclude Include="Code\Material.hpp" />
     <ClInclude Include="Code\Model.hpp" />
-    <ClInclude Include="Code\Scene.hpp" />
     <ClInclude Include="Code\Shader.hpp" />
     <ClInclude Include="Code\Texture.hpp" />
     <ClInclude Include="Code\VertexBuffers.hpp" />
