@@ -17,11 +17,19 @@ struct Primitive {
          std::vector<uint16_t>,
          std::vector<uint32_t>>;
 
-    Vertices vertices{};
-    Indices  indices{};
+    Vertices vertices;
+    Indices  indices;
 
     int material{ -1 };
-    int mode{ 4 }; // triangles by default
+    int mode{ GL_TRIANGLES }; // triangles by default
+
+    VAO vao{};
+    VBO vbo{};
+    EBO ebo{};
+
+    GLenum index_type{};
+    size_t index_count{};
+    size_t index_offset{};
 
     Primitive()  = default;
     ~Primitive() = default;
@@ -29,8 +37,8 @@ struct Primitive {
 
 struct Mesh {
     std::string            name;
-    std::vector<Primitive> primitives{};
-    std::vector<double>    weights{}; // weights to be applied to the Morph Targets
+    std::vector<Primitive> primitives;
+    std::vector<double>    weights; // weights to be applied to the Morph Targets
 
     Mesh()  = default;
     ~Mesh() = default;
@@ -52,18 +60,17 @@ struct AnimationSampler {
         CUBICSPLINE
     };
 
-    std::vector<float>     times{};
-    std::vector<glm::vec4> values{}; // rotation as quat, translation/scale as vec3
-    InterpolationMode      interpolation;
+    std::vector<float>     times;
+    std::vector<glm::vec4> values; // rotation as quat, translation/scale as vec3
+    InterpolationMode      interpolation{ InterpolationMode::LINEAR };
 
-    AnimationSampler()
-        : interpolation{ InterpolationMode::LINEAR } {}
+    AnimationSampler() {}
     ~AnimationSampler() = default;
 };
 
 struct Animation {
-    std::vector<AnimationChannel> channels{};
-    std::vector<AnimationSampler> samplers{};
+    std::vector<AnimationChannel> channels;
+    std::vector<AnimationSampler> samplers;
 
     Animation()  = default;
     ~Animation() = default;
@@ -77,14 +84,14 @@ struct Node {
     int emitter = -1;
 
     std::string      name;
-    std::vector<int> children{};
+    std::vector<int> children;
 
     glm::quat rotation{ 1, 0, 0, 0 };
     glm::vec3 scale{ 1, 1, 1 };
     glm::vec3 translation{ 0, 0, 0 };
-    glm::mat4 matrix{ 1.0f };
+    glm::mat4 matrix{ 1.0F };
 
-    std::vector<double> weights{};
+    std::vector<double> weights;
 
     Node() = default;
 };
@@ -93,7 +100,7 @@ struct Skin {
     std::string      name;
     int              inverse_bind_matrices{ -1 }; // required here but not in the spec
     int              skeleton{ -1 };              // The index of the node used as a skeleton root
-    std::vector<int> joints{};                    // Indices of skeleton nodes
+    std::vector<int> joints;                      // Indices of skeleton nodes
 
     Skin()  = default;
     ~Skin() = default;
@@ -109,18 +116,17 @@ public:
     void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj);
 
 private:
-    void loadNodes(const tinygltf::Model& model);
-    void loadSceneRoots(const tinygltf::Model& model);
-    void loadSkins(const tinygltf::Model& model);
-    void loadMeshes(const tinygltf::Model& model);
-    void loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
-    void loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive);
-    void loadIndices(const tinygltf::Model& model, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive);
-    void loadMaterials(const tinygltf::Model& model);
-    void loadTextures(const tinygltf::Model& model);
-    void loadAnimations(const tinygltf::Model& model);
+    void        loadNodes(const tinygltf::Model& model);
+    void        loadSceneRoots(const tinygltf::Model& model);
+    void        loadSkins(const tinygltf::Model& model);
+    void        loadMeshes(const tinygltf::Model& model);
+    void        loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
+    void        loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive);
+    static void loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive);
+    void        loadMaterials(const tinygltf::Model& model);
+    void        loadTextures(const tinygltf::Model& model);
+    void        loadAnimations(const tinygltf::Model& model);
 
-private:
     void updateNodeTransforms();
     void updateNodeRecursive(int index, const glm::mat4& parent);
     void updateSkinMatrices(const Shader& shader);
@@ -130,13 +136,12 @@ private:
     void bindMaterial(const Material& material, const Shader& shader);
     void bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot);
 
-private:
     template <typename T>
-    inline void readAttribute(const tinygltf::Model&     model,
-                              const tinygltf::Primitive& primitive,
-                              const std::string&         attribute_name,
-                              std::vector<T>&            out,
-                              bool                       is_indices = false) {
+    void readAttribute(const tinygltf::Model&     model,
+                       const tinygltf::Primitive& primitive,
+                       const std::string&         attribute_name,
+                       std::vector<T>&            out,
+                       bool                       is_indices = false) {
 
         if constexpr (!(
                           std::is_same_v<T, glm::vec2> ||
@@ -169,12 +174,14 @@ private:
         int            component_size = tinygltf::GetComponentSizeInBytes(accessor.componentType);
         int            num_components = tinygltf::GetNumComponentsInType(accessor.type);
 
-        size_t element_size = static_cast<size_t>(component_size * num_components);
+        auto   element_size = static_cast<size_t>(component_size * num_components);
         size_t stride       = buffer_view.byteStride != 0 ? buffer_view.byteStride : element_size;
 
         out.resize(accessor.count);
 
-        if (fastCopy<T>(accessor, buffer_view, buffer, out)) return;
+        if (fastCopy<T>(accessor, buffer_view, buffer, out)) {
+            return;
+        }
 
         for (size_t i = 0; i < accessor.count; i++) {
             const uint8_t* p = data_ptr + (i * stride);
@@ -192,7 +199,7 @@ private:
                 out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
             }
             else if constexpr (std::is_same_v<T, glm::u8vec4>) {
-                const auto* ptr = reinterpret_cast<const uint8_t*>(p);
+                const auto* ptr = p;
                 out[i]          = glm::u8vec4(ptr[0], ptr[1], ptr[2], ptr[3]);
             }
             else if constexpr (std::is_same_v<T, glm::u16vec4>) {
@@ -203,7 +210,7 @@ private:
     }
 
     template <typename T>
-    inline [[nodiscard]] bool fastCopy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
+    [[nodiscard]] bool fastCopy(const tinygltf::Accessor& accessor, const tinygltf::BufferView& buffer_view, const tinygltf::Buffer& buffer, std::vector<T>& out) {
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
             size_t element_size = sizeof(T);
             size_t stride       = buffer_view.byteStride ? buffer_view.byteStride : element_size;
@@ -217,21 +224,20 @@ private:
         return false;
     }
 
-    void readVector(glm::vec2& dst, const std::vector<double>& src);
-    void readVector(glm::vec3& dst, const std::vector<double>& src);
-    void readVector(glm::vec4& dst, const std::vector<double>& src);
-    void readVector(glm::quat& dst, const std::vector<double>& src);
+    static void readVector(glm::vec2& dst, const std::vector<double>& src);
+    static void readVector(glm::vec3& dst, const std::vector<double>& src);
+    static void readVector(glm::vec4& dst, const std::vector<double>& src);
+    static void readVector(glm::quat& dst, const std::vector<double>& src);
 
-    float readComponentAsFloat(const uint8_t* data, int component_type, bool normalized);
-    void  readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out);
-    void  readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out);
+    static float readComponentAsFloat(const uint8_t* data, int component_type, bool normalized);
+    void         readAccessorVec4(const tinygltf::Model& model, int accessor_index, std::vector<glm::vec4>& out);
+    void         readAccessorFloat(const tinygltf::Model& model, int accessor_index, std::vector<float>& out);
 
-private:
-    std::vector<Node>      m_nodes{};
-    std::vector<int>       m_sceneRoots{};
-    std::vector<Skin>      m_skins{};
-    std::vector<Mesh>      m_meshes{};
-    std::vector<Material>  m_materials{};
-    std::vector<Texture>   m_textures{};
-    std::vector<Animation> m_animations{};
+    std::vector<Node>      m_nodes;
+    std::vector<int>       m_sceneRoots;
+    std::vector<Skin>      m_skins;
+    std::vector<Mesh>      m_meshes;
+    std::vector<Material>  m_materials;
+    std::vector<Texture>   m_textures;
+    std::vector<Animation> m_animations;
 };

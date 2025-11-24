@@ -124,9 +124,48 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
         auto&                      this_primitive = this_primitives[i];
 
         loadVertices(model, this_primitive.vertices, primitive);
-        loadIndices(model, this_primitive.indices, primitive);
+        loadIndices(model, this_primitive, this_primitive.indices, primitive);
         this_primitive.material = primitive.material;
         this_primitive.mode     = primitive.mode;
+
+        this_primitive.vao.Create();
+        this_primitive.vao.Bind();
+
+        this_primitive.vbo.Create(this_primitive.vertices);
+        this_primitive.vbo.Bind();
+
+        constexpr GLsizei stride = sizeof(Vertex);
+
+        VAO::LinkAttrib(this_primitive.vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, position));
+        VAO::LinkAttrib(this_primitive.vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, normal));
+        VAO::LinkAttrib(this_primitive.vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, texture_coord));
+
+        this_primitive.vbo.Bind();
+        glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, joints));
+        glEnableVertexAttribArray(3);
+
+        VAO::LinkAttrib(this_primitive.vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
+        VAO::LinkAttrib(this_primitive.vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
+
+        if (std::holds_alternative<uint32_t>(this_primitive.indices)) {
+            auto& vec = std::get<std::vector<uint32_t>>(this_primitive.indices);
+            this_primitive.ebo.Create<uint32_t>(vec);
+            this_primitive.ebo.Bind();
+        }
+        else if (std::holds_alternative<uint16_t>(this_primitive.indices)) {
+            auto& vec = std::get<std::vector<uint16_t>>(this_primitive.indices);
+            this_primitive.ebo.Create<uint16_t>(vec);
+            this_primitive.ebo.Bind();
+        }
+        else if (std::holds_alternative<uint8_t>(this_primitive.indices)) {
+            auto& vec = std::get<std::vector<uint8_t>>(this_primitive.indices);
+            this_primitive.ebo.Create<uint8_t>(vec);
+            this_primitive.ebo.Bind();
+        }
+
+        this_primitive.vbo.Unbind();
+        this_primitive.vao.Unbind();
+        this_primitive.ebo.Unbind();
     }
 }
 
@@ -163,13 +202,14 @@ void Model::loadVertices(const tinygltf::Model& model, Primitive::Vertices& this
     }
 }
 
-void Model::loadIndices(const tinygltf::Model& model, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive) {
-    if (primitive.indices < 0) assert(1);
+void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive) {
+    if (primitive.indices < 0)
+        throw std::runtime_error("Primitive has no indices");
 
-    const tinygltf::Accessor&   accessor   = model.accessors[primitive.indices];
-    const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-    const tinygltf::Buffer&     buffer     = model.buffers[bufferView.buffer];
-    const uint8_t*              data_ptr   = buffer.data.data() + bufferView.byteOffset + accessor.byteOffset;
+    const tinygltf::Accessor&   accessor    = model.accessors[primitive.indices];
+    const tinygltf::BufferView& buffer_view = model.bufferViews[accessor.bufferView];
+    const tinygltf::Buffer&     buffer      = model.buffers[buffer_view.buffer];
+    const uint8_t*              data_ptr    = buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset;
 
     switch (accessor.componentType) {
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE: {
@@ -177,34 +217,49 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive::Indices& this_i
             auto& vec    = std::get<std::vector<uint8_t>>(this_indices);
             vec.resize(accessor.count);
             memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint8_t));
+
+            this_primitive.index_type   = GL_UNSIGNED_BYTE;
+            this_primitive.index_count  = accessor.count;
+            this_primitive.index_offset = 0;
+
             break;
         }
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
             this_indices = std::vector<uint16_t>{};
             auto& vec    = std::get<std::vector<uint16_t>>(this_indices);
             vec.resize(accessor.count);
-            if (bufferView.byteStride == 0 || bufferView.byteStride == sizeof(uint16_t)) { // tightly packed
+            if (buffer_view.byteStride == 0 || buffer_view.byteStride == sizeof(uint16_t)) { // tightly packed
                 memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint16_t));
             }
             else {
                 for (size_t i = 0; i < accessor.count; i++) {
-                    vec[i] = *reinterpret_cast<const uint16_t*>(data_ptr + i * bufferView.byteStride);
+                    vec[i] = *reinterpret_cast<const uint16_t*>(data_ptr + i * buffer_view.byteStride);
                 }
             }
+
+            this_primitive.index_type   = GL_UNSIGNED_SHORT;
+            this_primitive.index_count  = accessor.count;
+            this_primitive.index_offset = 0;
+
             break;
         }
         case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT: {
             this_indices = std::vector<uint32_t>{};
             auto& vec    = std::get<std::vector<uint32_t>>(this_indices);
             vec.resize(accessor.count);
-            if (bufferView.byteStride == 0 || bufferView.byteStride == sizeof(uint32_t)) { // tightly packed
+            if (buffer_view.byteStride == 0 || buffer_view.byteStride == sizeof(uint32_t)) { // tightly packed
                 memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint16_t));
             }
             else {
                 for (size_t i = 0; i < accessor.count; i++) {
-                    vec[i] = *reinterpret_cast<const uint32_t*>(data_ptr + i * bufferView.byteStride);
+                    vec[i] = *reinterpret_cast<const uint32_t*>(data_ptr + i * buffer_view.byteStride);
                 }
             }
+
+            this_primitive.index_type   = GL_UNSIGNED_INT;
+            this_primitive.index_count  = accessor.count;
+            this_primitive.index_offset = 0;
+
             break;
         }
         default:
@@ -230,7 +285,7 @@ void Model::loadTextures(const tinygltf::Model& model) {
         }
 
         int                        gltf_texture_index  = static_cast<int>(i);
-        Texture::TextureColorSpace texture_color_space = Texture::TextureColorSpace::Linear;
+        Texture::TextureColorSpace texture_color_space = Texture::TextureColorSpace::LINEAR;
 
         for (auto& material : m_materials) {
             if (material.pbr_metallic_roughness.base_color_texture.index == gltf_texture_index ||
@@ -365,12 +420,12 @@ void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
 
     this->bindMaterial(material, shader);
 
-    //glBindVertexArray(primitive.vao);
+    primitive.vao.Bind();
 
-    //if (primitive.index_count > 0)
-    //    glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, primitive.index_offset);
-    //else
-    //    glDrawArrays(GL_TRIANGLES, 0, primitive.vertex_count);
+    if (primitive.index_count > 0)
+        glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, &primitive.index_offset);
+    else
+        glDrawArrays(GL_TRIANGLES, 0, primitive.vertices.size());
 }
 
 void Model::bindMaterial(const Material& material, const Shader& shader) {

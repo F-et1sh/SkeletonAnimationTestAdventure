@@ -8,11 +8,10 @@
 class Texture {
 public:
     enum class TextureColorSpace {
-        Linear,
+        LINEAR,
         SRGB
     };
 
-public:
     Texture() = default;
     ~Texture();
 
@@ -34,6 +33,5 @@ private:
                              GLenum               internal_format,
                              GLenum               data_format);
 
-private:
     GLuint m_index{ 0 };
 };

@@ -52,10 +52,17 @@ public:
     EBO() = default;
     ~EBO();
 
-    void Create(std::vector<GLuint>& indices);
+    template <typename T = GLuint>
+    void Create(std::vector<T>& indices) {
+        glGenBuffers(1, &m_index);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);
+    }
 
     void        Bind() const;
     static void Unbind();
+
+    inline unsigned int index() const noexcept { return m_index; }
 
 private:
     GLuint m_index;
