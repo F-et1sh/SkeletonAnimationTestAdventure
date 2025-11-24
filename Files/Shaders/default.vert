@@ -36,7 +36,7 @@ void main() {
 
     i_texCoord = a_texCoord;
 
-    vec4 world_pos = u_model * skinned_position;
+    vec4 world_pos = u_model * vec4(a_position, 1.0);
     i_position = world_pos.xyz;
 
     gl_Position = u_cameraMatrix * world_pos;

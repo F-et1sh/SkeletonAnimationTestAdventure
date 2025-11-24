@@ -1,22 +1,13 @@
 #pragma once
 #include <print>
 #include <string>
-#include <variant>
 
-#include "tiny_gltf.h"
-
+#include "Texture.hpp"
 #include "Material.hpp"
 #include "Shader.hpp"
-#include "Texture.hpp"
 #include "VertexBuffers.hpp"
 
 struct Primitive {
-    using Vertices = std::vector<Vertex>;
-    using Indices  = std::variant<
-         std::vector<uint8_t>,
-         std::vector<uint16_t>,
-         std::vector<uint32_t>>;
-
     Vertices vertices;
     Indices  indices;
 
@@ -113,7 +104,7 @@ public:
 
     void Release();
     void Initialize(const std::filesystem::path& path);
-    void Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj);
+    void Draw(const Shader& shader);
 
 private:
     void        loadNodes(const tinygltf::Model& model);
@@ -121,8 +112,8 @@ private:
     void        loadSkins(const tinygltf::Model& model);
     void        loadMeshes(const tinygltf::Model& model);
     void        loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
-    void        loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive);
-    static void loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive);
+    void        loadVertices(const tinygltf::Model& model, Vertices& this_vertices, const tinygltf::Primitive& primitive);
+    static void loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Indices& this_indices, const tinygltf::Primitive& primitive);
     void        loadMaterials(const tinygltf::Model& model);
     void        loadTextures(const tinygltf::Model& model);
     void        loadAnimations(const tinygltf::Model& model);

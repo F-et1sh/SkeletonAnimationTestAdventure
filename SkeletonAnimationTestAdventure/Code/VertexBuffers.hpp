@@ -1,4 +1,5 @@
 #pragma once
+#include <variant>
 #include <vector>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -16,6 +17,12 @@ struct Vertex {
     ~Vertex() = default;
 };
 #pragma pack(pop)
+
+using Vertices = std::vector<Vertex>;
+using Indices  = std::variant<
+     std::vector<uint8_t>,
+     std::vector<uint16_t>,
+     std::vector<uint32_t>>;
 
 class VBO {
 public:
@@ -52,12 +59,8 @@ public:
     EBO() = default;
     ~EBO();
 
-    template <typename T = GLuint>
-    void Create(std::vector<T>& indices) {
-        glGenBuffers(1, &m_index);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);
-    }
+    void Create(std::vector<GLuint>& indices);
+    void Create(Indices& indices_variant);
 
     void        Bind() const;
     static void Unbind();

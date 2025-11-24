@@ -41,6 +41,23 @@ VAO::~VAO() {
     glDeleteVertexArrays(1, &m_index);
 }
 
+void EBO::Create(std::vector<GLuint>& indices) {
+    glGenBuffers(1, &m_index);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+}
+
+void EBO::Create(Indices& indices_variant) {
+    glGenBuffers(1, &m_index);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
+
+    std::visit([&](const auto& indices) {
+        using T = std::ranges::range_value_t<std::decay_t<decltype(indices)>>;
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(), GL_STATIC_DRAW);
+    },
+               indices_variant);
+}
+
 void EBO::Bind() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
 }

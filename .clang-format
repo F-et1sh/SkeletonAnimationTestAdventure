@@ -27,7 +27,7 @@ SpaceAfterCStyleCast: true
 SpaceBeforeParens: ControlStatements
 PointerAlignment: Left
 DerivePointerAlignment: false
-SortIncludes: true
+SortIncludes: false # never turn this on. Wtf, why it is sorting by the freaking alphabet ??
 ReflowComments: false
 IndentCaseLabels: true
 Cpp11BracedListStyle: false

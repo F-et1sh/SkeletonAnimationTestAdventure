@@ -4,6 +4,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
+void Model::Release() {
+}
+
 void Model::Initialize(const std::filesystem::path& path) {
     tinygltf::Model    model{};
     tinygltf::TinyGLTF loader{};
@@ -40,11 +43,8 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadAnimations(model);
 }
 
-void Model::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj) {
+void Model::Draw(const Shader& shader) {
     shader.Bind();
-
-    glm::mat4 camera_matrix = view * proj;
-    shader.setUniformMat4("u_CameraMatrix", camera_matrix);
 
     this->updateNodeTransforms();
     this->updateSkinMatrices(shader);
@@ -150,21 +150,8 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
         VAO::LinkAttrib(this_primitive.vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
         VAO::LinkAttrib(this_primitive.vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
 
-        if (std::holds_alternative<uint32_t>(this_primitive.indices)) {
-            auto& vec = std::get<std::vector<uint32_t>>(this_primitive.indices);
-            this_primitive.ebo.Create<uint32_t>(vec);
-            this_primitive.ebo.Bind();
-        }
-        else if (std::holds_alternative<uint16_t>(this_primitive.indices)) {
-            auto& vec = std::get<std::vector<uint16_t>>(this_primitive.indices);
-            this_primitive.ebo.Create<uint16_t>(vec);
-            this_primitive.ebo.Bind();
-        }
-        else if (std::holds_alternative<uint8_t>(this_primitive.indices)) {
-            auto& vec = std::get<std::vector<uint8_t>>(this_primitive.indices);
-            this_primitive.ebo.Create<uint8_t>(vec);
-            this_primitive.ebo.Bind();
-        }
+        this_primitive.ebo.Create(this_primitive.indices);
+        this_primitive.ebo.Bind();
 
         VBO::Unbind();
         VAO::Unbind();
@@ -172,7 +159,7 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
     }
 }
 
-void Model::loadVertices(const tinygltf::Model& model, Primitive::Vertices& this_vertices, const tinygltf::Primitive& primitive) {
+void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, const tinygltf::Primitive& primitive) {
     std::vector<glm::vec3> positions{};
     this->readAttribute(model, primitive, "POSITION", positions);
 
@@ -215,7 +202,7 @@ void Model::loadVertices(const tinygltf::Model& model, Primitive::Vertices& this
     }
 }
 
-void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Primitive::Indices& this_indices, const tinygltf::Primitive& primitive) {
+void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Indices& this_indices, const tinygltf::Primitive& primitive) {
     if (primitive.indices < 0) {
         throw std::runtime_error("Primitive has no indices");
     }
@@ -435,7 +422,7 @@ void Model::drawNode(const Node& node, const Shader& shader) {
 }
 
 void Model::drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix) {
-    shader.setUniformMat4("u_Model", matrix);
+    shader.setUniformMat4("u_model", matrix);
 
     for (const Primitive& primitive : mesh.primitives) {
         this->drawPrimitive(primitive, shader);
@@ -450,7 +437,7 @@ void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
     primitive.vao.Bind();
 
     if (primitive.index_count > 0) {
-        glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, &primitive.index_offset);
+        glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, (void*)primitive.index_offset);
     }
     else {
         glDrawArrays(GL_TRIANGLES, 0, primitive.vertices.size());
@@ -483,22 +470,22 @@ void Model::bindTexture(const Shader& shader, const std::string& uniform, int te
 }
 
 void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {
-    assert(src.size() == 2);
+    if (src.size() != 2) return;
     dst = glm::vec2(static_cast<float>(src[0]), static_cast<float>(src[1]));
 }
 
 void Model::readVector(glm::vec3& dst, const std::vector<double>& src) {
-    assert(src.size() == 3);
+    if (src.size() != 3) return;
     dst = glm::vec3(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
 }
 
 void Model::readVector(glm::vec4& dst, const std::vector<double>& src) {
-    assert(src.size() == 4);
+    if (src.size() != 4) return;
     dst = glm::vec4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
 }
 
 void Model::readVector(glm::quat& dst, const std::vector<double>& src) {
-    assert(src.size() == 4);
+    if (src.size() != 4) return;
     dst = glm::quat(static_cast<float>(src[3]), static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
 }
 
