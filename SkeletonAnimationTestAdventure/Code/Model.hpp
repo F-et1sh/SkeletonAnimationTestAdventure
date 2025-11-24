@@ -123,6 +123,12 @@ private:
 private:
     void updateNodeTransforms();
     void updateNodeRecursive(int index, const glm::mat4& parent);
+    void updateSkinMatrices(const Shader& shader);
+    void drawNode(const Node& node, const Shader& shader);
+    void drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix);
+    void drawPrimitive(const Primitive& primitive, const Shader& shader);
+    void bindMaterial(const Material& material, const Shader& shader);
+    void bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot);
 
 private:
     template <typename T>

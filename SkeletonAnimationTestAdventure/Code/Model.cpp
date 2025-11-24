@@ -40,10 +40,15 @@ void Model::Initialize(const std::filesystem::path& path) {
 
 void Model::Draw(const Shader& shader, const glm::mat4& view, const glm::mat4& proj) {
     shader.Bind();
+
     glm::mat4 camera_matrix = view * proj;
     shader.setUniformMat4("u_CameraMatrix", camera_matrix);
 
+    this->updateNodeTransforms();
+    this->updateSkinMatrices(shader);
 
+    for (int i : m_sceneRoots)
+        drawNode(m_nodes[i], shader);
 }
 
 void Model::loadNodes(const tinygltf::Model& model) {
@@ -319,7 +324,7 @@ void Model::loadAnimations(const tinygltf::Model& model) {
 
 void Model::updateNodeTransforms() {
     for (int root : m_sceneRoots)
-        updateNodeRecursive(root, glm::mat4(1.0f));
+        this->updateNodeRecursive(root, glm::mat4(1.0f));
 }
 
 void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
@@ -333,7 +338,62 @@ void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
     node.matrix = parent * local;
 
     for (int child : node.children)
-        updateNodeRecursive(child, node.matrix);
+        this->updateNodeRecursive(child, node.matrix);
+}
+
+void Model::updateSkinMatrices(const Shader& shader) {
+    // ..
+}
+
+void Model::drawNode(const Node& node, const Shader& shader) {
+    if (node.mesh >= 0)
+        this->drawMesh(m_meshes[node.mesh], shader, node.matrix);
+
+    for (int child : node.children)
+        this->drawNode(m_nodes[child], shader);
+}
+
+void Model::drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix) {
+    shader.setUniformMat4("u_Model", matrix);
+
+    for (const Primitive& primitive : mesh.primitives)
+        this->drawPrimitive(primitive, shader);
+}
+
+void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
+    const Material& material = m_materials[primitive.material];
+
+    this->bindMaterial(material, shader);
+
+    //glBindVertexArray(primitive.vao);
+
+    //if (primitive.index_count > 0)
+    //    glDrawElements(GL_TRIANGLES, primitive.index_count, primitive.index_type, primitive.index_offset);
+    //else
+    //    glDrawArrays(GL_TRIANGLES, 0, primitive.vertex_count);
+}
+
+void Model::bindMaterial(const Material& material, const Shader& shader) {
+    shader.setUniformVec4("u_baseColorFactor", material.pbr_metallic_roughness.base_color_factor);
+    shader.setUniformFloat("u_metallicFactor", material.pbr_metallic_roughness.metallic_factor);
+    shader.setUniformFloat("u_roughnessFactor", material.pbr_metallic_roughness.roughness_factor);
+
+    int slot = 0;
+
+    bindTexture(shader, "u_baseColorTex", material.pbr_metallic_roughness.base_color_texture.index, slot++);                 // 0
+    bindTexture(shader, "u_metallicRoughnessTex", material.pbr_metallic_roughness.metallic_roughness_texture.index, slot++); // 1
+    bindTexture(shader, "u_normalTex", material.normal_texture.index, slot++);                                               // 2
+    bindTexture(shader, "u_occlusionTex", material.occlusion_texture.index, slot++);                                         // 3
+    bindTexture(shader, "u_emissiveTex", material.emissive_texture.index, slot++);                                           // 4
+}
+
+void Model::bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot) {
+    shader.setUniformInt(uniform.c_str(), slot);
+
+    if (texture_index < 0) return;
+
+    glActiveTexture(GL_TEXTURE0 + slot);
+    m_textures[texture_index].Bind();
 }
 
 void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {

@@ -1,43 +1,43 @@
 #version 460
 
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec2 a_TexCoord;
-layout(location = 3) in uvec4 a_Joints;
-layout(location = 4) in vec4 a_Weights;
-layout(location = 5) in vec4 a_Tangent;
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec2 a_texCoord;
+layout(location = 3) in uvec4 a_joints;
+layout(location = 4) in vec4 a_weights;
+layout(location = 5) in vec4 a_tangent;
 
-out vec3 i_Position;
-out vec2 i_TexCoord;
+out vec3 i_position;
+out vec2 i_texCoord;
 out mat3 i_TBN;
 
-uniform mat4 u_CameraMatrix;
-uniform mat4 u_Model;
-uniform mat4 u_Bones[128];
+uniform mat4 u_cameraMatrix;
+uniform mat4 u_model;
+uniform mat4 u_bones[128];
 
 void main() {
     mat4 skin_matrix =
-        u_Bones[a_Joints.x] * a_Weights.x +
-        u_Bones[a_Joints.y] * a_Weights.y +
-        u_Bones[a_Joints.z] * a_Weights.z +
-        u_Bones[a_Joints.w] * a_Weights.w;
+        u_bones[a_joints.x] * a_weights.x +
+        u_bones[a_joints.y] * a_weights.y +
+        u_bones[a_joints.z] * a_weights.z +
+        u_bones[a_joints.w] * a_weights.w;
 
-    vec4 skinned_position = skin_matrix * vec4(a_Position, 1.0);
+    vec4 skinned_position = skin_matrix * vec4(a_position, 1.0);
 
     mat3 skin = mat3(skin_matrix);
-    vec3 skinned_normal  = normalize(skin * a_Normal);
-    vec3 skinned_tangent = normalize(skin * a_Tangent.xyz);
+    vec3 skinned_normal  = normalize(skin * a_normal);
+    vec3 skinned_tangent = normalize(skin * a_tangent.xyz);
 
-    vec3 T = normalize(mat3(u_Model) * skinned_tangent);
-    vec3 N = normalize(mat3(u_Model) * skinned_normal);
-    vec3 B = cross(N, T) * a_Tangent.w;
+    vec3 T = normalize(mat3(u_model) * skinned_tangent);
+    vec3 N = normalize(mat3(u_model) * skinned_normal);
+    vec3 B = cross(N, T) * a_tangent.w;
 
     i_TBN = mat3(T, B, N);
 
-    i_TexCoord = a_TexCoord;
+    i_texCoord = a_texCoord;
 
-    vec4 world_pos = u_Model * skinned_position;
-    i_Position = world_pos.xyz;
+    vec4 world_pos = u_model * skinned_position;
+    i_position = world_pos.xyz;
 
-    gl_Position = u_CameraMatrix * world_pos;
+    gl_Position = u_cameraMatrix * world_pos;
 }
