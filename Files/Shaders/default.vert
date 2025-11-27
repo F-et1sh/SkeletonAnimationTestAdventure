@@ -28,8 +28,8 @@ void main() {
     vec3 skinned_normal  = normalize(skin * a_normal);
     vec3 skinned_tangent = normalize(skin * a_tangent.xyz);
 
-    vec3 T = normalize(mat3(u_model) * skinned_tangent);
-    vec3 N = normalize(mat3(u_model) * skinned_normal);
+    vec3 T = normalize(mat3(u_model) * a_tangent.xyz);
+    vec3 N = normalize(mat3(u_model) * a_normal);
     vec3 B = cross(N, T) * a_tangent.w;
 
     i_TBN = mat3(T, B, N);

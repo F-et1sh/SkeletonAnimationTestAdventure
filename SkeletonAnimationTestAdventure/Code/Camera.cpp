@@ -12,8 +12,8 @@ void Camera::UpdateMatrix(float fov_deg, float near_plane, float far_plane) {
     m_cameraMatrix = projection * view;
 }
 
-void Camera::UploadUniform(Shader& shader, const char* uniform) {
-    glUniformMatrix4fv(glGetUniformLocation(shader.reference(), uniform), 1, GL_FALSE, glm::value_ptr(m_cameraMatrix));
+void Camera::UploadUniforms(Shader& shader, const char* uniform) {
+    shader.setUniformMat4(uniform, m_cameraMatrix);
 }
 
 void Camera::Inputs(GLFWwindow* window) {

@@ -41,6 +41,10 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadMaterials(model);
     this->loadTextures(model);
     this->loadAnimations(model);
+
+    for (int i : m_sceneRoots) { // temp
+        m_nodes[i].rotation = glm::quat_cast(glm::rotate(glm::mat4{ 1.0f }, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    }
 }
 
 void Model::Draw(const Shader& shader) {

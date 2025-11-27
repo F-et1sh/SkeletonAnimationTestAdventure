@@ -9,7 +9,9 @@ public:
 
     void Inputs(GLFWwindow* window);
     void UpdateMatrix(float fov_deg, float near_plane, float far_plane);
-    void UploadUniform(Shader& shader, const char* uniform);
+    void UploadUniforms(Shader& shader, const char* uniform);
+
+    inline const glm::vec3& getPosition() const noexcept { return m_position; }
 
 private:
     glm::vec3 m_position{};

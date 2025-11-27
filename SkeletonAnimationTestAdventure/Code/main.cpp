@@ -45,7 +45,11 @@ int main() {
 
         camera.Inputs(window);
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
-        camera.UploadUniform(shader, "u_cameraMatrix");
+        camera.UploadUniforms(shader, "u_cameraMatrix");
+
+        shader.setUniformVec3("u_lightDirection", glm::vec3(5, 5, 5));
+        shader.setUniformVec3("u_lightColor", glm::vec3(3, 3, 3));
+        shader.setUniformVec3("u_cameraPosition", camera.getPosition());
 
         model.Draw(shader);
 
