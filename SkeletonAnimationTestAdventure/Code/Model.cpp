@@ -46,8 +46,9 @@ void Model::Initialize(const std::filesystem::path& path) {
 void Model::Draw(const Shader& shader, float time) {
     shader.Bind();
 
-    if (!m_animations.empty())
-        this->applyAnimationToNodes(0, time); // play the first animation
+    if (!m_animations.empty()) {
+        this->applyAnimationToNodes(3, time); // play the first animation
+    }
 
     this->updateNodeTransforms();
 

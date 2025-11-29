@@ -7,8 +7,6 @@
 #include "Shader.hpp"
 #include "VertexBuffers.hpp"
 
-#include <GLFW/glfw3.h>
-
 inline static constexpr size_t JOINTS_COUNT = 128;
 
 struct Primitive {
