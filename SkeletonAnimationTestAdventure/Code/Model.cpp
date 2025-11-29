@@ -27,11 +27,11 @@ void Model::Initialize(const std::filesystem::path& path) {
     }
     if (!error.empty()) {
         std::println("ERROR : {}", error);
-        assert(0);
+        assert(1);
     }
     if (!good) {
         std::println("ERROR : Failed to parse glTF : {}", filename);
-        assert(0);
+        assert(1);
     }
 
     this->loadNodes(model);
@@ -50,7 +50,9 @@ void Model::Draw(const Shader& shader, float time) {
         this->applyAnimationToNodes(0, time); // play the first animation
 
     this->updateNodeTransforms();
-    this->updateSkinMatrices();
+
+    if (!m_animations.empty())
+        this->updateSkinMatrices();
 
     for (int i : m_sceneRoots) {
         drawNode(m_nodes[i], shader);
@@ -495,7 +497,9 @@ void Model::drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, con
     if (skin_index >= 0) {
         const Skin& skin = m_skins[skin_index];
         shader.setUniformMat4Array("u_bones", skin.bone_final_matrices.data(), JOINTS_COUNT);
+        shader.setUniformInt("u_isAnimated", true);
     }
+    shader.setUniformInt("u_isAnimated", false);
 
     shader.setUniformMat4("u_model", matrix);
 

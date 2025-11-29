@@ -14,6 +14,8 @@ void Texture::Create(const std::filesystem::path& path) {
     int            component = 0;
     unsigned char* bytes     = stbi_load(path.string().c_str(), &width, &height, &component, 0);
 
+    if (!bytes) assert(1);
+
     GLenum internal_format{};
     GLenum data_format{};
 

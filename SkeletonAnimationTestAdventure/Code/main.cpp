@@ -37,7 +37,7 @@ int main() {
     shader.Bind();
 
     Model model{};
-    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\test_character\\scene.gltf");
+    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\grindstone\\scene.gltf");
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);

@@ -81,7 +81,7 @@ void main() {
     float G   = GeometrySmith(N, V, L, roughness);
     vec3  F   = fresnelSchlick(max(dot(H, V), 0.0f), F0);
     
-    vec3 specular = (NDF * G * F) / max(4.0f * max(dot(N,V), 0.0f) * N_dot_L, 0.001f);
+    vec3 specular = (NDF * G * F) / max(4.0f * max(dot(N, V), 0.0f) * N_dot_L, 0.001f);
 
     vec3 kS = F;
     vec3 kD = (1.0 - kS) * (1.0 - metallic);
