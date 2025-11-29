@@ -251,15 +251,18 @@ bool LoadGLTF(const std::string& filename, std::vector<Vertex>& outVertices, std
         nodes = LoadNodes(gltf);
         skin  = LoadSkin(gltf);
         boneMatrices.resize(skin.joints.size());
-        
+        
+
 
          i = 0; i < skin.joints.size(); i++) {
             int jointIndex = skin.joints[i];
-        
+        
+
 
             lobalTransform = nodes[jointIndex].globalMatrix;
             glm::mat4 invBind         = skin.inverseBindMatrices[i];
-        
+        
+
 
             s[i] = globalTransform * invBind;
         }

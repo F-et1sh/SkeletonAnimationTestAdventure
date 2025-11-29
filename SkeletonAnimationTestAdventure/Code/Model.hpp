@@ -82,9 +82,12 @@ struct Node {
     glm::vec3 translation{ 0, 0, 0 };
     glm::mat4 matrix{ 1.0F };
 
+    glm::mat4 global_matrix{ 1.0f };
+
     std::vector<double> weights;
 
     Node() = default;
+    ~Node() = default;
 };
 
 struct Skin {
@@ -104,7 +107,7 @@ public:
 
     void Release();
     void Initialize(const std::filesystem::path& path);
-    void Draw(const Shader& shader);
+    void Draw(const Shader& shader, float time);
 
 private:
     void        loadNodes(const tinygltf::Model& model);
@@ -119,6 +122,7 @@ private:
     void        loadAnimations(const tinygltf::Model& model);
 
 private:
+    void applyAnimationToNodes(size_t i, float time);
     void updateNodeTransforms();
     void updateNodeRecursive(int index, const glm::mat4& parent);
     void updateSkinMatrices(const Shader& shader);

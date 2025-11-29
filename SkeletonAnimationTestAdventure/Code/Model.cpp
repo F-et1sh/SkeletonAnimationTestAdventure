@@ -47,8 +47,10 @@ void Model::Initialize(const std::filesystem::path& path) {
     }
 }
 
-void Model::Draw(const Shader& shader) {
+void Model::Draw(const Shader& shader, float time) {
     shader.Bind();
+
+    this->applyAnimationToNodes(0, time); // play the first animation
 
     this->updateNodeTransforms();
     this->updateSkinMatrices(shader);
@@ -109,6 +111,14 @@ void Model::loadSkins(const tinygltf::Model& model) {
 
         size_t accessor_index = skin.inverseBindMatrices;
         this->readAttribute(model, accessor_index, this_skin.inverse_bind_matrices);
+
+        /*std::vector<glm::mat4> ibm_bone(skin.joints.size());
+
+        for (int bone = 0; bone < skin.joints.size(); bone++) {
+            ibm_bone[bone] = this_skin.inverse_bind_matrices[bone];
+        }
+
+        this_skin.inverse_bind_matrices = ibm_bone;*/
 
         this_skin.skeleton = skin.skeleton;
         this_skin.joints   = skin.joints;
@@ -399,6 +409,43 @@ void Model::loadAnimations(const tinygltf::Model& model) {
             else if (sampler.interpolation == "CUBICSPLINE") {
                 this_sampler.interpolation = AnimationSampler::InterpolationMode::CUBICSPLINE;
             }
+        }
+    }
+}
+
+void Model::applyAnimationToNodes(size_t i, float time) {
+    const Animation& animation = m_animations[i];
+    for (const AnimationChannel& channel : animation.channels) {
+        const AnimationSampler& sampler = animation.samplers[channel.sampler];
+
+        if (sampler.times.empty() || sampler.values.empty()) {
+            continue; // skip unsupported sampler
+        }
+
+        int k1 = 0;
+        while (k1 < sampler.times.size() - 1 && time > sampler.times[k1 + 1]) {
+            k1++;
+        }
+        int k2 = k1 + 1;
+
+        glm::vec4 v1 = sampler.values[k1];
+        glm::vec4 v2 = sampler.values[k2];
+
+        float t = (time - sampler.times[k1]) / (sampler.times[k2] - sampler.times[k1]);
+        t       = glm::clamp(t, 0.0F, 1.0F);
+
+        Node node = m_nodes[channel.target_node];
+
+        if (channel.target_path == "rotation") {
+            glm::quat q1(v1.w, v1.x, v1.y, v1.z);
+            glm::quat q2(v2.w, v2.x, v2.y, v2.z);
+            node.rotation = glm::mix(q1, q2, t); // slerp replaced
+        }
+        else if (channel.target_path == "translation") {
+            node.translation = glm::mix(glm::vec3(v1), glm::vec3(v2), t);
+        }
+        else if (channel.target_path == "scale") {
+            node.scale = glm::mix(glm::vec3(v1), glm::vec3(v2), t);
         }
     }
 }
