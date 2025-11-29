@@ -7,6 +7,8 @@
 #include "Shader.hpp"
 #include "VertexBuffers.hpp"
 
+#include <GLFW/glfw3.h>
+
 inline static constexpr size_t JOINTS_COUNT = 128;
 
 struct Primitive {
@@ -183,7 +185,7 @@ private:
             }
             else if constexpr (std::is_same_v<T, glm::mat4>) {
                 glm::mat4 m{};
-                memcpy(glm::value_ptr(m), data_ptr + (i * sizeof(glm::mat4)), sizeof(glm::mat4));
+                memcpy(glm::value_ptr(m), data_ptr + i * stride, sizeof(glm::mat4));
                 out[i] = m;
             }
         }

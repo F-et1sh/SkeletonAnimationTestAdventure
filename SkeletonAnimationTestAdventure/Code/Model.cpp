@@ -41,10 +41,6 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadMaterials(model);
     this->loadTextures(model);
     this->loadAnimations(model);
-
-    for (int i : m_sceneRoots) { // temp
-        m_nodes[i].rotation = glm::quat_cast(glm::rotate(glm::mat4{ 1.0f }, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-    }
 }
 
 void Model::Draw(const Shader& shader, float time) {
@@ -278,7 +274,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
             auto& vec    = std::get<std::vector<uint32_t>>(this_indices);
             vec.resize(accessor.count);
             if (buffer_view.byteStride == 0 || buffer_view.byteStride == sizeof(uint32_t)) { // tightly packed
-                memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint16_t));
+                memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint32_t));
             }
             else {
                 for (size_t i = 0; i < accessor.count; i++) {
