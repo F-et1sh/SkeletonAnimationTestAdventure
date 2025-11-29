@@ -15,7 +15,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Test", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(2560, 1440, "Test", nullptr, nullptr);
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window" << '\n';
         glfwTerminate();
@@ -27,17 +27,17 @@ int main() {
         return -1;
     }
 
-    glViewport(0, 0, 1920, 1080);
+    glViewport(0, 0, 2560, 1440);
     glEnable(GL_DEPTH_TEST);
 
-    Camera camera(1920, 1080, glm::vec3{});
+    Camera camera(2560, 1440, glm::vec3{});
 
     Shader shader;
     shader.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Shaders\\default");
     shader.Bind();
 
     Model model{};
-    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\first_person_cso_airbuster\\scene.gltf");
+    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\rifle-awp-weapon-model-cs2-converted\\scene.gltf");
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
