@@ -7,6 +7,8 @@
 #include "Shader.hpp"
 #include "VertexBuffers.hpp"
 
+inline static constexpr size_t JOINTS_COUNT = 128;
+
 struct Primitive {
     Vertices vertices;
     Indices  indices;
@@ -38,7 +40,7 @@ struct Mesh {
 struct AnimationChannel {
     int         sampler{ -1 };
     int         target_node{ -1 };
-    std::string target_path; // "rotation", "translation", "scale"
+    std::string target_path; // "rotation", "translation", "scale" // TODO : use enum class instead
 
     AnimationChannel()  = default;
     ~AnimationChannel() = default;
@@ -77,16 +79,16 @@ struct Node {
     std::string      name;
     std::vector<int> children;
 
-    glm::quat rotation{ 1, 0, 0, 0 };
+    glm::quat rotation{ 1, 0, 0, 0 }; // order : xyzw
     glm::vec3 scale{ 1, 1, 1 };
     glm::vec3 translation{ 0, 0, 0 };
-    glm::mat4 matrix{ 1.0F };
 
+    glm::mat4 local_matrix{ 1.0F };
     glm::mat4 global_matrix{ 1.0f };
 
     std::vector<double> weights;
 
-    Node() = default;
+    Node()  = default;
     ~Node() = default;
 };
 
@@ -95,6 +97,8 @@ struct Skin {
     std::vector<glm::mat4> inverse_bind_matrices;
     int                    skeleton{ -1 }; // the index of the node used as a skeleton root
     std::vector<int>       joints;         // indices of skeleton nodes
+
+    std::vector<glm::mat4> bone_final_matrices;
 
     Skin()  = default;
     ~Skin() = default;
@@ -122,29 +126,25 @@ private:
     void        loadAnimations(const tinygltf::Model& model);
 
 private:
-    void applyAnimationToNodes(size_t i, float time);
+    void applyAnimationToNodes(int index, float time);
     void updateNodeTransforms();
     void updateNodeRecursive(int index, const glm::mat4& parent);
-    void updateSkinMatrices(const Shader& shader);
+    void updateSkinMatrices();
     void drawNode(const Node& node, const Shader& shader);
-    void drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix);
+    void drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, const glm::mat4& matrix);
     void drawPrimitive(const Primitive& primitive, const Shader& shader);
     void bindMaterial(const Material& material, const Shader& shader);
     void bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot);
 
 private:
     template <typename T>
+        requires(std::is_same_v<T, glm::vec2> ||
+                 std::is_same_v<T, glm::vec3> ||
+                 std::is_same_v<T, glm::vec4> ||
+                 std::is_same_v<T, glm::uvec4> ||
+                 std::is_same_v<T, glm::u16vec4> ||
+                 std::is_same_v<T, glm::mat4>)
     void readAttribute(const tinygltf::Model& model, size_t accessor_index, std::vector<T>& out) {
-
-        if constexpr (!(
-                          std::is_same_v<T, glm::vec2> ||
-                          std::is_same_v<T, glm::vec3> ||
-                          std::is_same_v<T, glm::vec4> ||
-                          std::is_same_v<T, glm::u8vec4> ||
-                          std::is_same_v<T, glm::u16vec4>) ) {
-            assert("Unsupported attribute type");
-        }
-
         const tinygltf::Accessor&   accessor    = model.accessors[accessor_index];
         const tinygltf::BufferView& buffer_view = model.bufferViews[accessor.bufferView];
         const tinygltf::Buffer&     buffer      = model.buffers[buffer_view.buffer];
@@ -176,10 +176,6 @@ private:
             else if constexpr (std::is_same_v<T, glm::vec4>) {
                 const auto* f = reinterpret_cast<const float*>(p);
                 out[i]        = glm::vec4(f[0], f[1], f[2], f[3]);
-            }
-            else if constexpr (std::is_same_v<T, glm::u8vec4>) {
-                const auto* ptr = p;
-                out[i]          = glm::u8vec4(ptr[0], ptr[1], ptr[2], ptr[3]);
             }
             else if constexpr (std::is_same_v<T, glm::u16vec4>) {
                 const auto* ptr = reinterpret_cast<const uint16_t*>(p);

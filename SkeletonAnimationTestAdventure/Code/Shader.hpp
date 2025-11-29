@@ -61,25 +61,25 @@ public:
     // Set vec2 [ ACTIVATE SHADER FIRST ]
     void setUniformVec2(const char* uniform_name, const glm::vec2& load_uniform) const noexcept;
     // Set vec2 Array [ ACTIVATE SHADER FIRST ]
-    void setUniformVec2Array(const char* uniform_name, glm::vec2* load_uniform, unsigned int count) const noexcept;
+    void setUniformVec2Array(const char* uniform_name, const glm::vec2* load_uniform, unsigned int count) const noexcept;
     // Set vec3 [ ACTIVATE SHADER FIRST ]
     void setUniformVec3(const char* uniform_name, const glm::vec3& load_uniform) const noexcept;
     // Set vec3 [ ACTIVATE SHADER FIRST ]
-    void setUniformVec3Array(const char* uniform_name, glm::vec3* load_uniform, unsigned int count) const noexcept;
+    void setUniformVec3Array(const char* uniform_name, const glm::vec3* load_uniform, unsigned int count) const noexcept;
     // Set vec4 [ ACTIVATE SHADER FIRST ]
     void setUniformVec4(const char* uniform_name, const glm::vec4& load_uniform) const noexcept;
     // Set vec4 Array [ ACTIVATE SHADER FIRST ]
-    void setUniformVec4Array(const char* uniform_name, glm::vec4* load_uniform, unsigned int count) const noexcept;
+    void setUniformVec4Array(const char* uniform_name, const glm::vec4* load_uniform, unsigned int count) const noexcept;
 
     // Set mat3 [ ACTIVATE SHADER FIRST ]
     void setUniformMat3(const char* uniform_name, const glm::mat3& load_uniform) const noexcept;
     // Set mat3 Array [ ACTIVATE SHADER FIRST ]
-    void setUniformMat3Array(const char* uniform_name, glm::mat3* load_uniform, unsigned int count) const noexcept;
+    void setUniformMat3Array(const char* uniform_name, const glm::mat3* load_uniform, unsigned int count) const noexcept;
 
     // Set mat4 [ ACTIVATE SHADER FIRST ]
     void setUniformMat4(const char* uniform_name, const glm::mat4& load_uniform) const noexcept;
     // Set mat4 Array [ ACTIVATE SHADER FIRST ]
-    void setUniformMat4Array(const char* uniform_name, glm::mat4* load_uniform, unsigned int count) const noexcept;
+    void setUniformMat4Array(const char* uniform_name, const glm::mat4* load_uniform, unsigned int count) const noexcept;
 
 #pragma endregion
 
@@ -93,19 +93,19 @@ public:
     static void setUniformFloatArray(unsigned int shader_ref, const char* uniform_name, float* load_uniform, unsigned int count) noexcept;
 
     static void setUniformVec2(unsigned int shader_ref, const char* uniform_name, const glm::vec2& load_uniform) noexcept;
-    static void setUniformVec2Array(unsigned int shader_ref, const char* uniform_name, glm::vec2* load_uniform, unsigned int count) noexcept;
+    static void setUniformVec2Array(unsigned int shader_ref, const char* uniform_name, const glm::vec2* load_uniform, unsigned int count) noexcept;
 
     static void setUniformVec3(unsigned int shader_ref, const char* uniform_name, const glm::vec3& load_uniform) noexcept;
-    static void setUniformVec3Array(unsigned int shader_ref, const char* uniform_name, glm::vec3* load_uniform, unsigned int count) noexcept;
+    static void setUniformVec3Array(unsigned int shader_ref, const char* uniform_name, const glm::vec3* load_uniform, unsigned int count) noexcept;
 
     static void setUniformVec4(unsigned int shader_ref, const char* uniform_name, const glm::vec4& load_uniform) noexcept;
-    static void setUniformVec4Array(unsigned int shader_ref, const char* uniform_name, glm::vec4* load_uniform, unsigned int count) noexcept;
+    static void setUniformVec4Array(unsigned int shader_ref, const char* uniform_name, const glm::vec4* load_uniform, unsigned int count) noexcept;
 
     static void setUniformMat3(unsigned int shader_ref, const char* uniform_name, const glm::mat3& load_uniform) noexcept;
-    static void setUniformMat3Array(unsigned int shader_ref, const char* uniform_name, glm::mat3* load_uniform, unsigned int count) noexcept;
+    static void setUniformMat3Array(unsigned int shader_ref, const char* uniform_name, const glm::mat3* load_uniform, unsigned int count) noexcept;
 
     static void setUniformMat4(unsigned int shader_ref, const char* uniform_name, const glm::mat4& load_uniform) noexcept;
-    static void setUniformMat4Array(unsigned int shader_ref, const char* uniform_name, glm::mat4* load_uniform, unsigned int count) noexcept;
+    static void setUniformMat4Array(unsigned int shader_ref, const char* uniform_name, const glm::mat4* load_uniform, unsigned int count) noexcept;
 
 #pragma endregion
 };

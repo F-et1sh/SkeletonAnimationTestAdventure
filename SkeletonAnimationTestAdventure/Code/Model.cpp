@@ -27,11 +27,11 @@ void Model::Initialize(const std::filesystem::path& path) {
     }
     if (!error.empty()) {
         std::println("ERROR : {}", error);
-        assert(1);
+        assert(0);
     }
     if (!good) {
         std::println("ERROR : Failed to parse glTF : {}", filename);
-        assert(1);
+        assert(0);
     }
 
     this->loadNodes(model);
@@ -43,17 +43,18 @@ void Model::Initialize(const std::filesystem::path& path) {
     this->loadAnimations(model);
 
     for (int i : m_sceneRoots) { // temp
-        m_nodes[i].rotation = glm::quat_cast(glm::rotate(glm::mat4{ 1.0f }, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        m_nodes[i].rotation = glm::quat_cast(glm::rotate(glm::mat4{ 1.0f }, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     }
 }
 
 void Model::Draw(const Shader& shader, float time) {
     shader.Bind();
 
-    this->applyAnimationToNodes(0, time); // play the first animation
+    if (!m_animations.empty())
+        this->applyAnimationToNodes(0, time); // play the first animation
 
     this->updateNodeTransforms();
-    this->updateSkinMatrices(shader);
+    this->updateSkinMatrices();
 
     for (int i : m_sceneRoots) {
         drawNode(m_nodes[i], shader);
@@ -81,10 +82,10 @@ void Model::loadNodes(const tinygltf::Model& model) {
             for (int i = 0; i < 16; i++) {
                 m[i / 4][i % 4] = node.matrix[i];
             }
-            this_node.matrix = m;
+            this_node.local_matrix = m;
         }
         else {
-            this_node.matrix = glm::translate(glm::mat4(1.0F), this_node.translation) * glm::mat4_cast(this_node.rotation) * glm::scale(glm::mat4(1.0F), this_node.scale);
+            this_node.local_matrix = glm::translate(glm::mat4(1.0F), this_node.translation) * glm::mat4_cast(this_node.rotation) * glm::scale(glm::mat4(1.0F), this_node.scale);
         }
         this_node.weights = node.weights;
     }
@@ -122,6 +123,7 @@ void Model::loadSkins(const tinygltf::Model& model) {
 
         this_skin.skeleton = skin.skeleton;
         this_skin.joints   = skin.joints;
+        this_skin.bone_final_matrices.resize(JOINTS_COUNT);
     }
 }
 
@@ -199,10 +201,10 @@ void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, 
     std::vector<glm::vec2> texture_coords{};
     read_attribute("TEXCOORD_0", texture_coords);
 
-    std::vector<glm::uvec4> joints{};
+    std::vector<glm::u16vec4> joints{};
     read_attribute("JOINTS_0", joints);
 
-    std::vector<glm::vec4> weights{};
+    std::vector<glm::uvec4> weights{};
     read_attribute("WEIGHTS_0", weights);
 
     size_t count = positions.size();
@@ -413,33 +415,34 @@ void Model::loadAnimations(const tinygltf::Model& model) {
     }
 }
 
-void Model::applyAnimationToNodes(size_t i, float time) {
-    const Animation& animation = m_animations[i];
+void Model::applyAnimationToNodes(int index, float time) {
+    const Animation& animation = m_animations[index];
+
     for (const AnimationChannel& channel : animation.channels) {
         const AnimationSampler& sampler = animation.samplers[channel.sampler];
 
-        if (sampler.times.empty() || sampler.values.empty()) {
-            continue; // skip unsupported sampler
-        }
+        if (sampler.times.size() < 2 || sampler.values.size() < 2)
+            continue;
 
         int k1 = 0;
         while (k1 < sampler.times.size() - 1 && time > sampler.times[k1 + 1]) {
             k1++;
         }
-        int k2 = k1 + 1;
+
+        int k2 = std::min<int>(k1 + 1, sampler.times.size() - 1);
 
         glm::vec4 v1 = sampler.values[k1];
         glm::vec4 v2 = sampler.values[k2];
 
         float t = (time - sampler.times[k1]) / (sampler.times[k2] - sampler.times[k1]);
-        t       = glm::clamp(t, 0.0F, 1.0F);
+        t       = glm::clamp(t, 0.0f, 1.0f);
 
-        Node node = m_nodes[channel.target_node];
+        Node& node = m_nodes[channel.target_node];
 
         if (channel.target_path == "rotation") {
             glm::quat q1(v1.w, v1.x, v1.y, v1.z);
             glm::quat q2(v2.w, v2.x, v2.y, v2.z);
-            node.rotation = glm::mix(q1, q2, t); // slerp replaced
+            node.rotation = glm::normalize(glm::slerp(q1, q2, t));
         }
         else if (channel.target_path == "translation") {
             node.translation = glm::mix(glm::vec3(v1), glm::vec3(v2), t);
@@ -459,25 +462,32 @@ void Model::updateNodeTransforms() {
 void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
     Node& node = m_nodes[index];
 
-    glm::mat4 local =
-        glm::translate(glm::mat4(1), node.translation) *
+    node.local_matrix =
+        glm::translate(glm::mat4(1.0f), node.translation) *
         glm::mat4_cast(node.rotation) *
-        glm::scale(glm::mat4(1), node.scale);
+        glm::scale(glm::mat4(1.0f), node.scale);
 
-    node.matrix = parent * local;
+    node.global_matrix = parent * node.local_matrix;
 
     for (int child : node.children) {
-        this->updateNodeRecursive(child, node.matrix);
+        this->updateNodeRecursive(child, node.global_matrix);
     }
 }
 
-void Model::updateSkinMatrices(const Shader& shader) {
-    // ..
+void Model::updateSkinMatrices() {
+    for (Skin& skin : m_skins) {
+        for (size_t i = 0; i < skin.joints.size(); i++) {
+            int         joint_node_index = skin.joints[i];
+            const Node& joint_node       = m_nodes[joint_node_index];
+
+            skin.bone_final_matrices[i] = joint_node.global_matrix * skin.inverse_bind_matrices[i];
+        }
+    }
 }
 
 void Model::drawNode(const Node& node, const Shader& shader) {
     if (node.mesh >= 0) {
-        this->drawMesh(m_meshes[node.mesh], shader, node.matrix);
+        this->drawMesh(m_meshes[node.mesh], node.skin, shader, node.global_matrix);
     }
 
     for (int child : node.children) {
@@ -485,7 +495,12 @@ void Model::drawNode(const Node& node, const Shader& shader) {
     }
 }
 
-void Model::drawMesh(const Mesh& mesh, const Shader& shader, const glm::mat4& matrix) {
+void Model::drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, const glm::mat4& matrix) {
+    if (skin_index >= 0) {
+        const Skin& skin = m_skins[skin_index];
+        shader.setUniformMat4Array("u_bones", skin.bone_final_matrices.data(), JOINTS_COUNT);
+    }
+
     shader.setUniformMat4("u_model", matrix);
 
     for (const Primitive& primitive : mesh.primitives) {
@@ -550,7 +565,7 @@ void Model::readVector(glm::vec4& dst, const std::vector<double>& src) {
 
 void Model::readVector(glm::quat& dst, const std::vector<double>& src) {
     if (src.size() != 4) return;
-    dst = glm::quat(static_cast<float>(src[3]), static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
+    dst = glm::quat(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
 }
 
 float Model::readComponentAsFloat(const uint8_t* data, int component_type, bool normalized) {

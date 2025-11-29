@@ -148,35 +148,35 @@ void Shader::setUniformFloatArray(const char* uniform_name, float* load_uniform,
 void Shader::setUniformVec2(const char* uniform_name, const glm::vec2& load_uniform) const noexcept {
     glUniform2f(glGetUniformLocation(this->m_program, uniform_name), load_uniform.x, load_uniform.y);
 }
-void Shader::setUniformVec2Array(const char* uniform_name, glm::vec2* load_uniform, unsigned int count) const noexcept {
+void Shader::setUniformVec2Array(const char* uniform_name, const glm::vec2* load_uniform, unsigned int count) const noexcept {
     glUniform2fv(glGetUniformLocation(this->m_program, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformVec3(const char* uniform_name, const glm::vec3& load_uniform) const noexcept {
     glUniform3f(glGetUniformLocation(this->m_program, uniform_name), load_uniform.x, load_uniform.y, load_uniform.z);
 }
-void Shader::setUniformVec3Array(const char* uniform_name, glm::vec3* load_uniform, unsigned int count) const noexcept {
+void Shader::setUniformVec3Array(const char* uniform_name, const glm::vec3* load_uniform, unsigned int count) const noexcept {
     glUniform3fv(glGetUniformLocation(this->m_program, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformVec4(const char* uniform_name, const glm::vec4& load_uniform) const noexcept {
     glUniform4f(glGetUniformLocation(this->m_program, uniform_name), load_uniform.x, load_uniform.y, load_uniform.z, load_uniform.w);
 }
-void Shader::setUniformVec4Array(const char* uniform_name, glm::vec4* load_uniform, unsigned int count) const noexcept {
+void Shader::setUniformVec4Array(const char* uniform_name, const glm::vec4* load_uniform, unsigned int count) const noexcept {
     glUniform4fv(glGetUniformLocation(this->m_program, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformMat3(const char* uniform_name, const glm::mat3& load_uniform) const noexcept {
     glUniformMatrix3fv(glGetUniformLocation(this->m_program, uniform_name), 1, GL_FALSE, glm::value_ptr(load_uniform));
 }
-void Shader::setUniformMat3Array(const char* uniform_name, glm::mat3* load_uniform, unsigned int count) const noexcept {
+void Shader::setUniformMat3Array(const char* uniform_name, const glm::mat3* load_uniform, unsigned int count) const noexcept {
     glUniformMatrix3fv(glGetUniformLocation(this->m_program, uniform_name), count, GL_FALSE, glm::value_ptr(load_uniform[0]));
 }
 
 void Shader::setUniformMat4(const char* uniform_name, const glm::mat4& load_uniform) const noexcept {
     glUniformMatrix4fv(glGetUniformLocation(this->m_program, uniform_name), 1, GL_FALSE, glm::value_ptr(load_uniform));
 }
-void Shader::setUniformMat4Array(const char* uniform_name, glm::mat4* load_uniform, unsigned int count) const noexcept {
+void Shader::setUniformMat4Array(const char* uniform_name, const glm::mat4* load_uniform, unsigned int count) const noexcept {
     glUniformMatrix4fv(glGetUniformLocation(this->m_program, uniform_name), count, GL_FALSE, glm::value_ptr(load_uniform[0]));
 }
 
@@ -202,35 +202,35 @@ void Shader::setUniformFloatArray(unsigned int shader_ref, const char* uniform_n
 void Shader::setUniformVec2(unsigned int shader_ref, const char* uniform_name, const glm::vec2& load_uniform) noexcept {
     glUniform2f(glGetUniformLocation(shader_ref, uniform_name), load_uniform.x, load_uniform.y);
 }
-void Shader::setUniformVec2Array(unsigned int shader_ref, const char* uniform_name, glm::vec2* load_uniform, unsigned int count) noexcept {
+void Shader::setUniformVec2Array(unsigned int shader_ref, const char* uniform_name, const glm::vec2* load_uniform, unsigned int count) noexcept {
     glUniform2fv(glGetUniformLocation(shader_ref, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformVec3(unsigned int shader_ref, const char* uniform_name, const glm::vec3& load_uniform) noexcept {
     glUniform3f(glGetUniformLocation(shader_ref, uniform_name), load_uniform.x, load_uniform.y, load_uniform.z);
 }
-void Shader::setUniformVec3Array(unsigned int shader_ref, const char* uniform_name, glm::vec3* load_uniform, unsigned int count) noexcept {
+void Shader::setUniformVec3Array(unsigned int shader_ref, const char* uniform_name, const glm::vec3* load_uniform, unsigned int count) noexcept {
     glUniform3fv(glGetUniformLocation(shader_ref, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformVec4(unsigned int shader_ref, const char* uniform_name, const glm::vec4& load_uniform) noexcept {
     glUniform4f(glGetUniformLocation(shader_ref, uniform_name), load_uniform.x, load_uniform.y, load_uniform.z, load_uniform.w);
 }
-void Shader::setUniformVec4Array(unsigned int shader_ref, const char* uniform_name, glm::vec4* load_uniform, unsigned int count) noexcept {
+void Shader::setUniformVec4Array(unsigned int shader_ref, const char* uniform_name, const glm::vec4* load_uniform, unsigned int count) noexcept {
     glUniform4fv(glGetUniformLocation(shader_ref, uniform_name), count, &load_uniform[0].x);
 }
 
 void Shader::setUniformMat3(unsigned int shader_ref, const char* uniform_name, const glm::mat3& load_uniform) noexcept {
     glUniformMatrix3fv(glGetUniformLocation(shader_ref, uniform_name), 1, GL_FALSE, glm::value_ptr(load_uniform));
 }
-void Shader::setUniformMat3Array(unsigned int shader_ref, const char* uniform_name, glm::mat3* load_uniform, unsigned int count) noexcept {
+void Shader::setUniformMat3Array(unsigned int shader_ref, const char* uniform_name, const glm::mat3* load_uniform, unsigned int count) noexcept {
     glUniformMatrix3fv(glGetUniformLocation(shader_ref, uniform_name), count, GL_FALSE, glm::value_ptr(load_uniform[0]));
 }
 
 void Shader::setUniformMat4(unsigned int shader_ref, const char* uniform_name, const glm::mat4& load_uniform) noexcept {
     glUniformMatrix4fv(glGetUniformLocation(shader_ref, uniform_name), 1, GL_FALSE, glm::value_ptr(load_uniform));
 }
-void Shader::setUniformMat4Array(unsigned int shader_ref, const char* uniform_name, glm::mat4* load_uniform, unsigned int count) noexcept {
+void Shader::setUniformMat4Array(unsigned int shader_ref, const char* uniform_name, const glm::mat4* load_uniform, unsigned int count) noexcept {
     glUniformMatrix4fv(glGetUniformLocation(shader_ref, uniform_name), count, GL_FALSE, glm::value_ptr(load_uniform[0]));
 }
 
