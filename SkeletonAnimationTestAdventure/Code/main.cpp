@@ -37,7 +37,7 @@ int main() {
     shader.Bind();
 
     Model model{};
-    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\animal-food-chicken-model-cs2\\source\\CHICKEN.glb");
+    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\first_person_cso_airbuster\\scene.gltf");
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
@@ -47,7 +47,7 @@ int main() {
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
         camera.UploadUniforms(shader, "u_cameraMatrix");
 
-        shader.setUniformVec3("u_lightDirection", glm::vec3(5, 5, 5));
+        shader.setUniformVec3("u_lightDirection", glm::vec3(1, 1, 1));
         shader.setUniformVec3("u_lightColor", glm::vec3(30, 30, 30));
         shader.setUniformVec3("u_cameraPosition", camera.getPosition());
 

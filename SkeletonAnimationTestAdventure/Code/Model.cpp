@@ -47,7 +47,7 @@ void Model::Draw(const Shader& shader, float time) {
     shader.Bind();
 
     if (!m_animations.empty()) {
-        this->applyAnimationToNodes(3, time); // play the first animation
+        this->applyAnimationToNodes(0, time); // play the first animation
     }
 
     this->updateNodeTransforms();
@@ -500,7 +500,7 @@ void Model::drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, con
         shader.setUniformMat4Array("u_bones", skin.bone_final_matrices.data(), JOINTS_COUNT);
         shader.setUniformInt("u_isAnimated", true);
     }
-    shader.setUniformInt("u_isAnimated", false);
+    else shader.setUniformInt("u_isAnimated", false);
 
     shader.setUniformMat4("u_model", matrix);
 

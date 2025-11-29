@@ -1,0 +1,11 @@
+Model Information:
+* title:	RIFLE | AWP Weapon Model (CS2)
+* source:	https://sketchfab.com/3d-models/rifle-awp-weapon-model-cs2-23ad3d7fb46b40e59cab7937654e2691
+* author:	6lucius (https://sketchfab.com/6lucius)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "RIFLE | AWP Weapon Model (CS2)" (https://sketchfab.com/3d-models/rifle-awp-weapon-model-cs2-23ad3d7fb46b40e59cab7937654e2691) by 6lucius (https://sketchfab.com/6lucius) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -24,6 +24,6 @@ private:
     int m_width  = 0;
     int m_height = 0;
 
-    float m_speed       = 0.01F;
+    float m_speed       = 0.001F;
     float m_sensitivity = 100.0F;
 };
