@@ -122,14 +122,6 @@ void Model::loadSkins(const tinygltf::Model& model) {
         size_t accessor_index = skin.inverseBindMatrices;
         this->readAttribute(model, accessor_index, this_skin.inverse_bind_matrices);
 
-        /*std::vector<glm::mat4> ibm_bone(skin.joints.size());
-
-        for (int bone = 0; bone < skin.joints.size(); bone++) {
-            ibm_bone[bone] = this_skin.inverse_bind_matrices[bone];
-        }
-
-        this_skin.inverse_bind_matrices = ibm_bone;*/
-
         this_skin.skeleton = skin.skeleton;
         this_skin.joints   = skin.joints;
         this_skin.bone_final_matrices.resize(JOINTS_COUNT);

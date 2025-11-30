@@ -37,7 +37,7 @@ int main() {
     shader.Bind();
 
     Model model{};
-    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\rifle-awp-weapon-model-cs2-converted\\scene.gltf");
+    model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\rifle-awp-weapon-model-cs2-original\\source\\AWP.glb");
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);

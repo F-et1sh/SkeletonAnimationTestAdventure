@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\main.cpp" />
+    <ClCompile Include="ThirdParty\MikkTSpace\mikktspace.c" />
     <None Include="..\Files\Shaders\default.frag" />
     <None Include="..\Files\Shaders\default.vert" />
     <None Include="Code\Old\Camera.cpp" />
@@ -194,6 +195,7 @@
     <CopyFileToFolders Include="ThirdParty\GLM\GLM_COPYING.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ThirdParty\MikkTSpace\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />
     <None Include="Code\Old\EBO.hpp" />
     <None Include="Code\Old\Mesh.hpp" />

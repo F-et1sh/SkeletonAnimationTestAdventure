@@ -40,6 +40,9 @@
     <Filter Include="Code\Material">
       <UniqueIdentifier>{0e356cad-7859-4664-9365-fea1b16c7ada}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty\MikkTSpace">
+      <UniqueIdentifier>{9f097177-19c2-4c37-9ec3-6e71fa58b32b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -65,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="Code\Material.cpp">
       <Filter>Code\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\MikkTSpace\mikktspace.c">
+      <Filter>ThirdParty\MikkTSpace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="Code\Material.hpp">
       <Filter>Code\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\MikkTSpace\mikktspace.h">
+      <Filter>ThirdParty\MikkTSpace</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

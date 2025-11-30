@@ -39,16 +39,20 @@ void main() {
         vec3 skinned_normal  = normalize(skin * a_normal);
         vec3 skinned_tangent = normalize(skin * a_tangent.xyz);
 
-        T = normalize(mat3(u_model) * skinned_tangent.xyz);
-        N = normalize(mat3(u_model) * skinned_normal);
-        B = cross(N, T) * a_tangent.w;
+        mat3 normal_matrix = transpose(inverse(mat3(u_model)));
+
+        T = normalize(normal_matrix * skinned_tangent.xyz);
+        N = normalize(normal_matrix * skinned_normal);
+        B = normalize(cross(N, T) * a_tangent.w);
     }
     else {
         world_pos = u_model * vec4(a_position, 1.0f);
 
-        T = normalize(mat3(u_model) * a_tangent.xyz);
-        N = normalize(mat3(u_model) * a_normal);
-        B = cross(N, T) * a_tangent.w;
+        mat3 normal_matrix = transpose(inverse(mat3(u_model)));
+
+        N = normalize(normal_matrix * a_normal);
+        T = normalize(normal_matrix * a_tangent.xyz);
+        B = normalize(cross(N, T) * a_tangent.w);
     }
 
     i_TBN = mat3(T, B, N);
