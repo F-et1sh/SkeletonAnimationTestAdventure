@@ -84,7 +84,7 @@ struct Node {
     glm::vec3 translation{ 0, 0, 0 };
 
     glm::mat4 local_matrix{ 1.0F };
-    glm::mat4 global_matrix{ 1.0f };
+    glm::mat4 global_matrix{ 1.0F };
 
     std::vector<double> weights;
 
@@ -119,7 +119,7 @@ private:
     void        loadSkins(const tinygltf::Model& model);
     void        loadMeshes(const tinygltf::Model& model);
     void        loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>& this_primitives, const std::vector<tinygltf::Primitive>& primitives);
-    void        loadVertices(const tinygltf::Model& model, Vertices& this_vertices, const tinygltf::Primitive& primitive);
+    void        loadVertices(const tinygltf::Model& model, Vertices& this_vertices, Indices& this_indices, const tinygltf::Primitive& primitive);
     static void loadIndices(const tinygltf::Model& model, Primitive& this_primitive, Indices& this_indices, const tinygltf::Primitive& primitive);
     void        loadMaterials(const tinygltf::Model& model);
     void        loadTextures(const tinygltf::Model& model);
@@ -183,7 +183,7 @@ private:
             }
             else if constexpr (std::is_same_v<T, glm::mat4>) {
                 glm::mat4 m{};
-                memcpy(glm::value_ptr(m), data_ptr + i * stride, sizeof(glm::mat4));
+                memcpy(glm::value_ptr(m), data_ptr + (i * stride), sizeof(glm::mat4));
                 out[i] = m;
             }
         }

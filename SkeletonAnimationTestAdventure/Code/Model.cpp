@@ -1,8 +1,65 @@
 #include "Model.hpp"
 
+#include <algorithm>
+
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include "mikktspace.h"
+
+struct MikkUserData {
+    std::vector<glm::vec3>* positions;
+    std::vector<glm::vec3>* normals;
+    std::vector<glm::vec2>* texture_coords;
+    std::vector<glm::vec4>* tangents; // output
+    std::vector<uint32_t>*  indices;
+};
+
+int getNumberFaces(const SMikkTSpaceContext* p_context) {
+    auto* data = (MikkUserData*) p_context->m_pUserData;
+    return data->indices->size() / 3;
+}
+
+int getNumberVerticesOfFace(const SMikkTSpaceContext* /*unused*/, int /*unused*/) {
+    return 3;
+}
+
+void getPosition(const SMikkTSpaceContext* p_context, float position[3], int face, int vertex) {
+    auto*    data  = (MikkUserData*) p_context->m_pUserData;
+    uint32_t index = (*data->indices)[(face * 3) + vertex];
+    auto&    p     = (*data->positions)[index];
+    position[0]    = p.x;
+    position[1]    = p.y;
+    position[2]    = p.z;
+}
+
+void getNormal(const SMikkTSpaceContext* p_context, float normal[3], int face, int vertex) {
+    auto*    data  = (MikkUserData*) p_context->m_pUserData;
+    uint32_t index = (*data->indices)[(face * 3) + vertex];
+    auto&    p     = (*data->normals)[index];
+    normal[0]      = p.x;
+    normal[1]      = p.y;
+    normal[2]      = p.z;
+}
+
+void getTextureCoord(const SMikkTSpaceContext* p_context, float texture_coord[2], int face, int vertex) {
+    auto*    data    = (MikkUserData*) p_context->m_pUserData;
+    uint32_t index   = (*data->indices)[(face * 3) + vertex];
+    auto&    p       = (*data->texture_coords)[index];
+    texture_coord[0] = p.x;
+    texture_coord[1] = p.y;
+}
+
+void setTSpaceBasic(const SMikkTSpaceContext* p_context,
+                    const float               tangent[3],
+                    const float               sign,
+                    const int                 face,
+                    const int                 vertex) {
+    auto*    data            = (MikkUserData*) p_context->m_pUserData;
+    uint32_t index           = (*data->indices)[(face * 3) + vertex];
+    (*data->tangents)[index] = glm::vec4(tangent[0], tangent[1], tangent[2], sign);
+}
 
 void Model::Release() {
 }
@@ -27,11 +84,11 @@ void Model::Initialize(const std::filesystem::path& path) {
     }
     if (!error.empty()) {
         std::println("ERROR : {}", error);
-        assert(1);
+        assert(false);
     }
     if (!good) {
         std::println("ERROR : Failed to parse glTF : {}", filename);
-        assert(1);
+        assert(false);
     }
 
     this->loadNodes(model);
@@ -51,9 +108,11 @@ void Model::Draw(const Shader& shader, float time) {
 
         float duration = m_animations[animation_index].samplers[0].times.back();
 
-        for (const auto& s : m_animations[animation_index].samplers)
-            for (const auto& t : s.times)
-                if (duration < t) duration = t;
+        for (const auto& s : m_animations[animation_index].samplers) {
+            for (const auto& t : s.times) {
+                duration = std::max(duration, t);
+            }
+        }
 
         time = fmod(time, duration);
 
@@ -62,8 +121,9 @@ void Model::Draw(const Shader& shader, float time) {
 
     this->updateNodeTransforms();
 
-    if (!m_animations.empty())
+    if (!m_animations.empty()) {
         this->updateSkinMatrices();
+    }
 
     for (int i : m_sceneRoots) {
         drawNode(m_nodes[i], shader);
@@ -146,7 +206,7 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
         const tinygltf::Primitive& primitive      = primitives[i];
         auto&                      this_primitive = this_primitives[i];
 
-        loadVertices(model, this_primitive.vertices, primitive);
+        loadVertices(model, this_primitive.vertices, this_primitive.indices, primitive);
         loadIndices(model, this_primitive, this_primitive.indices, primitive);
         this_primitive.material = primitive.material;
         this_primitive.mode     = primitive.mode;
@@ -179,7 +239,7 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
     }
 }
 
-void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, const tinygltf::Primitive& primitive) {
+void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, Indices& this_indices, const tinygltf::Primitive& primitive) {
 
     auto read_attribute = [&](const std::string& attribute_name, auto& data) {
         auto it = primitive.attributes.find(attribute_name);
@@ -208,10 +268,63 @@ void Model::loadVertices(const tinygltf::Model& model, Vertices& this_vertices, 
     std::vector<glm::uvec4> weights{};
     read_attribute("WEIGHTS_0", weights);
 
-    size_t count = positions.size();
-    this_vertices.resize(count);
+    size_t vertices_count = positions.size();
+    this_vertices.resize(vertices_count);
 
-    for (size_t i = 0; i < count; i++) {
+    if (tangents.empty()) {
+        tangents.resize(vertices_count);
+
+        std::vector<uint32_t> indices_u32{};
+
+        if (!std::holds_alternative<std::vector<uint32_t>>(this_indices)) {
+            std::visit([&](auto const& indices) {
+                indices_u32.reserve(indices.size());
+                for (auto v : indices) {
+                    indices_u32.emplace_back(static_cast<uint32_t>(v));
+                }
+            },
+                       this_indices);
+        }
+        else {
+            indices_u32 = std::get<std::vector<uint32_t>>(this_indices);
+        }
+
+        if (positions.empty() || normals.empty() || texture_coords.empty() || indices_u32.empty()) {
+            std::cerr << "WARNING : Skip tangent generation : missing data" << '\n';
+        }
+        else {
+            for (uint32_t idx : indices_u32) {
+                if (idx >= positions.size() || idx >= normals.size() || idx >= texture_coords.size()) {
+                    std::cerr << "Bad index " << idx << "\n";
+                    assert(false);
+                }
+            }
+
+            MikkUserData userdata{
+                .positions      = &positions,
+                .normals        = &normals,
+                .texture_coords = &texture_coords,
+                .tangents       = &tangents,
+                .indices        = &indices_u32
+            };
+
+            SMikkTSpaceInterface iface   = {};
+            iface.m_getNumFaces          = getNumberFaces;
+            iface.m_getNumVerticesOfFace = getNumberVerticesOfFace;
+            iface.m_getPosition          = getPosition;
+            iface.m_getNormal            = getNormal;
+            iface.m_getTexCoord          = getTextureCoord;
+            iface.m_setTSpaceBasic       = setTSpaceBasic;
+
+            SMikkTSpaceContext context = {};
+            context.m_pInterface       = &iface;
+            context.m_pUserData        = &userdata;
+
+            genTangSpaceDefault(&context);
+        }
+    }
+
+    for (size_t i = 0; i < vertices_count; i++) {
         auto& v    = this_vertices[i];
         v.position = positions[i];
         if (i < normals.size()) {
@@ -400,7 +513,7 @@ void Model::loadAnimations(const tinygltf::Model& model) {
             const tinygltf::AnimationSampler& sampler      = animation.samplers[j];
             auto&                             this_sampler = this_animation.samplers[j];
 
-            this->readAccessorFloat(model, sampler.input, this_sampler.times);
+            Model::readAccessorFloat(model, sampler.input, this_sampler.times);
             Model::readAccessorVec4(model, sampler.output, this_sampler.values);
 
             if (sampler.interpolation == "LINEAR") {
@@ -422,8 +535,9 @@ void Model::applyAnimationToNodes(int index, float time) {
     for (const AnimationChannel& channel : animation.channels) {
         const AnimationSampler& sampler = animation.samplers[channel.sampler];
 
-        if (sampler.times.size() < 2 || sampler.values.size() < 2)
+        if (sampler.times.size() < 2 || sampler.values.size() < 2) {
             continue;
+        }
 
         int k1 = 0;
         while (k1 < sampler.times.size() - 1 && time > sampler.times[k1 + 1]) {
@@ -436,7 +550,7 @@ void Model::applyAnimationToNodes(int index, float time) {
         glm::vec4 v2 = sampler.values[k2];
 
         float t = (time - sampler.times[k1]) / (sampler.times[k2] - sampler.times[k1]);
-        t       = glm::clamp(t, 0.0f, 1.0f);
+        t       = glm::clamp(t, 0.0F, 1.0F);
 
         Node& node = m_nodes[channel.target_node];
 
@@ -464,9 +578,9 @@ void Model::updateNodeRecursive(int index, const glm::mat4& parent) {
     Node& node = m_nodes[index];
 
     node.local_matrix =
-        glm::translate(glm::mat4(1.0f), node.translation) *
+        glm::translate(glm::mat4(1.0F), node.translation) *
         glm::mat4_cast(node.rotation) *
-        glm::scale(glm::mat4(1.0f), node.scale);
+        glm::scale(glm::mat4(1.0F), node.scale);
 
     node.global_matrix = parent * node.local_matrix;
 
@@ -500,10 +614,11 @@ void Model::drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, con
     if (skin_index >= 0) {
         const Skin& skin = m_skins[skin_index];
         shader.setUniformMat4Array("u_bones", skin.bone_final_matrices.data(), JOINTS_COUNT);
-        shader.setUniformInt("u_isAnimated", true);
+        shader.setUniformInt("u_isAnimated", 1);
     }
-    else
-        shader.setUniformInt("u_isAnimated", false);
+    else {
+        shader.setUniformInt("u_isAnimated", 0);
+    }
 
     shader.setUniformMat4("u_model", matrix);
 
@@ -553,22 +668,30 @@ void Model::bindTexture(const Shader& shader, const std::string& uniform, int te
 }
 
 void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {
-    if (src.size() != 2) return;
+    if (src.size() != 2) {
+        return;
+    }
     dst = glm::vec2(static_cast<float>(src[0]), static_cast<float>(src[1]));
 }
 
 void Model::readVector(glm::vec3& dst, const std::vector<double>& src) {
-    if (src.size() != 3) return;
+    if (src.size() != 3) {
+        return;
+    }
     dst = glm::vec3(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]));
 }
 
 void Model::readVector(glm::vec4& dst, const std::vector<double>& src) {
-    if (src.size() != 4) return;
+    if (src.size() != 4) {
+        return;
+    }
     dst = glm::vec4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
 }
 
 void Model::readVector(glm::quat& dst, const std::vector<double>& src) {
-    if (src.size() != 4) return;
+    if (src.size() != 4) {
+        return;
+    }
     dst = glm::quat(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), static_cast<float>(src[3]));
 }
 

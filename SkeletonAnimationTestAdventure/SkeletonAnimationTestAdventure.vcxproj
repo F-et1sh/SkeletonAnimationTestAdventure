@@ -82,7 +82,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,7 +101,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +137,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +149,7 @@
   <ItemGroup>
     <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\main.cpp" />
-    <ClCompile Include="ThirdParty\MikkTSpace\mikktspace.c" />
+    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c" />
     <None Include="..\Files\Shaders\default.frag" />
     <None Include="..\Files\Shaders\default.vert" />
     <None Include="Code\Old\Camera.cpp" />
@@ -195,7 +195,7 @@
     <CopyFileToFolders Include="ThirdParty\GLM\GLM_COPYING.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ThirdParty\MikkTSpace\mikktspace.h" />
+    <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />
     <None Include="Code\Old\EBO.hpp" />
     <None Include="Code\Old\Mesh.hpp" />

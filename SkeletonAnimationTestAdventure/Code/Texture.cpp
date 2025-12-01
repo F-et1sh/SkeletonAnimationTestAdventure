@@ -14,7 +14,9 @@ void Texture::Create(const std::filesystem::path& path) {
     int            component = 0;
     unsigned char* bytes     = stbi_load(path.string().c_str(), &width, &height, &component, 0);
 
-    if (!bytes) assert(1);
+    if (bytes == nullptr) {
+        assert(false);
+    }
 
     GLenum internal_format{};
     GLenum data_format{};
@@ -33,7 +35,7 @@ void Texture::Create(const std::filesystem::path& path) {
             internal_format = GL_R8;
             break;
         default:
-            assert(1);
+            assert(false);
             break;
     }
 
@@ -51,7 +53,7 @@ void Texture::Create(const std::filesystem::path& path) {
             data_format = GL_RED;
             break;
         default:
-            assert(1);
+            assert(false);
             break;
     }
 
@@ -98,7 +100,7 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
                 internal_format = GL_R8;
                 break;
             default:
-                assert(1);
+                assert(false);
                 break;
         }
     }
@@ -117,7 +119,7 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             data_format = GL_RED;
             break;
         default:
-            assert(1);
+            assert(false);
             break;
     }
 

@@ -69,7 +69,7 @@
     <ClCompile Include="Code\Material.cpp">
       <Filter>Code\Material</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\MikkTSpace\mikktspace.c">
+    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <Filter>ThirdParty\MikkTSpace</Filter>
     </ClCompile>
   </ItemGroup>
@@ -171,7 +171,7 @@
     <ClInclude Include="Code\Material.hpp">
       <Filter>Code\Material</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\MikkTSpace\mikktspace.h">
+    <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h">
       <Filter>ThirdParty\MikkTSpace</Filter>
     </ClInclude>
   </ItemGroup>
