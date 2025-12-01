@@ -206,8 +206,8 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
         const tinygltf::Primitive& primitive      = primitives[i];
         auto&                      this_primitive = this_primitives[i];
 
+        loadIndices(model, this_primitive, this_primitive.indices, primitive); // indices go first
         loadVertices(model, this_primitive.vertices, this_primitive.indices, primitive);
-        loadIndices(model, this_primitive, this_primitive.indices, primitive);
         this_primitive.material = primitive.material;
         this_primitive.mode     = primitive.mode;
 
