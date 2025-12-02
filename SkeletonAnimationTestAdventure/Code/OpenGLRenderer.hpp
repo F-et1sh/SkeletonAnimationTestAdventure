@@ -1,13 +1,16 @@
 #pragma once
 #include "IRenderer.hpp"
+#include "OpenGLResourceManager.h"
 
-class RendererOpenGL : public IRenderer {
+class OpenGLRenderer : public IRenderer {
 public:
-    RendererOpenGL()  = default;
-    ~RendererOpenGL() = default;
+    OpenGLRenderer()  = default;
+    ~OpenGLRenderer() = default;
 
     void Release() override;
     void Initialize(GLFWwindow* p_window) override;
+
+    inline void loadModel(const Model& model) override { this->m_resourceManager.loadModel(model); }
 
     void onResize(uint32_t width, uint32_t height) override;
 
@@ -19,6 +22,5 @@ public:
     void waitIdle() override;
 
 private:
-
-
+    OpenGLResourceManager m_resourceManager{};
 };

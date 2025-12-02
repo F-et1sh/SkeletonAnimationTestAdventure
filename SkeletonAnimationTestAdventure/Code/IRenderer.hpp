@@ -1,6 +1,6 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include "Model.hpp"
+#include <GLFW/glfw3.h>
 #include "Camera.hpp"
 
 struct RenderCommand {
@@ -23,6 +23,8 @@ public:
 
     virtual void Release()                        = 0;
     virtual void Initialize(GLFWwindow* p_window) = 0;
+
+    virtual void loadModel(const Model& model) = 0;
 
     virtual void onResize(uint32_t width, uint32_t height) = 0;
 

@@ -1,10 +1,8 @@
-#include "Model.hpp"
-#include <GLFW/glfw3.h>
+#include "OpenGLRenderer.hpp"
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
-#include "Camera.hpp"
 
 int main() {
     if (glfwInit() == 0) {
@@ -38,6 +36,10 @@ int main() {
 
     Model model{};
     model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\rifle-awp-weapon-model-cs2-original\\source\\AWP.glb");
+
+    std::unique_ptr<IRenderer> renderer = std::make_unique<OpenGLRenderer>();
+    renderer->Initialize(window);
+    renderer->loadModel(model);
 
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);

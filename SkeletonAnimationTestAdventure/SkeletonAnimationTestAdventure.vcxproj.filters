@@ -49,6 +49,12 @@
     <Filter Include="Code\Renderer\OpenGL">
       <UniqueIdentifier>{8f459704-fff3-4b4b-a242-c949c403a456}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Renderer\OpenGL\Renderer">
+      <UniqueIdentifier>{4f896b20-d00c-4bf2-9453-2f487ed270dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\OpenGL\ResourceManager">
+      <UniqueIdentifier>{637b3963-47b8-4bd5-adcb-5008b8cae2ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -81,8 +87,11 @@
     <ClCompile Include="Code\IRenderer.cpp">
       <Filter>Code\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Code\RendererOpenGL.cpp">
-      <Filter>Code\Renderer\OpenGL</Filter>
+    <ClCompile Include="Code\OpenGLRenderer.cpp">
+      <Filter>Code\Renderer\OpenGL\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\OpenGLResourceManager.cpp">
+      <Filter>Code\Renderer\OpenGL\ResourceManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,8 +198,11 @@
     <ClInclude Include="Code\IRenderer.hpp">
       <Filter>Code\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Code\RendererOpenGL.hpp">
-      <Filter>Code\Renderer\OpenGL</Filter>
+    <ClInclude Include="Code\OpenGLRenderer.hpp">
+      <Filter>Code\Renderer\OpenGL\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\OpenGLResourceManager.h">
+      <Filter>Code\Renderer\OpenGL\ResourceManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

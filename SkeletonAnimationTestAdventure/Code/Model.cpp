@@ -209,9 +209,35 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
         loadIndices(model, this_primitive, this_primitive.indices, primitive); // indices go first
         loadVertices(model, this_primitive.vertices, this_primitive.indices, primitive);
         this_primitive.material = primitive.material;
-        this_primitive.mode     = primitive.mode;
 
-        this_primitive.vao.Create();
+        switch (primitive.mode) {
+            case TINYGLTF_MODE_POINTS:
+                this_primitive.mode = RenderMode::POINTS;
+                break;
+            case TINYGLTF_MODE_LINE:
+                this_primitive.mode = RenderMode::LINES;
+                break;
+            case TINYGLTF_MODE_LINE_LOOP:
+                this_primitive.mode = RenderMode::LINE_LOOP;
+                break;
+            case TINYGLTF_MODE_LINE_STRIP:
+                this_primitive.mode = RenderMode::LINE_STRIP;
+                break;
+            case TINYGLTF_MODE_TRIANGLES:
+                this_primitive.mode = RenderMode::TRIANGLES;
+                break;
+            case TINYGLTF_MODE_TRIANGLE_STRIP:
+                this_primitive.mode = RenderMode::TRIANGLE_STRIP;
+                break;
+            case TINYGLTF_MODE_TRIANGLE_FAN:
+                this_primitive.mode = RenderMode::TRIANGLE_FAN;
+                break;
+            default:
+                assert(false);
+                break;
+        }
+
+        /*this_primitive.vao.Create();
         this_primitive.vao.Bind();
 
         this_primitive.vbo.Create(this_primitive.vertices);
@@ -235,7 +261,7 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
 
         VBO::Unbind();
         VAO::Unbind();
-        EBO::Unbind();
+        EBO::Unbind();*/
     }
 }
 
@@ -362,7 +388,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
             vec.resize(accessor.count);
             memcpy(vec.data(), data_ptr, accessor.count * sizeof(uint8_t));
 
-            this_primitive.index_type   = GL_UNSIGNED_BYTE;
+            this_primitive.index_type   = RenderIndexType::UNSIGNED_BYTE;
             this_primitive.index_count  = accessor.count;
             this_primitive.index_offset = 0;
 
@@ -381,7 +407,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
                 }
             }
 
-            this_primitive.index_type   = GL_UNSIGNED_SHORT;
+            this_primitive.index_type   = RenderIndexType::UNSIGNED_SHORT;
             this_primitive.index_count  = accessor.count;
             this_primitive.index_offset = 0;
 
@@ -400,7 +426,7 @@ void Model::loadIndices(const tinygltf::Model& model, Primitive& this_primitive,
                 }
             }
 
-            this_primitive.index_type   = GL_UNSIGNED_INT;
+            this_primitive.index_type   = RenderIndexType::UNSIGNED_INT;
             this_primitive.index_count  = accessor.count;
             this_primitive.index_offset = 0;
 
@@ -628,7 +654,7 @@ void Model::drawMesh(const Mesh& mesh, int skin_index, const Shader& shader, con
 }
 
 void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
-    const Material& material = m_materials[primitive.material];
+    /*const Material& material = m_materials[primitive.material];
 
     this->bindMaterial(material, shader);
 
@@ -639,7 +665,7 @@ void Model::drawPrimitive(const Primitive& primitive, const Shader& shader) {
     }
     else {
         glDrawArrays(GL_TRIANGLES, 0, primitive.vertices.size());
-    }
+    }*/
 }
 
 void Model::bindMaterial(const Material& material, const Shader& shader) {

@@ -9,20 +9,31 @@
 
 inline static constexpr size_t JOINTS_COUNT = 128;
 
+enum class RenderMode {
+    POINTS,
+    LINES,
+    LINE_LOOP,
+    LINE_STRIP,
+    TRIANGLES,
+    TRIANGLE_STRIP,
+    TRIANGLE_FAN,
+};
+
+enum class RenderIndexType {
+    UNSIGNED_BYTE,
+    UNSIGNED_SHORT,
+    UNSIGNED_INT,
+};
+
 struct Primitive {
     Vertices vertices;
     Indices  indices;
 
-    int material{ -1 };
-    int mode{ GL_TRIANGLES }; // triangles by default
-
-    VAO vao{};
-    VBO vbo{};
-    EBO ebo{};
-
-    GLenum index_type{};
-    size_t index_count{};
-    size_t index_offset{};
+    int             material{ -1 };
+    RenderMode      mode{ RenderMode::TRIANGLES }; // triangles by default
+    RenderIndexType index_type{};
+    size_t          index_count{};
+    size_t          index_offset{};
 
     Primitive()  = default;
     ~Primitive() = default;

@@ -150,7 +150,8 @@
     <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\IRenderer.cpp" />
     <ClCompile Include="Code\main.cpp" />
-    <ClCompile Include="Code\RendererOpenGL.cpp" />
+    <ClCompile Include="Code\OpenGLRenderer.cpp" />
+    <ClCompile Include="Code\OpenGLResourceManager.cpp" />
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c" />
     <None Include="..\Files\Shaders\default.frag" />
     <None Include="..\Files\Shaders\default.vert" />
@@ -198,7 +199,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\IRenderer.hpp" />
-    <ClInclude Include="Code\RendererOpenGL.hpp" />
+    <ClInclude Include="Code\OpenGLRenderer.hpp" />
+    <ClInclude Include="Code\OpenGLResourceManager.h" />
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />
     <None Include="Code\Old\EBO.hpp" />
