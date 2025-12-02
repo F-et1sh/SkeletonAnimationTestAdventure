@@ -8,7 +8,8 @@ void OpenGLResourceManager::loadModel(const Model& model) {
 
             new_primitive.material = primitive.material;
 
-            switch (primitive.mode) {
+            new_primitive.enum_mode = primitive.mode;
+            switch (new_primitive.enum_mode) {
                 case RenderMode::POINTS:
                     new_primitive.mode = GL_POINTS;
                     break;
@@ -61,7 +62,8 @@ void OpenGLResourceManager::loadModel(const Model& model) {
             VAO::Unbind();
             EBO::Unbind();
 
-            switch (primitive.index_type) {
+            new_primitive.enum_index_type = primitive.index_type;
+            switch (new_primitive.enum_index_type) {
                 case RenderIndexType::UNSIGNED_BYTE:
                     new_primitive.index_type = GL_UNSIGNED_BYTE;
                     break;
