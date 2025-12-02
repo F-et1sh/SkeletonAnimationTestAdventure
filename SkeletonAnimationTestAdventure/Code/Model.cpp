@@ -236,32 +236,6 @@ void Model::loadPrimitives(const tinygltf::Model& model, std::vector<Primitive>&
                 assert(false);
                 break;
         }
-
-        /*this_primitive.vao.Create();
-        this_primitive.vao.Bind();
-
-        this_primitive.vbo.Create(this_primitive.vertices);
-        this_primitive.vbo.Bind();
-
-        constexpr GLsizei stride = sizeof(Vertex);
-
-        VAO::LinkAttrib(this_primitive.vbo, 0, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, position));
-        VAO::LinkAttrib(this_primitive.vbo, 1, 3, GL_FLOAT, stride, (void*) offsetof(Vertex, normal));
-        VAO::LinkAttrib(this_primitive.vbo, 2, 2, GL_FLOAT, stride, (void*) offsetof(Vertex, texture_coord));
-
-        this_primitive.vbo.Bind();
-        glVertexAttribIPointer(3, 4, GL_UNSIGNED_SHORT, stride, (void*) offsetof(Vertex, joints));
-        glEnableVertexAttribArray(3);
-
-        VAO::LinkAttrib(this_primitive.vbo, 4, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, weights));
-        VAO::LinkAttrib(this_primitive.vbo, 5, 4, GL_FLOAT, stride, (void*) offsetof(Vertex, tangent));
-
-        this_primitive.ebo.Create(this_primitive.indices);
-        this_primitive.ebo.Bind();
-
-        VBO::Unbind();
-        VAO::Unbind();
-        EBO::Unbind();*/
     }
 }
 

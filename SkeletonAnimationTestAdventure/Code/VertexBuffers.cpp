@@ -4,7 +4,7 @@ VBO::~VBO() {
     glDeleteBuffers(1, &m_index);
 }
 
-void VBO::Create(std::vector<Vertex>& vertices) {
+void VBO::Create(const std::vector<Vertex>& vertices) {
     glGenBuffers(1, &m_index);
     glBindBuffer(GL_ARRAY_BUFFER, m_index);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
@@ -41,13 +41,13 @@ VAO::~VAO() {
     glDeleteVertexArrays(1, &m_index);
 }
 
-void EBO::Create(std::vector<GLuint>& indices) {
+void EBO::Create(const std::vector<GLuint>& indices) {
     glGenBuffers(1, &m_index);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 }
 
-void EBO::Create(Indices& indices_variant) {
+void EBO::Create(const Indices& indices_variant) {
     glGenBuffers(1, &m_index);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index);
 

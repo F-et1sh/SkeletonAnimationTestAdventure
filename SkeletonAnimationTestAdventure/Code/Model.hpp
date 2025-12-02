@@ -124,6 +124,8 @@ public:
     void Initialize(const std::filesystem::path& path);
     void Draw(const Shader& shader, float time);
 
+    inline const std::vector<Mesh>& getMeshes() const noexcept { return m_meshes; }
+
 private:
     void        loadNodes(const tinygltf::Model& model);
     void        loadSceneRoots(const tinygltf::Model& model);

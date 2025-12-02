@@ -29,7 +29,7 @@ public:
     VBO() = default;
     ~VBO();
 
-    void Create(std::vector<Vertex>& vertices);
+    void Create(const std::vector<Vertex>& vertices);
 
     void        Bind() const;
     static void Unbind();
@@ -59,8 +59,8 @@ public:
     EBO() = default;
     ~EBO();
 
-    void Create(std::vector<GLuint>& indices);
-    void Create(Indices& indices_variant);
+    void Create(const std::vector<GLuint>& indices);
+    void Create(const Indices& indices_variant);
 
     void        Bind() const;
     static void Unbind();
