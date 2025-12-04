@@ -125,6 +125,7 @@ public:
     void Draw(const Shader& shader, float time);
 
     inline const std::vector<Mesh>& getMeshes() const noexcept { return m_meshes; }
+    inline const std::vector<Texture>& getTextures() const noexcept { return m_textures; }
 
 private:
     void        loadNodes(const tinygltf::Model& model);
