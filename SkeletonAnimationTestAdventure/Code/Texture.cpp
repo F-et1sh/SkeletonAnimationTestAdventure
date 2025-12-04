@@ -133,37 +133,37 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
 
     switch (min_filter) {
         case TINYGLTF_TEXTURE_FILTER_NEAREST:
-            m_minFilter = TextureFilter::NEAREST;
+            m_minFilter = TextureMinFilter::NEAREST;
             break;
         case TINYGLTF_TEXTURE_FILTER_LINEAR:
-            m_minFilter = TextureFilter::LINEAR;
+            m_minFilter = TextureMinFilter::LINEAR;
             break;
         case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST:
-            m_minFilter = TextureFilter::NEAREST_MIPMAP_NEAREST;
+            m_minFilter = TextureMinFilter::NEAREST_MIPMAP_NEAREST;
             break;
         case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
-            m_minFilter = TextureFilter::LINEAR_MIPMAP_NEAREST;
+            m_minFilter = TextureMinFilter::LINEAR_MIPMAP_NEAREST;
             break;
         case TINYGLTF_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
-            m_minFilter = TextureFilter::NEAREST_MIPMAP_LINEAR;
+            m_minFilter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
             break;
         case TINYGLTF_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR:
-            m_minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+            m_minFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
             break;
         default:
-            m_minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+            m_minFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
             break;
     }
 
     switch (mag_filter) {
         case TINYGLTF_TEXTURE_FILTER_NEAREST:
-            m_magFilter = TextureFilter::NEAREST;
+            m_magFilter = TextureMagFilter::NEAREST;
             break;
         case TINYGLTF_TEXTURE_FILTER_LINEAR:
-            m_magFilter = TextureFilter::LINEAR;
+            m_magFilter = TextureMagFilter::LINEAR;
             break;
         default:
-            m_magFilter = TextureFilter::LINEAR;
+            m_magFilter = TextureMagFilter::LINEAR;
             break;
     }
 

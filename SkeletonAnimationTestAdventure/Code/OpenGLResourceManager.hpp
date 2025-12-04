@@ -38,9 +38,9 @@ public:
     void loadModel(const Model& model);
 
 private:
-    void loadPrimitive(const Primitive& primitive);
+    void createPrimitive(const Primitive& primitive);
     void createBuffers(OpenGLPrimitive& new_primitive, const Primitive& primitive);
-    void createTexture(OpenGLTexture& texture, int width, int height, int component, const unsigned char* bytes, int min_filter, int mag_filter, int wrap_s, int wrap_t, GLenum internal_format, GLenum data_format);
+    void createTexture(const Texture& texture);
 
 private:
     std::vector<OpenGLTexture>   m_textures;

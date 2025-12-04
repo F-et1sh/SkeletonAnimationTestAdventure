@@ -29,13 +29,18 @@ public:
         RED
     };
 
-    enum class TextureFilter {
+    enum class TextureMinFilter {
         NEAREST,
         LINEAR,
         NEAREST_MIPMAP_NEAREST,
         LINEAR_MIPMAP_NEAREST,
         NEAREST_MIPMAP_LINEAR,
         LINEAR_MIPMAP_LINEAR
+    };
+
+    enum class TextureMagFilter {
+        NEAREST,
+        LINEAR,
     };
 
     enum class TextureWrap {
@@ -51,6 +56,17 @@ public:
     void Create(const std::filesystem::path& path);
     void Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler, TextureColorSpace texture_color_space);
 
+    inline unsigned int          getWidth() const noexcept { return m_width; }
+    inline unsigned int          getHeight() const noexcept { return m_height; }
+    inline unsigned int          getComponents() const noexcept { return m_components; }
+    inline const unsigned char*  getBytes() const noexcept { return m_bytes.get(); }
+    inline TextureMinFilter      getMinFilter() const noexcept { return m_minFilter; }
+    inline TextureMagFilter      getMagFilter() const noexcept { return m_magFilter; }
+    inline TextureWrap           getWrapS() const noexcept { return m_wrapS; }
+    inline TextureWrap           getWrapT() const noexcept { return m_wrapT; }
+    inline TextureInternalFormat getInternalFormat() const noexcept { return m_internalFormat; }
+    inline TextureDataFormat     getDataFormat() const noexcept { return m_dataFormat; }
+
     Texture(const Texture&)            = delete;
     Texture& operator=(const Texture&) = delete;
 
@@ -63,10 +79,10 @@ private:
     unsigned int                     m_components{ 0 };
     std::unique_ptr<unsigned char[]> m_bytes{};
 
-    TextureFilter m_minFilter{ TextureFilter::LINEAR_MIPMAP_LINEAR };
-    TextureFilter m_magFilter{ TextureFilter::LINEAR };
-    TextureWrap   m_wrapS{ TextureWrap::REPEAT };
-    TextureWrap   m_wrapT{ TextureWrap::REPEAT };
+    TextureMinFilter m_minFilter{ TextureMinFilter::LINEAR_MIPMAP_LINEAR };
+    TextureMagFilter m_magFilter{ TextureMagFilter::LINEAR };
+    TextureWrap      m_wrapS{ TextureWrap::REPEAT };
+    TextureWrap      m_wrapT{ TextureWrap::REPEAT };
 
     TextureInternalFormat m_internalFormat{};
     TextureDataFormat     m_dataFormat{};
