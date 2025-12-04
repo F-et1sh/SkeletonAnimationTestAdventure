@@ -152,7 +152,9 @@
     <ClCompile Include="Code\main.cpp" />
     <ClCompile Include="Code\OpenGLRenderer.cpp" />
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
-    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c" />
+    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
+      <FileType>CppCode</FileType>
+    </ClCompile>
     <None Include="..\Files\Shaders\default.frag" />
     <None Include="..\Files\Shaders\default.vert" />
     <None Include="Code\Old\Camera.cpp" />

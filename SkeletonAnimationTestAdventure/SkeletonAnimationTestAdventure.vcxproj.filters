@@ -81,9 +81,6 @@
     <ClCompile Include="Code\Material.cpp">
       <Filter>Code\Material</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
-      <Filter>ThirdParty\MikkTSpace</Filter>
-    </ClCompile>
     <ClCompile Include="Code\IRenderer.cpp">
       <Filter>Code\Renderer</Filter>
     </ClCompile>
@@ -92,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="Code\OpenGLResourceManager.cpp">
       <Filter>Code\Renderer\OpenGL\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
+      <Filter>ThirdParty\MikkTSpace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +192,6 @@
     <ClInclude Include="Code\Material.hpp">
       <Filter>Code\Material</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h">
-      <Filter>ThirdParty\MikkTSpace</Filter>
-    </ClInclude>
     <ClInclude Include="Code\IRenderer.hpp">
       <Filter>Code\Renderer</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="Code\OpenGLResourceManager.hpp">
       <Filter>Code\Renderer\OpenGL\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h">
+      <Filter>ThirdParty\MikkTSpace</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

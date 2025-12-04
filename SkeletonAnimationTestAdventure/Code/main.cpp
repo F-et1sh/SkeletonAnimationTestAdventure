@@ -61,10 +61,14 @@ int main() {
 
         model.Draw(shader, glfwGetTime());*/
 
+        shader.Bind();
+
         renderer->beginFrame();
         renderer->submitCommand(render_command);
         renderer->renderView(render_view);
         renderer->endFrame();
+
+        shader.Unbind();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

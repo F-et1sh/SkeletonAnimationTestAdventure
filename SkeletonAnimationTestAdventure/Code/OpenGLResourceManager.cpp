@@ -60,6 +60,9 @@ void OpenGLResourceManager::createPrimitive(const Primitive& primitive) {
         case RenderIndexType::UNSIGNED_INT:
             new_primitive.index_type = GL_UNSIGNED_INT;
             break;
+        default:
+            assert(false);
+            break;
     }
 
     new_primitive.index_count  = primitive.index_count;
@@ -125,6 +128,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
         case Texture::TextureMinFilter::LINEAR_MIPMAP_LINEAR:
             min_filter = GL_LINEAR_MIPMAP_LINEAR;
             break;
+        default:
+            assert(false);
+            break;
     }
 
     switch (texture.getMagFilter()) { // Texture::TextureMagFilter
@@ -133,6 +139,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
             break;
         case Texture::TextureMagFilter::LINEAR:
             mag_filter = GL_LINEAR;
+            break;
+        default:
+            assert(false);
             break;
     }
 
@@ -146,6 +155,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
         case Texture::TextureWrap::REPEAT:
             wrap_s = GL_REPEAT;
             break;
+        default:
+            assert(false);
+            break;
     }
 
     switch (texture.getWrapT()) { // Texture::TextureWrap
@@ -157,6 +169,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
             break;
         case Texture::TextureWrap::REPEAT:
             wrap_t = GL_REPEAT;
+            break;
+        default:
+            assert(false);
             break;
     }
 
@@ -179,6 +194,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
         case Texture::TextureInternalFormat::SRGB8:
             internal_format = GL_SRGB8;
             break;
+        default:
+            assert(false);
+            break;
     }
 
     switch (texture.getDataFormat()) { // Texture::TextureDataFormat
@@ -193,6 +211,9 @@ void OpenGLResourceManager::createTexture(const Texture& texture) {
             break;
         case Texture::TextureDataFormat::RED:
             data_format = GL_RED;
+            break;
+        default:
+            assert(false);
             break;
     }
 

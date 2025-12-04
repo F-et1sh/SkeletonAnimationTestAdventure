@@ -14,7 +14,7 @@ struct OpenGLPrimitive {
     int material{ -1 };
 
     RenderMode enum_mode{};
-    int        mode{ GL_TRIANGLES }; // triangles by default
+    GLenum     mode{ GL_TRIANGLES }; // triangles by default
 
     VAO vao{};
     VBO vbo{};
@@ -36,6 +36,8 @@ public:
     ~OpenGLResourceManager() = default;
 
     void loadModel(const Model& model);
+
+    inline const std::vector<OpenGLPrimitive>& getPrimitives() const noexcept { return m_primitives; }
 
 private:
     void createPrimitive(const Primitive& primitive);
