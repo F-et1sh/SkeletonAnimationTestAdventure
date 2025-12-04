@@ -5,7 +5,7 @@
 class OpenGLRenderer : public IRenderer {
 public:
     OpenGLRenderer()  = default;
-    ~OpenGLRenderer() = default;
+    ~OpenGLRenderer() { this->Release(); }
 
     void Release() override;
     void Initialize(GLFWwindow* p_window) override;

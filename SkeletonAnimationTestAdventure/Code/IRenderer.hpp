@@ -19,7 +19,7 @@ struct RenderView {
 
 class IRenderer {
 public:
-    virtual ~IRenderer() { this->Release(); }
+    virtual ~IRenderer() = default;
 
     virtual void Release()                        = 0;
     virtual void Initialize(GLFWwindow* p_window) = 0;

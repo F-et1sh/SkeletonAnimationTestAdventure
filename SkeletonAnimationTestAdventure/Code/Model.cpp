@@ -657,14 +657,14 @@ void Model::bindMaterial(const Material& material, const Shader& shader) {
 }
 
 void Model::bindTexture(const Shader& shader, const std::string& uniform, int texture_index, int slot) {
-    shader.setUniformInt(uniform.c_str(), slot);
+    /*shader.setUniformInt(uniform.c_str(), slot);
 
     if (texture_index < 0) {
         return;
     }
 
     glActiveTexture(GL_TEXTURE0 + slot);
-    m_textures[texture_index].Bind();
+    m_textures[texture_index].Bind();*/
 }
 
 void Model::readVector(glm::vec2& dst, const std::vector<double>& src) {

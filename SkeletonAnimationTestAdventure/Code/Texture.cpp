@@ -5,7 +5,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 Texture::~Texture() {
-    stbi_image_free(m_bytes.get());
+    //stbi_image_free(m_bytes.get());
 }
 
 void Texture::Create(const std::filesystem::path& path) {
@@ -60,7 +60,7 @@ void Texture::Create(const std::filesystem::path& path) {
     m_width          = width;
     m_height         = height;
     m_components     = components;
-    m_bytes          = std::make_unique<unsigned char>(bytes);
+    //m_bytes          = std::make_unique<unsigned char>(*bytes);
     m_internalFormat = internal_format;
     m_dataFormat     = data_format;
 }
@@ -185,4 +185,11 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
             m_wrapT = TextureWrap::REPEAT;
             break;
     }
+
+    m_width          = width;
+    m_height         = height;
+    m_components     = components;
+    //m_bytes          = std::make_unique<unsigned char>(*bytes); 
+    m_internalFormat = internal_format;
+    m_dataFormat     = data_format;
 }
