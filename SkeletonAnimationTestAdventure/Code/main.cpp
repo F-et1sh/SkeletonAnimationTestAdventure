@@ -41,6 +41,12 @@ int main() {
     renderer->Initialize(window);
     renderer->loadModel(model);
 
+    RenderCommand render_command{};
+    render_command.model = &model;
+
+    RenderView render_view{};
+    render_view.camera = &camera;
+
     while (glfwWindowShouldClose(window) == 0) {
         glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -49,11 +55,16 @@ int main() {
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
         camera.UploadUniforms(shader, "u_cameraMatrix");
 
-        shader.setUniformVec3("u_lightDirection", glm::vec3(1, 1, 1));
+        /*shader.setUniformVec3("u_lightDirection", glm::vec3(1, 1, 1));
         shader.setUniformVec3("u_lightColor", glm::vec3(30, 30, 30));
         shader.setUniformVec3("u_cameraPosition", camera.getPosition());
 
-        model.Draw(shader, glfwGetTime());
+        model.Draw(shader, glfwGetTime());*/
+
+        renderer->beginFrame();
+        renderer->submitCommand(render_command);
+        renderer->renderView(render_view);
+        renderer->endFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
