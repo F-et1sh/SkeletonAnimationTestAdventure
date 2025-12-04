@@ -200,7 +200,7 @@
   <ItemGroup>
     <ClInclude Include="Code\IRenderer.hpp" />
     <ClInclude Include="Code\OpenGLRenderer.hpp" />
-    <ClInclude Include="Code\OpenGLResourceManager.h" />
+    <ClInclude Include="Code\OpenGLResourceManager.hpp" />
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />
     <None Include="Code\Old\EBO.hpp" />

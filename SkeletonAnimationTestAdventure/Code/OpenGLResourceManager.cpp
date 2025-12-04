@@ -1,4 +1,4 @@
-#include "OpenGLResourceManager.h"
+#include "OpenGLResourceManager.hpp"
 
 void OpenGLResourceManager::loadModel(const Model& model) {
     const auto& meshes = model.getMeshes();
@@ -8,8 +8,7 @@ void OpenGLResourceManager::loadModel(const Model& model) {
         }
     }
 
-    const auto& textures = model.getTextures();
-    
+    //const auto& textures = model.getTextures();
 }
 
 void OpenGLResourceManager::loadPrimitive(const Primitive& primitive) {

@@ -60,9 +60,14 @@ void Texture::Create(const std::filesystem::path& path) {
     m_width          = width;
     m_height         = height;
     m_components     = components;
-    //m_bytes          = std::make_unique<unsigned char>(*bytes);
     m_internalFormat = internal_format;
     m_dataFormat     = data_format;
+
+    size_t buffer_size = width * height * components;
+    m_bytes            = std::make_unique<unsigned char[]>(buffer_size);
+
+    // bytes are already checked that it is not nullptr
+    std::copy(bytes, bytes + buffer_size, m_bytes.get());
 }
 
 void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler, TextureColorSpace texture_color_space) {
@@ -189,7 +194,16 @@ void Texture::Create(const tinygltf::Image& image, const tinygltf::Sampler& samp
     m_width          = width;
     m_height         = height;
     m_components     = components;
-    //m_bytes          = std::make_unique<unsigned char>(*bytes); 
     m_internalFormat = internal_format;
     m_dataFormat     = data_format;
+
+    size_t buffer_size = image.width * image.height * image.component;
+    m_bytes            = std::make_unique<unsigned char[]>(buffer_size);
+
+    if (!image.image.empty() && buffer_size == image.image.size()) {
+        std::copy(image.image.begin(), image.image.end(), m_bytes.get());
+    }
+    else {
+        assert(false);
+    }
 }

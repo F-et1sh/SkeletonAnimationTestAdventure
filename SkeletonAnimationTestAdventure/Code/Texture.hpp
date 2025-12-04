@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+#include <memory>
 
 #include "stb_image.h"
 #include "tiny_gltf.h"
@@ -50,11 +51,17 @@ public:
     void Create(const std::filesystem::path& path);
     void Create(const tinygltf::Image& image, const tinygltf::Sampler& sampler, TextureColorSpace texture_color_space);
 
+    Texture(const Texture&)            = delete;
+    Texture& operator=(const Texture&) = delete;
+
+    Texture(Texture&&) noexcept            = default;
+    Texture& operator=(Texture&&) noexcept = default;
+
 private:
-    unsigned int                   m_width{ 0 };
-    unsigned int                   m_height{ 0 };
-    unsigned int                   m_components{ 0 };
-    //std::unique_ptr<unsigned char> m_bytes;
+    unsigned int                     m_width{ 0 };
+    unsigned int                     m_height{ 0 };
+    unsigned int                     m_components{ 0 };
+    std::unique_ptr<unsigned char[]> m_bytes{};
 
     TextureFilter m_minFilter{ TextureFilter::LINEAR_MIPMAP_LINEAR };
     TextureFilter m_magFilter{ TextureFilter::LINEAR };

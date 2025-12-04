@@ -1,6 +1,6 @@
 #pragma once
 #include "IRenderer.hpp"
-#include "OpenGLResourceManager.h"
+#include "OpenGLResourceManager.hpp"
 
 class OpenGLRenderer : public IRenderer {
 public:

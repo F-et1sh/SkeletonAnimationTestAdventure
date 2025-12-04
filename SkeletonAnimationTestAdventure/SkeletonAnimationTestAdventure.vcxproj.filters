@@ -201,7 +201,7 @@
     <ClInclude Include="Code\OpenGLRenderer.hpp">
       <Filter>Code\Renderer\OpenGL\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Code\OpenGLResourceManager.h">
+    <ClInclude Include="Code\OpenGLResourceManager.hpp">
       <Filter>Code\Renderer\OpenGL\ResourceManager</Filter>
     </ClInclude>
   </ItemGroup>
