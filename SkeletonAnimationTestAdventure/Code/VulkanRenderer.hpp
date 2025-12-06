@@ -3,6 +3,9 @@
 
 #include "VulkanDeviceManager.hpp"
 #include "VulkanSwapchainManager.hpp"
+#include "VulkanRenderPassManager.hpp"
+#include "VulkanPipelineManager.hpp"
+#include "VulkanRenderMesh.hpp"
 
 class VulkanRenderer : public IRenderer {
 public:

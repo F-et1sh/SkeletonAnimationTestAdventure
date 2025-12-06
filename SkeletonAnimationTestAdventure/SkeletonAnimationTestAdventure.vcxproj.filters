@@ -73,6 +73,12 @@
     <Filter Include="Code\Renderer\Vulkan\SwapchainManager">
       <UniqueIdentifier>{baf9387e-ff64-4129-9ab3-c31dca9ea799}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Renderer\Vulkan\RenderMesh">
+      <UniqueIdentifier>{42782156-d576-4c9c-ad98-ae1fa9e84e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\Vulkan\GameObject">
+      <UniqueIdentifier>{9f9ed8e1-09b4-47ae-ad15-b37e030b1444}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -125,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="Code\VulkanPipelineManager.cpp">
       <Filter>Code\Renderer\Vulkan\PipelineManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanRenderMesh.cpp">
+      <Filter>Code\Renderer\Vulkan\RenderMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanGameObject.cpp">
+      <Filter>Code\Renderer\Vulkan\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="Code\VulkanPipelineManager.hpp">
       <Filter>Code\Renderer\Vulkan\PipelineManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanRenderMesh.hpp">
+      <Filter>Code\Renderer\Vulkan\RenderMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanGameObject.hpp">
+      <Filter>Code\Renderer\Vulkan\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
