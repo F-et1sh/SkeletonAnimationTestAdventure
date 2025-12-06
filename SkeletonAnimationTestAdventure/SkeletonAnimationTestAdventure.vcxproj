@@ -118,13 +118,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\win64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\win64\lib-vc2022;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;slang.lib;volk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,13 +137,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\Code;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\glad\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\tiny_gltf\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\STBI\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\json\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLM\include;$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\MikkTSpace\include;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\win64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SkeletonAnimationTestAdventure\ThirdParty\GLFW\win64\lib-vc2022;$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;slang.lib;volk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -152,6 +152,8 @@
     <ClCompile Include="Code\main.cpp" />
     <ClCompile Include="Code\OpenGLRenderer.cpp" />
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
+    <ClCompile Include="Code\VulkanDeviceManager.cpp" />
+    <ClCompile Include="Code\VulkanRenderer.cpp" />
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <FileType>CppCode</FileType>
     </ClCompile>
@@ -203,6 +205,9 @@
     <ClInclude Include="Code\IRenderer.hpp" />
     <ClInclude Include="Code\OpenGLRenderer.hpp" />
     <ClInclude Include="Code\OpenGLResourceManager.hpp" />
+    <ClInclude Include="Code\VulkanDeviceManager.hpp" />
+    <ClInclude Include="Code\VulkanRenderer.hpp" />
+    <ClInclude Include="Code\VulkanSwapchain.hpp" />
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />
     <None Include="Code\Old\EBO.hpp" />

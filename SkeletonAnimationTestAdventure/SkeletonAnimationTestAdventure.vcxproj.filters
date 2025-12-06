@@ -55,6 +55,18 @@
     <Filter Include="Code\Renderer\OpenGL\ResourceManager">
       <UniqueIdentifier>{637b3963-47b8-4bd5-adcb-5008b8cae2ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Renderer\Vulkan">
+      <UniqueIdentifier>{8e444777-81f4-4c85-9c4e-1510ee9e1f74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\Vulkan\Renderer">
+      <UniqueIdentifier>{450e6c5e-9ad4-425b-a997-997216ad5511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\Vulkan\DeviceManager">
+      <UniqueIdentifier>{13b2aff8-c579-4ca8-851b-cc642e51eb10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\Vulkan\Swapchain">
+      <UniqueIdentifier>{baf9387e-ff64-4129-9ab3-c31dca9ea799}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -92,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <Filter>ThirdParty\MikkTSpace</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanRenderer.cpp">
+      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanDeviceManager.cpp">
+      <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +221,15 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h">
       <Filter>ThirdParty\MikkTSpace</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanRenderer.hpp">
+      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanDeviceManager.hpp">
+      <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanSwapchain.hpp">
+      <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
