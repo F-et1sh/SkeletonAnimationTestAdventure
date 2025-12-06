@@ -1,5 +1,8 @@
 #include "VulkanSwapchainManager.hpp"
 
+#include "VulkanDeviceManager.hpp"
+#include "VulkanRenderPassManager.hpp"
+
 void VulkanSwapchainManager::Release() {
     VkDevice   device   = (p_DeviceManager != nullptr) ? p_DeviceManager->getDevice() : VK_NULL_HANDLE;
     VkInstance instance = (p_DeviceManager != nullptr) ? p_DeviceManager->getInstance() : VK_NULL_HANDLE;

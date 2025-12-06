@@ -1,7 +1,12 @@
 #pragma once
+#include <vector>
 #include <iostream>
 #include <algorithm>
-#include "VulkanDeviceManager.hpp"
+
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
+#include <Volk/volk.h>
 
 /* forward declaration */
 class VulkanDeviceManager;

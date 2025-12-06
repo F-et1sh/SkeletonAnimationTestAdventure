@@ -24,10 +24,10 @@ public:
 private:
     GLFWwindow* p_glfwWindow = nullptr;
 
-    VulkanDeviceManager           m_DeviceManager;
-    VulkanSwapchainManagerManager m_SwapchainManager;
-    VulkanRenderPassManager       m_RenderPassManager;
-    VulkanPipelineManager         m_PipelineManager;
+    VulkanDeviceManager     m_DeviceManager;
+    VulkanSwapchainManager  m_SwapchainManager;
+    VulkanRenderPassManager m_RenderPassManager;
+    VulkanPipelineManager   m_PipelineManager;
 
     VulkanRenderMesh m_RenderMesh;
 };

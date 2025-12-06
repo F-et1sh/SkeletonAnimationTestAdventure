@@ -1,4 +1,5 @@
 #include "VulkanRenderPassManager.hpp"
+#include "VulkanDeviceManager.hpp"
 
 void VulkanRenderPassManager::Release() {
     vkDestroyRenderPass(p_DeviceManager->getDevice(), m_RenderPass, nullptr);

@@ -79,6 +79,9 @@
     <Filter Include="Code\Renderer\Vulkan\GameObject">
       <UniqueIdentifier>{9f9ed8e1-09b4-47ae-ad15-b37e030b1444}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\PathManager">
+      <UniqueIdentifier>{d5c83841-9ff2-4e77-8397-dc0e8b1153d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -137,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="Code\VulkanGameObject.cpp">
       <Filter>Code\Renderer\Vulkan\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\PathManager.cpp">
+      <Filter>Code\PathManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="Code\VulkanGameObject.hpp">
       <Filter>Code\Renderer\Vulkan\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\PathManager.hpp">
+      <Filter>Code\PathManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

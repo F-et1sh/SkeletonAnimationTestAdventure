@@ -1,9 +1,10 @@
 #pragma once
 #include <iostream>
 #include <array>
-#include <Volk/volk.h>
 
 #include "VulkanSwapchainManager.hpp"
+
+#include <Volk/volk.h>
 
 /* forward declaration */
 class VulkanDeviceManager;

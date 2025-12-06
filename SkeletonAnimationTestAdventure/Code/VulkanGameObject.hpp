@@ -1,6 +1,6 @@
 #pragma once
-#include <Volk/volk.h>
 #include "VertexBuffers.hpp"
+#include <Volk/volk.h>
 
 struct UniformBufferObject {
     alignas(16) glm::mat4 model;

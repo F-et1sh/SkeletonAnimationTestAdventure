@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include "VulkanGameObject.hpp"
 
 class VulkanDeviceManager; // forward declaration

@@ -1,4 +1,8 @@
 #include "VulkanDeviceManager.hpp"
+#include "VulkanSwapchainManager.hpp"
+#include "VulkanRenderPassManager.hpp"
+#include "VulkanPipelineManager.hpp"
+#include "VulkanRenderMesh.hpp"
 
 void VulkanDeviceManager::Release() {
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
@@ -244,13 +248,13 @@ void VulkanDeviceManager::DrawFrame() {
 
     result = vkQueuePresentKHR(m_PresentQueue, &present_info);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || p_GLFWwindow->isFramebufferResized()) {
+    /*if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || p_GLFWwindow->isFramebufferResized()) {
         p_GLFWwindow->resetFramebufferResized();
         p_SwapchainManager->recreateSwapchain();
     }
     else if (result != VK_SUCCESS) {
         throw std::runtime_error("ERROR : Failed to present swap chain image");
-    }
+    }*/
 
     m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
@@ -336,7 +340,7 @@ bool VulkanDeviceManager::isDeviceSuitable(VkPhysicalDevice device) {
 
     bool swap_chain_adequate = false;
     if (extensions_supported) {
-        SwapChainSupportDetails swap_chain_support = SwapchainManager::querySwapChainSupport(device, p_SwapchainManager->getSurface());
+        SwapChainSupportDetails swap_chain_support = VulkanSwapchainManager::querySwapChainSupport(device, p_SwapchainManager->getSurface());
         swap_chain_adequate                        = !swap_chain_support.formats.empty() && !swap_chain_support.present_modes.empty();
     }
 

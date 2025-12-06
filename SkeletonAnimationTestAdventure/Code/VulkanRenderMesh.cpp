@@ -9,6 +9,7 @@
 #include <tiny_gltf.h>
 
 #include "VulkanDeviceManager.hpp"
+#include "PathManager.hpp"
 
 void VulkanRenderMesh::Release() {
     vkDestroyBuffer(p_DeviceManager->getDevice(), m_IndexBuffer, nullptr);

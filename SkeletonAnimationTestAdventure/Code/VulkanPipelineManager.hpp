@@ -5,10 +5,10 @@
 #include <vector>
 #include <set>
 
-#include <Volk/volk.h>
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include "VulkanRenderMesh.h"
+#include "VulkanRenderMesh.hpp"
 
 /* forward declarations */
 class VulkanDeviceManager;

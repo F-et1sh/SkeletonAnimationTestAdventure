@@ -7,6 +7,7 @@
 
 #include <Volk/volk.h>
 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 struct QueueFamilyIndices {
@@ -15,6 +16,8 @@ struct QueueFamilyIndices {
 
     bool is_complete() const noexcept { return graphics_family.has_value() && present_family.has_value(); }
 };
+
+constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
 #ifdef NDEBUG
 constexpr inline static bool ENABLE_VALIDATION_LAYERS = false;
@@ -31,7 +34,7 @@ constexpr inline static std::array DEVICE_EXTENSIONS{
 };
 
 /* forward declarations */
-class VulkanSwapchainManagerManager;
+class VulkanSwapchainManager;
 class VulkanRenderPassManager;
 class VulkanPipelineManager;
 class VulkanRenderMesh;
@@ -39,7 +42,7 @@ class VulkanRenderMesh;
 class VulkanDeviceManager {
 public:
     VulkanDeviceManager(
-        VulkanSwapchainManagerManager*  swapchain_manager,
+        VulkanSwapchainManager*  swapchain_manager,
         GLFWwindow*              p_glfw_window,
         VulkanRenderPassManager* render_pass_manager,
         VulkanPipelineManager*   pipeline_manager,
@@ -103,7 +106,7 @@ private:
     }
 
 private:
-    VulkanSwapchainManagerManager*  p_SwapchainManager  = nullptr;
+    VulkanSwapchainManager*  p_SwapchainManager  = nullptr;
     GLFWwindow*              p_GLFWwindow        = nullptr;
     VulkanRenderPassManager* p_RenderPassManager = nullptr;
     VulkanPipelineManager*   p_PipelineManager   = nullptr;

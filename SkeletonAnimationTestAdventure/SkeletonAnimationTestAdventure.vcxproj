@@ -152,6 +152,7 @@
     <ClCompile Include="Code\main.cpp" />
     <ClCompile Include="Code\OpenGLRenderer.cpp" />
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
+    <ClCompile Include="Code\PathManager.cpp" />
     <ClCompile Include="Code\VulkanRenderMesh.cpp" />
     <ClCompile Include="Code\VulkanDeviceManager.cpp" />
     <ClCompile Include="Code\VulkanGameObject.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Code\IRenderer.hpp" />
     <ClInclude Include="Code\OpenGLRenderer.hpp" />
     <ClInclude Include="Code\OpenGLResourceManager.hpp" />
+    <ClInclude Include="Code\PathManager.hpp" />
     <ClInclude Include="Code\VulkanRenderMesh.hpp" />
     <ClInclude Include="Code\VulkanDeviceManager.hpp" />
     <ClInclude Include="Code\VulkanGameObject.hpp" />
