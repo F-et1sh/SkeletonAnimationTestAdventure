@@ -154,6 +154,7 @@
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
     <ClCompile Include="Code\VulkanDeviceManager.cpp" />
     <ClCompile Include="Code\VulkanRenderer.cpp" />
+    <ClCompile Include="Code\VulkanSwapchain.cpp" />
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <FileType>CppCode</FileType>
     </ClCompile>

@@ -1,13 +1,7 @@
 #pragma once
 #include <iostream>
-#include <optional>
-#include <array>
-#include <vector>
-#include <set>
-
-#include <Volk/volk.h>
-
-#include <GLFW/glfw3.h>
+#include <algorithm>
+#include "VulkanDeviceManager.hpp"
 
 /* forward declaration */
 class VulkanDeviceManager;
@@ -22,11 +16,11 @@ struct SwapChainSupportDetails {
     ~SwapChainSupportDetails() = default;
 };
 
-class SwapchainManager {
+class VulkanSwapchain {
 public:
-    SwapchainManager(VulkanDeviceManager* device_manager, GLFWwindow* window, VulkanRenderPassManager* render_pass_manager)
+    VulkanSwapchain(VulkanDeviceManager* device_manager, GLFWwindow* window, VulkanRenderPassManager* render_pass_manager)
         : p_DeviceManager{ device_manager }, p_GLFWwindow{ window }, p_RenderPassManager{ render_pass_manager } {}
-    ~SwapchainManager() { this->Release(); }
+    ~VulkanSwapchain() { this->Release(); }
 
     void Release();
 

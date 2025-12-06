@@ -111,6 +111,9 @@
     <ClCompile Include="Code\VulkanDeviceManager.cpp">
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClCompile>
+    <ClCompile Include="Code\VulkanSwapchain.cpp">
+      <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="ThirdParty\glad\GLAD_LICENSE">
