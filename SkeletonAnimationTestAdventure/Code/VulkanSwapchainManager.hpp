@@ -16,11 +16,11 @@ struct SwapChainSupportDetails {
     ~SwapChainSupportDetails() = default;
 };
 
-class VulkanSwapchain {
+class VulkanSwapchainManager {
 public:
-    VulkanSwapchain(VulkanDeviceManager* device_manager, GLFWwindow* window, VulkanRenderPassManager* render_pass_manager)
+    VulkanSwapchainManager(VulkanDeviceManager* device_manager, GLFWwindow* window, VulkanRenderPassManager* render_pass_manager)
         : p_DeviceManager{ device_manager }, p_GLFWwindow{ window }, p_RenderPassManager{ render_pass_manager } {}
-    ~VulkanSwapchain() { this->Release(); }
+    ~VulkanSwapchainManager() { this->Release(); }
 
     void Release();
 

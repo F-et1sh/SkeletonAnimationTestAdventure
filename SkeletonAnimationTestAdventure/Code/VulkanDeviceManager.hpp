@@ -31,7 +31,7 @@ constexpr inline static std::array DEVICE_EXTENSIONS{
 };
 
 /* forward declarations */
-class VulkanSwapchainManager;
+class VulkanSwapchainManagerManager;
 class VulkanRenderPassManager;
 class VulkanPipelineManager;
 class VulkanRenderMesh;
@@ -39,7 +39,7 @@ class VulkanRenderMesh;
 class VulkanDeviceManager {
 public:
     VulkanDeviceManager(
-        VulkanSwapchainManager*  swapchain_manager,
+        VulkanSwapchainManagerManager*  swapchain_manager,
         GLFWwindow*              p_glfw_window,
         VulkanRenderPassManager* render_pass_manager,
         VulkanPipelineManager*   pipeline_manager,
@@ -103,7 +103,7 @@ private:
     }
 
 private:
-    VulkanSwapchainManager*  p_SwapchainManager  = nullptr;
+    VulkanSwapchainManagerManager*  p_SwapchainManager  = nullptr;
     GLFWwindow*              p_GLFWwindow        = nullptr;
     VulkanRenderPassManager* p_RenderPassManager = nullptr;
     VulkanPipelineManager*   p_PipelineManager   = nullptr;

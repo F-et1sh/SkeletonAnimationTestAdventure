@@ -1,6 +1,6 @@
-#include "VulkanSwapchain.hpp"
+#include "VulkanSwapchainManager.hpp"
 
-void VulkanSwapchain::Release() {
+void VulkanSwapchainManager::Release() {
     VkDevice   device   = (p_DeviceManager != nullptr) ? p_DeviceManager->getDevice() : VK_NULL_HANDLE;
     VkInstance instance = (p_DeviceManager != nullptr) ? p_DeviceManager->getInstance() : VK_NULL_HANDLE;
 
@@ -25,13 +25,13 @@ void VulkanSwapchain::Release() {
     vkDestroySurfaceKHR(instance, m_Surface, nullptr);
 }
 
-void VulkanSwapchain::CreateSurface() {
+void VulkanSwapchainManager::CreateSurface() {
     if (glfwCreateWindowSurface(p_DeviceManager->getInstance(), p_GLFWwindow, nullptr, &m_Surface) != VK_SUCCESS) {
         throw std::runtime_error("ERROR : Failed to create window surface");
     }
 }
 
-void VulkanSwapchain::CreateSwapchain() {
+void VulkanSwapchainManager::CreateSwapchain() {
     auto* physical_device = p_DeviceManager->getPhysicalDevice();
     auto* device          = p_DeviceManager->getDevice();
     auto* window          = p_GLFWwindow;
@@ -58,7 +58,7 @@ void VulkanSwapchain::CreateSwapchain() {
     create_info.imageArrayLayers = 1;
     create_info.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    QueueFamilyIndices indices                = DeviceManager::findQueueFamilies(p_DeviceManager->getPhysicalDevice(), m_Surface);
+    QueueFamilyIndices indices                = VulkanDeviceManager::findQueueFamilies(p_DeviceManager->getPhysicalDevice(), m_Surface);
     uint32_t           queue_family_indices[] = { indices.graphics_family.value(), indices.present_family.value() };
 
     if (indices.graphics_family != indices.present_family) {
@@ -87,7 +87,7 @@ void VulkanSwapchain::CreateSwapchain() {
     m_SwapchainExtent      = extent;
 }
 
-void VulkanSwapchain::CreateImageViews() {
+void VulkanSwapchainManager::CreateImageViews() {
     m_SwapchainImageViews.resize(m_SwapchainImages.size());
 
     for (uint32_t i = 0; i < m_SwapchainImages.size(); i++) {
@@ -95,21 +95,21 @@ void VulkanSwapchain::CreateImageViews() {
     }
 }
 
-void VulkanSwapchain::CreateColorResources() {
+void VulkanSwapchainManager::CreateColorResources() {
     VkFormat color_format = m_SwapchainImageFormat;
 
     p_DeviceManager->createImage(m_SwapchainExtent.width, m_SwapchainExtent.height, 1, p_DeviceManager->getMSAASamples(), color_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_ColorImage, m_ColorImageMemory);
     m_ColorImageView = p_DeviceManager->createImageView(m_ColorImage, color_format, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 }
 
-void VulkanSwapchain::CreateDepthResources() {
+void VulkanSwapchainManager::CreateDepthResources() {
     VkFormat depth_format = p_DeviceManager->findDepthFormat();
 
     p_DeviceManager->createImage(m_SwapchainExtent.width, m_SwapchainExtent.height, 1, p_DeviceManager->getMSAASamples(), depth_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_DepthImage, m_DepthImageMemory);
     m_DepthImageView = p_DeviceManager->createImageView(m_DepthImage, depth_format, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
 }
 
-void VulkanSwapchain::CreateFramebuffers() {
+void VulkanSwapchainManager::CreateFramebuffers() {
     m_SwapchainFramebuffers.resize(m_SwapchainImageViews.size());
 
     for (size_t i = 0; i < m_SwapchainImageViews.size(); i++) {
@@ -134,7 +134,7 @@ void VulkanSwapchain::CreateFramebuffers() {
     }
 }
 
-VkSurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats) {
+VkSurfaceFormatKHR VulkanSwapchainManager::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& available_formats) {
     for (const auto& available_format : available_formats) {
         if (available_format.format == VK_FORMAT_B8G8R8A8_SRGB && available_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
             return available_format;
@@ -144,7 +144,7 @@ VkSurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(const std::vector<Vk
     return available_formats[0];
 }
 
-VkPresentModeKHR VulkanSwapchain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
+VkPresentModeKHR VulkanSwapchainManager::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& available_present_modes) {
     for (const auto& available_present_mode : available_present_modes) {
         if (available_present_mode == VK_PRESENT_MODE_MAILBOX_KHR) {
             return available_present_mode;
@@ -154,7 +154,7 @@ VkPresentModeKHR VulkanSwapchain::chooseSwapPresentMode(const std::vector<VkPres
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window) {
+VkExtent2D VulkanSwapchainManager::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window) {
     if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
         return capabilities.currentExtent;
     }
@@ -174,7 +174,7 @@ VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& cap
     return actual_extent;
 }
 
-SwapChainSupportDetails VulkanSwapchain::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
+SwapChainSupportDetails VulkanSwapchainManager::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
     SwapChainSupportDetails details{};
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
@@ -198,7 +198,7 @@ SwapChainSupportDetails VulkanSwapchain::querySwapChainSupport(VkPhysicalDevice 
     return details;
 }
 
-void VulkanSwapchain::recreateSwapchain() {
+void VulkanSwapchainManager::recreateSwapchain() {
     int width  = 0;
     int height = 0;
     glfwGetFramebufferSize(p_GLFWwindow, &width, &height);

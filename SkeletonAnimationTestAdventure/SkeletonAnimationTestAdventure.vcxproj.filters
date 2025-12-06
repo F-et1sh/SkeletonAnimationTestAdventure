@@ -111,7 +111,7 @@
     <ClCompile Include="Code\VulkanDeviceManager.cpp">
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClCompile>
-    <ClCompile Include="Code\VulkanSwapchain.cpp">
+    <ClCompile Include="Code\VulkanSwapchainManager.cpp">
       <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
     </ClCompile>
   </ItemGroup>
@@ -231,7 +231,7 @@
     <ClInclude Include="Code\VulkanDeviceManager.hpp">
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClInclude>
-    <ClInclude Include="Code\VulkanSwapchain.hpp">
+    <ClInclude Include="Code\VulkanSwapchainManager.hpp">
       <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
     </ClInclude>
   </ItemGroup>

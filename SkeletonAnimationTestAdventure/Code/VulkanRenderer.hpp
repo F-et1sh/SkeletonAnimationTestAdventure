@@ -1,8 +1,8 @@
 #pragma once
 #include "IRenderer.hpp"
 
-#include <Volk/volk.h>
-#include "vma/vk_mem_alloc.h"
+#include "VulkanDeviceManager.hpp"
+#include "VulkanSwapchainManager.hpp"
 
 class VulkanRenderer : public IRenderer {
 public:
@@ -21,10 +21,10 @@ public:
 private:
     GLFWwindow* p_glfwWindow = nullptr;
 
-    DeviceManager     m_DeviceManager;
-    SwapchainManager  m_SwapchainManager;
-    RenderPassManager m_RenderPassManager;
-    PipelineManager   m_PipelineManager;
+    VulkanDeviceManager           m_DeviceManager;
+    VulkanSwapchainManagerManager m_SwapchainManager;
+    VulkanRenderPassManager       m_RenderPassManager;
+    VulkanPipelineManager         m_PipelineManager;
 
-    RenderMesh m_RenderMesh;
+    VulkanRenderMesh m_RenderMesh;
 };
