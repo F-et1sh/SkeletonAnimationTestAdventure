@@ -154,6 +154,7 @@
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
     <ClCompile Include="Code\VulkanDeviceManager.cpp" />
     <ClCompile Include="Code\VulkanRenderer.cpp" />
+    <ClCompile Include="Code\VulkanRenderPassManager.cpp" />
     <ClCompile Include="Code\VulkanSwapchainManager.cpp" />
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <FileType>CppCode</FileType>
@@ -208,6 +209,7 @@
     <ClInclude Include="Code\OpenGLResourceManager.hpp" />
     <ClInclude Include="Code\VulkanDeviceManager.hpp" />
     <ClInclude Include="Code\VulkanRenderer.hpp" />
+    <ClInclude Include="Code\VulkanRenderPassManager.hpp" />
     <ClInclude Include="Code\VulkanSwapchainManager.hpp" />
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h" />
     <None Include="Code\Old\Camera.hpp" />

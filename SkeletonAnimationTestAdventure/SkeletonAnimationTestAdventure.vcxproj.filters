@@ -67,6 +67,9 @@
     <Filter Include="Code\Renderer\Vulkan\Swapchain">
       <UniqueIdentifier>{baf9387e-ff64-4129-9ab3-c31dca9ea799}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Renderer\Vulkan\RenderPass">
+      <UniqueIdentifier>{cb746ea8-e937-4f1a-9088-87dc85e3be05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Code\VulkanSwapchainManager.cpp">
       <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanRenderPassManager.cpp">
+      <Filter>Code\Renderer\Vulkan\RenderPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +239,9 @@
     </ClInclude>
     <ClInclude Include="Code\VulkanSwapchainManager.hpp">
       <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanRenderPassManager.hpp">
+      <Filter>Code\Renderer\Vulkan\RenderPass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
