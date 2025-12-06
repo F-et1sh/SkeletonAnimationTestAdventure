@@ -64,11 +64,14 @@
     <Filter Include="Code\Renderer\Vulkan\DeviceManager">
       <UniqueIdentifier>{13b2aff8-c579-4ca8-851b-cc642e51eb10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code\Renderer\Vulkan\Swapchain">
-      <UniqueIdentifier>{baf9387e-ff64-4129-9ab3-c31dca9ea799}</UniqueIdentifier>
+    <Filter Include="Code\Renderer\Vulkan\PipelineManager">
+      <UniqueIdentifier>{35ab705b-0e69-4a85-93cd-690d50461f1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Code\Renderer\Vulkan\RenderPass">
+    <Filter Include="Code\Renderer\Vulkan\RenderPassManager">
       <UniqueIdentifier>{cb746ea8-e937-4f1a-9088-87dc85e3be05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Renderer\Vulkan\SwapchainManager">
+      <UniqueIdentifier>{baf9387e-ff64-4129-9ab3-c31dca9ea799}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -115,10 +118,13 @@
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClCompile>
     <ClCompile Include="Code\VulkanSwapchainManager.cpp">
-      <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
+      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
     </ClCompile>
     <ClCompile Include="Code\VulkanRenderPassManager.cpp">
-      <Filter>Code\Renderer\Vulkan\RenderPass</Filter>
+      <Filter>Code\Renderer\Vulkan\RenderPassManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanPipelineManager.cpp">
+      <Filter>Code\Renderer\Vulkan\PipelineManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -238,10 +244,13 @@
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
     </ClInclude>
     <ClInclude Include="Code\VulkanSwapchainManager.hpp">
-      <Filter>Code\Renderer\Vulkan\Swapchain</Filter>
+      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
     </ClInclude>
     <ClInclude Include="Code\VulkanRenderPassManager.hpp">
-      <Filter>Code\Renderer\Vulkan\RenderPass</Filter>
+      <Filter>Code\Renderer\Vulkan\RenderPassManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanPipelineManager.hpp">
+      <Filter>Code\Renderer\Vulkan\PipelineManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

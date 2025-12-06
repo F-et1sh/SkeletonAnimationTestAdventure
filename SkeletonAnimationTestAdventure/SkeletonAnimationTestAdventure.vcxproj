@@ -153,6 +153,7 @@
     <ClCompile Include="Code\OpenGLRenderer.cpp" />
     <ClCompile Include="Code\OpenGLResourceManager.cpp" />
     <ClCompile Include="Code\VulkanDeviceManager.cpp" />
+    <ClCompile Include="Code\VulkanPipelineManager.cpp" />
     <ClCompile Include="Code\VulkanRenderer.cpp" />
     <ClCompile Include="Code\VulkanRenderPassManager.cpp" />
     <ClCompile Include="Code\VulkanSwapchainManager.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Code\OpenGLRenderer.hpp" />
     <ClInclude Include="Code\OpenGLResourceManager.hpp" />
     <ClInclude Include="Code\VulkanDeviceManager.hpp" />
+    <ClInclude Include="Code\VulkanPipelineManager.hpp" />
     <ClInclude Include="Code\VulkanRenderer.hpp" />
     <ClInclude Include="Code\VulkanRenderPassManager.hpp" />
     <ClInclude Include="Code\VulkanSwapchainManager.hpp" />
