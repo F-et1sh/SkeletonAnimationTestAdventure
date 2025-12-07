@@ -4,6 +4,7 @@
 #include "VulkanRenderPassManager.hpp"
 
 #include "PathManager.hpp"
+#include "Vertices.hpp"
 
 #include <fstream>
 
@@ -67,15 +68,13 @@ void VulkanPipelineManager::CreateGraphicsPipeline() {
     VkPipelineVertexInputStateCreateInfo vertex_input_info{};
     vertex_input_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-    // TODO
+    auto binding_description    = Vertex::getBindingDescription();
+    auto attribute_descriptions = Vertex::getAttributeDescriptions();
 
-    //auto binding_description    = Vertex::getBindingDescription();
-    //auto attribute_descriptions = Vertex::getAttributeDescriptions();
-
-    //vertex_input_info.vertexBindingDescriptionCount   = 1;
-    //vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attribute_descriptions.size());
-    //vertex_input_info.pVertexBindingDescriptions      = &binding_description;
-    //vertex_input_info.pVertexAttributeDescriptions    = attribute_descriptions.data();
+    vertex_input_info.vertexBindingDescriptionCount   = 1;
+    vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attribute_descriptions.size());
+    vertex_input_info.pVertexBindingDescriptions      = &binding_description;
+    vertex_input_info.pVertexAttributeDescriptions    = attribute_descriptions.data();
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly{};
     input_assembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

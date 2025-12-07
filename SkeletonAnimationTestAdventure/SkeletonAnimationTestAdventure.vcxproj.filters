@@ -82,6 +82,9 @@
     <Filter Include="Code\PathManager">
       <UniqueIdentifier>{d5c83841-9ff2-4e77-8397-dc0e8b1153d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Renderer\Vertices">
+      <UniqueIdentifier>{84291452-4e25-40e7-97e6-a3f6db33f87c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\glad\src\glad.c">
@@ -278,6 +281,9 @@
     </ClInclude>
     <ClInclude Include="Code\VulkanRenderer.hpp">
       <Filter>Code\Renderer\Vulkan\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Vertices.hpp">
+      <Filter>Code\Renderer\Vertices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

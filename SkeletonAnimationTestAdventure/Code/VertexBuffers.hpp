@@ -11,19 +11,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#pragma pack(push, 1)
-struct Vertex {
-    glm::vec3    position;
-    glm::vec3    normal;
-    glm::vec2    texture_coord;
-    glm::u16vec4 joints;
-    glm::vec4    weights;
-    glm::vec4    tangent;
-
-    Vertex()  = default;
-    ~Vertex() = default;
-};
-#pragma pack(pop)
+#include "Vertices.hpp"
 
 using Vertices = std::vector<Vertex>;
 using Indices  = std::variant<
