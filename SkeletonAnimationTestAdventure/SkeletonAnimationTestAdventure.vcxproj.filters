@@ -120,14 +120,11 @@
     <ClCompile Include="ThirdParty\MikkTSpace\include\mikktspace.c">
       <Filter>ThirdParty\MikkTSpace</Filter>
     </ClCompile>
-    <ClCompile Include="Code\VulkanRenderer.cpp">
-      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
+    <ClCompile Include="Code\PathManager.cpp">
+      <Filter>Code\PathManager</Filter>
     </ClCompile>
     <ClCompile Include="Code\VulkanDeviceManager.cpp">
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\VulkanSwapchainManager.cpp">
-      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
     </ClCompile>
     <ClCompile Include="Code\VulkanRenderPassManager.cpp">
       <Filter>Code\Renderer\Vulkan\RenderPassManager</Filter>
@@ -141,8 +138,11 @@
     <ClCompile Include="Code\VulkanGameObject.cpp">
       <Filter>Code\Renderer\Vulkan\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Code\PathManager.cpp">
-      <Filter>Code\PathManager</Filter>
+    <ClCompile Include="Code\VulkanSwapchainManager.cpp">
+      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\VulkanRenderer.cpp">
+      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,14 +255,11 @@
     <ClInclude Include="ThirdParty\MikkTSpace\include\mikktspace.h">
       <Filter>ThirdParty\MikkTSpace</Filter>
     </ClInclude>
-    <ClInclude Include="Code\VulkanRenderer.hpp">
-      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
+    <ClInclude Include="Code\PathManager.hpp">
+      <Filter>Code\PathManager</Filter>
     </ClInclude>
     <ClInclude Include="Code\VulkanDeviceManager.hpp">
       <Filter>Code\Renderer\Vulkan\DeviceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\VulkanSwapchainManager.hpp">
-      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
     </ClInclude>
     <ClInclude Include="Code\VulkanRenderPassManager.hpp">
       <Filter>Code\Renderer\Vulkan\RenderPassManager</Filter>
@@ -276,8 +273,11 @@
     <ClInclude Include="Code\VulkanGameObject.hpp">
       <Filter>Code\Renderer\Vulkan\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Code\PathManager.hpp">
-      <Filter>Code\PathManager</Filter>
+    <ClInclude Include="Code\VulkanSwapchainManager.hpp">
+      <Filter>Code\Renderer\Vulkan\SwapchainManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\VulkanRenderer.hpp">
+      <Filter>Code\Renderer\Vulkan\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

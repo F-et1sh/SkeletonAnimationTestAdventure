@@ -2,8 +2,6 @@
 #include <iostream>
 #include <array>
 
-#include "VulkanSwapchainManager.hpp"
-
 #include <Volk/volk.h>
 
 /* forward declaration */

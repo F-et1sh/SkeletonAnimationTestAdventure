@@ -1,10 +1,14 @@
 #include "VulkanRenderer.hpp"
 
 VulkanRenderer::~VulkanRenderer() {
+    this->Release();
+}
+
+void VulkanRenderer::Release() {
     vkDeviceWaitIdle(m_DeviceManager.getDevice());
 }
 
-void VulkanRenderer::Initialize() {
+void VulkanRenderer::Initialize(GLFWwindow* p_window) {
 
     m_DeviceManager.CreateInstance();
     m_DeviceManager.SetupDebugMessenger();
@@ -36,6 +40,27 @@ void VulkanRenderer::Initialize() {
 
     m_DeviceManager.CreateCommandBuffers();
     m_DeviceManager.CreateSyncObjects();
+}
+
+void VulkanRenderer::loadModel(const Model& model) {
+}
+
+void VulkanRenderer::onResize(uint32_t width, uint32_t height) {
+}
+
+void VulkanRenderer::beginFrame() {
+}
+
+void VulkanRenderer::submitCommand(const RenderCommand& cmd) {
+}
+
+void VulkanRenderer::renderView(const RenderView& view) {
+}
+
+void VulkanRenderer::endFrame() {
+}
+
+void VulkanRenderer::waitIdle() {
 }
 
 void VulkanRenderer::DrawFrame() {

@@ -1,4 +1,11 @@
 #include "VulkanPipelineManager.hpp"
+#include "VulkanDeviceManager.hpp"
+#include "VulkanRenderMesh.hpp"
+#include "VulkanRenderPassManager.hpp"
+
+#include "PathManager.hpp"
+
+#include <fstream>
 
 void VulkanPipelineManager::Release() {
     vkDestroyPipeline(p_DeviceManager->getDevice(), m_GraphicsPipeline, nullptr);
@@ -60,13 +67,15 @@ void VulkanPipelineManager::CreateGraphicsPipeline() {
     VkPipelineVertexInputStateCreateInfo vertex_input_info{};
     vertex_input_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-    auto binding_description    = Vertex::getBindingDescription();
-    auto attribute_descriptions = Vertex::getAttributeDescriptions();
+    // TODO
 
-    vertex_input_info.vertexBindingDescriptionCount   = 1;
-    vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attribute_descriptions.size());
-    vertex_input_info.pVertexBindingDescriptions      = &binding_description;
-    vertex_input_info.pVertexAttributeDescriptions    = attribute_descriptions.data();
+    //auto binding_description    = Vertex::getBindingDescription();
+    //auto attribute_descriptions = Vertex::getAttributeDescriptions();
+
+    //vertex_input_info.vertexBindingDescriptionCount   = 1;
+    //vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attribute_descriptions.size());
+    //vertex_input_info.pVertexBindingDescriptions      = &binding_description;
+    //vertex_input_info.pVertexAttributeDescriptions    = attribute_descriptions.data();
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly{};
     input_assembly.sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -163,13 +172,13 @@ void VulkanPipelineManager::CreateGraphicsPipeline() {
 void VulkanPipelineManager::CreateDescriptorPool() {
     // We need MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT descriptor sets
     std::array pool_size{
-        VkDescriptorPoolSize(VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, RenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT),
-        VkDescriptorPoolSize(VkDescriptorType::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, RenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT)
+        VkDescriptorPoolSize(VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VulkanRenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT),
+        VkDescriptorPoolSize(VkDescriptorType::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VulkanRenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT)
     };
     VkDescriptorPoolCreateInfo pool_info{
         .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .flags         = VkDescriptorPoolCreateFlagBits::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-        .maxSets       = RenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT,
+        .maxSets       = VulkanRenderMesh::MAX_OBJECTS * MAX_FRAMES_IN_FLIGHT,
         .poolSizeCount = static_cast<uint32_t>(pool_size.size()),
         .pPoolSizes    = pool_size.data()
     };
@@ -244,13 +253,12 @@ std::vector<char> VulkanPipelineManager::readFile(const std::filesystem::path& p
 }
 
 VkShaderModule VulkanPipelineManager::createShaderModule(const std::vector<char>& code) const {
-    vk::ShaderModuleCreateInfo create_info{
-        vk::ShaderModuleCreateFlags{},                  // Flags
-        code.size(),                                    // Code Size
-        reinterpret_cast<const uint32_t*>(code.data()), // Code
-    };
+    VkShaderModuleCreateInfo  create_info{};
+    create_info.codeSize = code.size();
+    create_info.pCode    = reinterpret_cast<const uint32_t*>(code.data());
+    create_info.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 
     VkShaderModule shader_module{};
-    vkCreateShaderModule(p_DeviceManager->getDevice(), create_info, nullptr, &shader_module);
+    vkCreateShaderModule(p_DeviceManager->getDevice(), &create_info, nullptr, &shader_module);
     return shader_module;
 }

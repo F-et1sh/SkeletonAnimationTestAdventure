@@ -16,7 +16,20 @@ public:
                                                m_PipelineManager{ &m_DeviceManager, &m_RenderPassManager, &m_SwapchainManager, &m_RenderMesh } {}
     ~VulkanRenderer();
 
-    void Initialize();
+    void Release() override;
+    void Initialize(GLFWwindow* p_window) override;
+
+    void loadModel(const Model& model) override;
+
+    void onResize(uint32_t width, uint32_t height) override;
+
+    void beginFrame() override;
+    void submitCommand(const RenderCommand& cmd) override;
+    void renderView(const RenderView& view) override;
+    void endFrame() override;
+
+    void waitIdle() override;
+
     void DrawFrame();
 
     GLFWwindow* getGLFWwindow() noexcept { return p_glfwWindow; }

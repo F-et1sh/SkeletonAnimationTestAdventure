@@ -1,14 +1,15 @@
 #pragma once
+#include <vector>
 #include <iostream>
 #include <optional>
 #include <array>
-#include <vector>
-#include <set>
 
-#include <Volk/volk.h>
+#define VK_NO_PROTOTYPES
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+#include <Volk/volk.h>
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphics_family;

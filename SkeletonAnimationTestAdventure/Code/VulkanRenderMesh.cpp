@@ -1,12 +1,8 @@
 #include "VulkanRenderMesh.hpp"
 
-// NOLINTNEXTLINE(readability-identifier-naming)
+#define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-// NOLINTNEXTLINE(readability-identifier-naming)
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_gltf.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include "VulkanDeviceManager.hpp"
 #include "PathManager.hpp"
@@ -285,7 +281,7 @@ void VulkanRenderMesh::loadModel() {
 }
 
 void VulkanRenderMesh::createVertexBuffer() {
-    VkDeviceSize buffer_size = sizeof(m_Vertices[0]) * m_Vertices.size();
+    /*VkDeviceSize buffer_size = sizeof(m_Vertices[0]) * m_Vertices.size();
 
     VkBuffer       staging_buffer        = nullptr;
     VkDeviceMemory staging_buffer_memory = nullptr;
@@ -301,11 +297,11 @@ void VulkanRenderMesh::createVertexBuffer() {
     p_DeviceManager->copyBuffer(staging_buffer, m_VertexBuffer, buffer_size);
 
     vkDestroyBuffer(p_DeviceManager->getDevice(), staging_buffer, nullptr);
-    vkFreeMemory(p_DeviceManager->getDevice(), staging_buffer_memory, nullptr);
+    vkFreeMemory(p_DeviceManager->getDevice(), staging_buffer_memory, nullptr);*/
 }
 
 void VulkanRenderMesh::createIndexBuffer() {
-    VkDeviceSize buffer_size = sizeof(m_Indices[0]) * m_Indices.size();
+    /*VkDeviceSize buffer_size = sizeof(m_Indices[0]) * m_Indices.size();
 
     VkBuffer       staging_buffer        = nullptr;
     VkDeviceMemory staging_buffer_memory = nullptr;
@@ -321,7 +317,7 @@ void VulkanRenderMesh::createIndexBuffer() {
     p_DeviceManager->copyBuffer(staging_buffer, m_IndexBuffer, buffer_size);
 
     vkDestroyBuffer(p_DeviceManager->getDevice(), staging_buffer, nullptr);
-    vkFreeMemory(p_DeviceManager->getDevice(), staging_buffer_memory, nullptr);
+    vkFreeMemory(p_DeviceManager->getDevice(), staging_buffer_memory, nullptr);*/
 }
 
 void VulkanRenderMesh::createUniformBuffers() {

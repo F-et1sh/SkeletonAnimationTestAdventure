@@ -1,6 +1,9 @@
 #pragma once
+#include <array>
 #include <filesystem>
 #include "VulkanGameObject.hpp"
+
+#include <stb_image.h>
 
 class VulkanDeviceManager; // forward declaration
 
@@ -21,7 +24,9 @@ public:
     VkBuffer getVertexBuffer() const noexcept { return m_VertexBuffer; }
     VkBuffer getIndexBuffer() const noexcept { return m_IndexBuffer; }
 
-    std::vector<uint32_t>                      getIndices() const noexcept { return m_Indices; }
+    std::vector<uint32_t> getIndices() const noexcept {
+        return {}; // TODO
+    }
     std::array<VulkanGameObject, MAX_OBJECTS>& getGameObjects() noexcept { return m_GameObjects; }
 
 private:
@@ -44,8 +49,8 @@ private:
     VkImageView    m_TextureImageView{};
     VkSampler      m_TextureSampler{};
 
-    std::vector<Vertex>   m_Vertices;
-    std::vector<uint32_t> m_Indices;
+    //std::vector<Vertex>   m_Vertices;
+    //std::vector<uint32_t> m_Indices;
 
     VkBuffer       m_VertexBuffer{};
     VkDeviceMemory m_VertexBufferMemory{};

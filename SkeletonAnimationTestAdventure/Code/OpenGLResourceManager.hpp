@@ -1,4 +1,5 @@
 #pragma once
+#include <glad/glad.h>
 #include "Model.hpp"
 
 struct OpenGLTexture {
