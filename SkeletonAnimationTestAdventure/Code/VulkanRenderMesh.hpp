@@ -2,6 +2,7 @@
 #include <array>
 #include <filesystem>
 #include "VulkanGameObject.hpp"
+#include "Vertices.hpp"
 
 #include <stb_image.h>
 
@@ -49,8 +50,8 @@ private:
     VkImageView    m_TextureImageView{};
     VkSampler      m_TextureSampler{};
 
-    //std::vector<Vertex>   m_Vertices;
-    //std::vector<uint32_t> m_Indices;
+    std::vector<Vertex>   m_Vertices;
+    std::vector<uint32_t> m_Indices;
 
     VkBuffer       m_VertexBuffer{};
     VkDeviceMemory m_VertexBufferMemory{};

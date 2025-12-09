@@ -21,12 +21,8 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
-    if (gladLoadGLLoader((GLADloadproc) glfwGetProcAddress) == 0) {
-        return -1;
-    }
-
-    glViewport(0, 0, 2560, 1440);
-    glEnable(GL_DEPTH_TEST);
+    std::unique_ptr<IRenderer> renderer = std::make_unique<OpenGLRenderer>();
+    renderer->Initialize(window);
 
     Camera camera(2560, 1440, glm::vec3{});
 
@@ -37,8 +33,6 @@ int main() {
     Model model{};
     model.Initialize(L"F:\\Windows\\Desktop\\SkeletonAnimationTestAdventure\\Files\\Models\\rifle-awp-weapon-model-cs2-original\\source\\AWP.glb");
 
-    std::unique_ptr<IRenderer> renderer = std::make_unique<OpenGLRenderer>();
-    renderer->Initialize(window);
     renderer->loadModel(model);
 
     RenderCommand render_command{};
@@ -48,12 +42,8 @@ int main() {
     render_view.camera = &camera;
 
     while (glfwWindowShouldClose(window) == 0) {
-        glClearColor(0.07F, 0.13F, 0.17F, 1.0F);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         camera.Inputs(window);
         camera.UpdateMatrix(70.0F, 0.01F, 1000.0F);
-        camera.UploadUniforms(shader, "u_cameraMatrix");
 
         /*shader.setUniformVec3("u_lightDirection", glm::vec3(1, 1, 1));
         shader.setUniformVec3("u_lightColor", glm::vec3(30, 30, 30));
@@ -70,7 +60,6 @@ int main() {
 
         shader.Unbind();
 
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 

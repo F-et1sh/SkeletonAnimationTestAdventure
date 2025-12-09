@@ -4,7 +4,8 @@
 #include "Camera.hpp"
 
 struct RenderCommand {
-    Model* model = nullptr;
+    int 
+    glm::mat4 transform{};
 
     RenderCommand()  = default;
     ~RenderCommand() = default;

@@ -10,10 +10,10 @@
 class VulkanRenderer : public IRenderer {
 public:
     VulkanRenderer(GLFWwindow* p_glfwWindow) : p_glfwWindow{ p_glfwWindow },
-                                               m_DeviceManager{ &m_SwapchainManager, p_glfwWindow, &m_RenderPassManager, &m_PipelineManager, &m_RenderMesh },
-                                               m_SwapchainManager{ &m_DeviceManager, p_glfwWindow, &m_RenderPassManager },
-                                               m_RenderPassManager{ &m_DeviceManager, &m_SwapchainManager },
-                                               m_PipelineManager{ &m_DeviceManager, &m_RenderPassManager, &m_SwapchainManager, &m_RenderMesh } {}
+                                               m_deviceManager{ &m_swapchainManager, p_glfwWindow, &m_renderPassManager, &m_pipelineManager, &m_renderMesh },
+                                               m_swapchainManager{ &m_deviceManager, p_glfwWindow, &m_renderPassManager },
+                                               m_renderPassManager{ &m_deviceManager, &m_swapchainManager },
+                                               m_pipelineManager{ &m_deviceManager, &m_renderPassManager, &m_swapchainManager, &m_renderMesh } {}
     ~VulkanRenderer();
 
     void Release() override;
@@ -37,10 +37,10 @@ public:
 private:
     GLFWwindow* p_glfwWindow = nullptr;
 
-    VulkanDeviceManager     m_DeviceManager;
-    VulkanSwapchainManager  m_SwapchainManager;
-    VulkanRenderPassManager m_RenderPassManager;
-    VulkanPipelineManager   m_PipelineManager;
+    VulkanDeviceManager     m_deviceManager;
+    VulkanSwapchainManager  m_swapchainManager;
+    VulkanRenderPassManager m_renderPassManager;
+    VulkanPipelineManager   m_pipelineManager;
 
-    VulkanRenderMesh m_RenderMesh;
+    VulkanRenderMesh m_renderMesh;
 };

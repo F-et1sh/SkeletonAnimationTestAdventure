@@ -4,7 +4,7 @@
 
 class OpenGLRenderer : public IRenderer {
 public:
-    OpenGLRenderer()  = default;
+    OpenGLRenderer() = default;
     ~OpenGLRenderer() { this->Release(); }
 
     void Release() override;
@@ -22,5 +22,9 @@ public:
     void waitIdle() override;
 
 private:
+    GLFWwindow*           p_window{};
     OpenGLResourceManager m_resourceManager{};
+
+    std::vector<RenderCommand> m_commandBuffer{};
+    RenderView                 m_renderView{};
 };

@@ -5,41 +5,41 @@ VulkanRenderer::~VulkanRenderer() {
 }
 
 void VulkanRenderer::Release() {
-    vkDeviceWaitIdle(m_DeviceManager.getDevice());
+    vkDeviceWaitIdle(m_deviceManager.getDevice());
 }
 
 void VulkanRenderer::Initialize(GLFWwindow* p_window) {
 
-    m_DeviceManager.CreateInstance();
-    m_DeviceManager.SetupDebugMessenger();
+    m_deviceManager.CreateInstance();
+    m_deviceManager.SetupDebugMessenger();
 
-    m_SwapchainManager.CreateSurface();
+    m_swapchainManager.CreateSurface();
 
-    m_DeviceManager.PickPhysicalDevice();
+    m_deviceManager.PickPhysicalDevice();
 
-    m_DeviceManager.CreateLogicalDevice();
-    m_SwapchainManager.CreateSwapchain();
-    m_SwapchainManager.CreateImageViews();
+    m_deviceManager.CreateLogicalDevice();
+    m_swapchainManager.CreateSwapchain();
+    m_swapchainManager.CreateImageViews();
 
-    m_RenderPassManager.CreateRenderPass();
+    m_renderPassManager.CreateRenderPass();
 
-    m_PipelineManager.CreateDescriptorSetLayout();
-    m_PipelineManager.CreateGraphicsPipeline();
+    m_pipelineManager.CreateDescriptorSetLayout();
+    m_pipelineManager.CreateGraphicsPipeline();
 
-    m_DeviceManager.CreateCommandPool();
+    m_deviceManager.CreateCommandPool();
 
-    m_SwapchainManager.CreateColorResources();
-    m_SwapchainManager.CreateDepthResources();
+    m_swapchainManager.CreateColorResources();
+    m_swapchainManager.CreateDepthResources();
 
-    m_SwapchainManager.CreateFramebuffers();
+    m_swapchainManager.CreateFramebuffers();
 
-    m_RenderMesh.Initialize(&m_DeviceManager);
+    m_renderMesh.Initialize(&m_deviceManager);
 
-    m_PipelineManager.CreateDescriptorPool();
-    m_PipelineManager.CreateDescriptorSets();
+    m_pipelineManager.CreateDescriptorPool();
+    m_pipelineManager.CreateDescriptorSets();
 
-    m_DeviceManager.CreateCommandBuffers();
-    m_DeviceManager.CreateSyncObjects();
+    m_deviceManager.CreateCommandBuffers();
+    m_deviceManager.CreateSyncObjects();
 }
 
 void VulkanRenderer::loadModel(const Model& model) {
@@ -64,5 +64,5 @@ void VulkanRenderer::waitIdle() {
 }
 
 void VulkanRenderer::DrawFrame() {
-    m_DeviceManager.DrawFrame();
+    m_deviceManager.DrawFrame();
 }
